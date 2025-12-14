@@ -1,0 +1,47 @@
+# SBT and Scala build artifacts
+target/
+project/target/
+project/project/
+*.class
+*.log
+.cache
+.history
+.lib/
+
+# IDE files
+.idea/
+.idea_modules/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.bsp/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Node modules (if using npm for frontend tooling)
+node_modules/
+npm-debug.log
+
+# Test reports
+test-reports/
+
+# Temporary files
+*.swp
+*.swo
+*~
+
+# Documentation that doesn't need to be in container
+*.md
+docs/
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-compose.yml
