@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # Web UI - served by nginx
+  mutilities-ui:
+    build:
+      context: ./mutilities-ui
+      dockerfile: Dockerfile
+    container_name: mutilities-ui
+    ports:
+      - "80:80"
+    depends_on:
+      - random-melody-service
+    networks:
+      - mutilities-network
+    restart: unless-stopped
+
+  # Random Melody Service - Scala microservice
+  random-melody-service:
+    build:
+      context: .
+      dockerfile: random-melody-service/Dockerfile
+    container_name: random-melody-service
+    ports:
+      - "8080:8080"
+    environment:
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - DATABASE_URL=jdbc:postgresql://postgres:5432/mutilities
+      - DATABASE_USER=mutilities
+      - DATABASE_PASSWORD=mutilities_pass
+#    depends_on:
+#      - kafka
+#      - postgres
+    networks:
+      - mutilities-network
+    restart: unless-stopped
+
+# Below services will be utilised in future
+
+#  # PostgreSQL Database
+#  postgres:
+#    image: postgres:16-alpine
+#    container_name: mutilities-postgres
+#    ports:
+#      - "5432:5432"
+#    environment:
+#      - POSTGRES_DB=mutilities
+#      - POSTGRES_USER=mutilities
+#      - POSTGRES_PASSWORD=mutilities_pass
+#    volumes:
+#      - postgres-data:/var/lib/postgresql/data
+#    networks:
+#      - mutilities-network
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U mutilities"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+
+#  # Zookeeper - required for Kafka
+#  zookeeper:
+#    image: confluentinc/cp-zookeeper:7.5.0
+#    container_name: mutilities-zookeeper
+#    environment:
+#      ZOOKEEPER_CLIENT_PORT: 2181
+#      ZOOKEEPER_TICK_TIME: 2000
+#    networks:
+#      - mutilities-network
+#    restart: unless-stopped
+
+#  # Kafka - message broker for async communication
+#  kafka:
+#    image: confluentinc/cp-kafka:7.5.0
+#    container_name: mutilities-kafka
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+#    depends_on:
+#      - zookeeper
+#    networks:
+#      - mutilities-network
+#    restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+#      interval: 10s
+#      timeout: 10s
+#      retries: 5
+
+networks:
+  mutilities-network:
+    driver: bridge
+
+volumes:
+  postgres-data:

@@ -1,0 +1,113 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    color: #ffffff;
+    background: linear-gradient(135deg, #2b2d30 0%, #1e1f22 100%);
+    min-height: 100vh;
+}
+
+header {
+    background: #1e1f22;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+main {
+    padding: 2rem;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: #1e1f22;
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.container h2 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.tools {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.tool-card {
+    background: #2b2d30;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tool-card h3 {
+    color: #cccccc;
+    margin-bottom: 0.5rem;
+}
+
+.tool-card p {
+    color: #aaaaaa;
+    margin-bottom: 1rem;
+}
+
+button {
+    background: #393b40;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#melody-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #1e1f22;
+    border-radius: 5px;
+    min-height: 50px;
+    display: none;
+}
+
+#melody-result.show {
+    display: block;
+}
+
+footer {
+    text-align: center;
+    padding: 2rem;
+    color: white;
+    margin-top: 2rem;
+}
+
+.error {
+    color: #e74c3c;
+    padding: 1rem;
+    background: #3a2222;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+
+.success {
+    color: #27ae60;
+    padding: 1rem;
+    background: #223a22;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
