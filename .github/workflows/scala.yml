@@ -19,7 +19,12 @@ jobs:
       with:
         java-version: '21'
         distribution: 'temurin'
-        cache: 'sbt'
+    
+    - name: Setup Scala
+      uses: coursier/setup-action@v1
+      with:
+        jvm: temurin:21
+        apps: sbt
         
     - name: Run tests
       run: sbt test
