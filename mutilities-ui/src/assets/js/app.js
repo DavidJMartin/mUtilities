@@ -291,6 +291,7 @@ function handleGuitarFretClick(fretElement, note) {
 function syncPianoWithSelection() {
     document.querySelectorAll('.piano-key').forEach(key => {
         const note = normalizeNote(key.dataset.note);
+        key.classList.remove('temp-selected');
         if (selectedNotes.has(note)) {
             key.classList.add('selected');
         } else {
@@ -302,6 +303,7 @@ function syncPianoWithSelection() {
 function syncGuitarWithSelection() {
     document.querySelectorAll('.guitar-fret').forEach(fret => {
         const note = normalizeNote(fret.dataset.note);
+        fret.classList.remove('temp-selected');
         if (selectedNotes.has(note)) {
             fret.classList.add('selected');
         } else {
@@ -364,7 +366,7 @@ function updatePossibleKeysDisplay() {
     
     if (possibleKeys.length === 0) {
         container.innerHTML = '<span class="placeholder">No matching keys found for these notes</span>';
-    } else if (possibleKeys.length > 10) {
+    } else if (possibleKeys.length > 26) {
         container.innerHTML = '<span class="placeholder">Press more notes to narrow down keys</span>';
     } else {
         container.innerHTML = possibleKeys.map(key =>
@@ -472,7 +474,9 @@ function updateScaleInfoDisplay(rootNote, scaleType) {
     const intervalNames = ['Root', '2nd', '3rd', '4th', '5th', '6th', '7th'];
     const degreeLabels = scale.intervals.map((interval, idx) => {
         if (idx === 0) return 'Root';
-        return `${idx + 1}${['st', 'nd', 'rd'][idx - 1] || 'th'}`;
+        const n = idx + 1;
+        const suffix = (n === 2) ? 'nd' : (n === 3) ? 'rd' : 'th';
+        return `${n}${suffix}`;
     });
     
     container.innerHTML = `
