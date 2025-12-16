@@ -9,23 +9,191 @@
 <body>
     <header>
         <h1>mUtilities</h1>
+        <nav id="main-nav">
+            <ul>
+                <li><a href="#home" class="nav-link active">Home</a></li>
+                <li><a href="#in-key-assistance" class="nav-link">In Key Assistance</a></li>
+                <li><a href="#drone-synth" class="nav-link">Drone Synth</a></li>
+                <li><a href="#random-melody" class="nav-link">Random Melody Generator</a></li>
+                <li><a href="#key-synth" class="nav-link">Key Synth</a></li>
+            </ul>
+        </nav>
     </header>
     
     <main>
-        <div class="container">
-            <p>Under construction</p>
-            
-            <section class="tools">
-                <div class="tool-card">
-                    <h3>Random Melody Generator</h3>
-                    <p>Proof of concept for calling backend services</p>
-                    <button id="generate-melody">Generate Melody</button>
-                    <div id="melody-result"></div>
+        <!-- Home Page -->
+        <section id="home" class="page active">
+            <div class="container">
+                <h2>Welcome to mUtilities</h2>
+                <p>A collection of music tools and utilities for composers and musicians.</p>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <h3>In Key Assistance</h3>
+                        <p>Get help staying in key with intelligent suggestions and scale information.</p>
+                        <a href="#in-key-assistance" class="button">Launch Tool</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h3>Drone Synth</h3>
+                        <p>Create ambient drone sounds for meditation, practice, or composition.</p>
+                        <a href="#drone-synth" class="button">Launch Tool</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h3>Random Melody Generator</h3>
+                        <p>Generate random melodies to inspire your compositions.</p>
+                        <a href="#random-melody" class="button">Launch Tool</a>
+                    </div>
+                    
+                    <div class="tool-card">
+                        <h3>Key Synth</h3>
+                        <p>Interactive synthesizer with key detection and visualization.</p>
+                        <a href="#key-synth" class="button">Launch Tool</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- In Key Assistance Page -->
+        <section id="in-key-assistance" class="page">
+            <div class="container">
+                <h2>In Key Assistance</h2>
+                <p class="page-description">Click on piano keys or guitar frets to select notes, or choose a key from the dropdowns below.</p>
+                
+                <!-- Key Selection Controls -->
+                <div class="key-controls">
+                    <div class="control-group">
+                        <label for="pitch-class-select">Root Note:</label>
+                        <select id="pitch-class-select">
+                            <option value="">-- Select Root --</option>
+                            <option value="C">C</option>
+                            <option value="C#">C# / Db</option>
+                            <option value="D">D</option>
+                            <option value="D#">D# / Eb</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="F#">F# / Gb</option>
+                            <option value="G">G</option>
+                            <option value="G#">G# / Ab</option>
+                            <option value="A">A</option>
+                            <option value="A#">A# / Bb</option>
+                            <option value="B">B</option>
+                        </select>
+                    </div>
+                    <div class="control-group">
+                        <label for="key-type-select">Scale Type:</label>
+                        <select id="key-type-select">
+                            <option value="">-- Select Scale --</option>
+                            <option value="major">Major</option>
+                            <option value="minor">Natural Minor</option>
+                            <option value="harmonicMinor">Harmonic Minor</option>
+                            <option value="melodicMinor">Melodic Minor</option>
+                            <option value="dorian">Dorian</option>
+                            <option value="phrygian">Phrygian</option>
+                            <option value="lydian">Lydian</option>
+                            <option value="mixolydian">Mixolydian</option>
+                            <option value="locrian">Locrian</option>
+                            <option value="pentatonicMajor">Pentatonic Major</option>
+                            <option value="pentatonicMinor">Pentatonic Minor</option>
+                            <option value="blues">Blues</option>
+                        </select>
+                    </div>
+                    <button id="clear-selection" class="button">Clear Selection</button>
                 </div>
                 
-                <!-- Add more tool cards as you build them -->
-            </section>
-        </div>
+                <!-- Piano Keyboard -->
+                <div class="instrument-section">
+                    <h3>Piano (2 Octaves)</h3>
+                    <div class="piano-container">
+                        <div id="piano" class="piano">
+                            <!-- Piano keys will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Guitar Neck -->
+                <div class="instrument-section">
+                    <h3>Guitar (Frets 0-12)</h3>
+                    <div class="guitar-container">
+                        <div id="guitar-neck" class="guitar-neck">
+                            <!-- Guitar neck will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Information Display -->
+                <div class="info-section">
+                    <div class="info-box">
+                        <h4>Selected Notes</h4>
+                        <div id="selected-notes" class="info-content">
+                            <span class="placeholder">Click keys or frets to select notes</span>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h4>Possible Keys</h4>
+                        <p class="info-hint">Click a key to preview it</p>
+                        <div id="possible-keys" class="info-content">
+                            <span class="placeholder">Select notes to find matching keys</span>
+                        </div>
+                    </div>
+                    <div class="info-box full-width">
+                        <h4>Scale Information</h4>
+                        <div id="scale-info" class="info-content">
+                            <span class="placeholder">Select a key from the dropdowns or click a possible key to see scale information</span>
+                        </div>
+                    </div>
+                    <div class="info-box full-width">
+                        <h4>Semitone Transposition for Sample in Key
+                            <select id="sample-key-select" class="inline-select">
+                                <option value="C" selected>C</option>
+                                <option value="C#">C#</option>
+                                <option value="D">D</option>
+                                <option value="D#">D#</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="F#">F#</option>
+                                <option value="G">G</option>
+                                <option value="G#">G#</option>
+                                <option value="A">A</option>
+                                <option value="A#">A#</option>
+                                <option value="B">B</option>
+                            </select>
+                        </h4>
+                        <p class="info-hint">Transpose values when using a melodic one-shot sample</p>
+                        <div id="transposition-values" class="info-content">
+                            <span class="placeholder">Select notes to see transposition values</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Drone Synth Page -->
+        <section id="drone-synth" class="page">
+            <div class="container">
+                <h2>Drone Synth</h2>
+                <p>Coming soon...</p>
+            </div>
+        </section>
+        
+        <!-- Random Melody Generator Page -->
+        <section id="random-melody" class="page">
+            <div class="container">
+                <h2>Random Melody Generator</h2>
+                <p>Generate random melodies based on musical patterns and scales.</p>
+                <button id="generate-melody" class="button">Generate Melody</button>
+                <div id="melody-result"></div>
+            </div>
+        </section>
+        
+        <!-- Key Synth Page -->
+        <section id="key-synth" class="page">
+            <div class="container">
+                <h2>Key Synth</h2>
+                <p>Coming soon...</p>
+            </div>
+        </section>
     </main>
     
     <footer>

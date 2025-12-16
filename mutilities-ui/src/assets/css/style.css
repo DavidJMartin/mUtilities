@@ -15,13 +15,42 @@ body {
 header {
     background: #1e1f22;
     color: white;
-    padding: 2rem;
-    text-align: center;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
 
 header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Navigation Styles */
+#main-nav ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+#main-nav a {
+    color: #aaaaaa;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+#main-nav a:hover {
+    color: #ffffff;
+    background: #2b2d30;
+}
+
+#main-nav a.active {
+    color: #ffffff;
+    background: #393b40;
 }
 
 main {
@@ -42,7 +71,27 @@ main {
     margin-bottom: 1rem;
 }
 
-.tools {
+/* Page Management */
+.page {
+    display: none;
+    animation: fadeIn 0.3s ease-in;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Tools Grid */
+.tools-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
@@ -66,7 +115,8 @@ main {
     margin-bottom: 1rem;
 }
 
-button {
+button,
+.button {
     background: #393b40;
     color: white;
     border: none;
@@ -74,6 +124,20 @@ button {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.3s ease;
+}
+
+button:hover,
+.button:hover {
+    background: #4a4d52;
+}
+
+button:disabled {
+    background: #2b2d30;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
 
 #melody-result {
@@ -110,4 +174,457 @@ footer {
     background: #223a22;
     border-radius: 5px;
     margin-top: 1rem;
+}
+
+/* ===== In Key Assistance Page Styles ===== */
+
+.page-description {
+    color: #aaaaaa;
+    margin-bottom: 1.5rem;
+}
+
+/* Key Controls */
+.key-controls {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #2b2d30;
+    border-radius: 8px;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.control-group label {
+    color: #cccccc;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.control-group select {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: 1px solid #4a4d52;
+    background: #1e1f22;
+    color: #ffffff;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 150px;
+}
+
+.control-group select:focus {
+    outline: none;
+    border-color: #6a6d72;
+}
+
+/* Instrument Sections */
+.instrument-section {
+    margin-bottom: 2rem;
+}
+
+.instrument-section h3 {
+    color: #cccccc;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* Piano Styles */
+.piano-container {
+    overflow-x: auto;
+    padding: 1rem;
+    background: #2b2d30;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+.piano {
+    display: flex;
+    position: relative;
+    height: 160px;
+    width: 820px; /* Same width as guitar neck (13 frets * 60px + 40px label) */
+    justify-content: center;
+}
+
+.piano-key {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 8px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    user-select: none;
+}
+
+.piano-key.white {
+    width: 55px;
+    height: 160px;
+    background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 100%);
+    border: 1px solid #aaa;
+    border-radius: 0 0 5px 5px;
+    margin-right: -1px;
+    z-index: 1;
+    color: #333;
+}
+
+.piano-key.white:hover {
+    background: linear-gradient(180deg, #ffffff 0%, #f0f0f0 100%);
+}
+
+.piano-key.white.selected {
+    background: linear-gradient(180deg, #4CAF50 0%, #45a049 100%);
+    color: #fff;
+}
+
+.piano-key.white.temp-selected {
+    background: linear-gradient(180deg, #FF9800 0%, #F57C00 100%);
+    color: #fff;
+}
+
+.piano-key.black {
+    width: 35px;
+    height: 100px;
+    background: linear-gradient(180deg, #333 0%, #1a1a1a 100%);
+    border: 1px solid #000;
+    border-radius: 0 0 4px 4px;
+    margin-left: -17px;
+    margin-right: -17px;
+    z-index: 2;
+    color: #fff;
+}
+
+.piano-key.black:hover {
+    background: linear-gradient(180deg, #444 0%, #222 100%);
+}
+
+.piano-key.black.selected {
+    background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+}
+
+.piano-key.black.temp-selected {
+    background: linear-gradient(180deg, #FF9800 0%, #E65100 100%);
+}
+
+/* Guitar Neck Styles */
+.guitar-container {
+    overflow-x: auto;
+    padding: 1rem;
+    background: #2b2d30;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+}
+
+.guitar-neck {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 820px; /* 13 frets * 60px + 40px label */
+}
+
+.guitar-string {
+    display: flex;
+    align-items: center;
+    height: 35px;
+    position: relative;
+}
+
+.string-label {
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    color: #cccccc;
+    font-size: 0.9rem;
+}
+
+.fret-container {
+    display: flex;
+    position: relative;
+}
+
+.guitar-fret {
+    width: 60px;
+    height: 35px;
+    background: linear-gradient(180deg, #8B4513 0%, #654321 100%);
+    border-left: 3px solid #c0c0c0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s ease;
+}
+
+.guitar-fret:first-child {
+    border-left: 6px solid #f5deb3;
+    background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+}
+
+.guitar-fret::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #d4aa70 0%, #b8860b 50%, #d4aa70 100%);
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.guitar-fret:hover {
+    background: linear-gradient(180deg, #9B5523 0%, #755331 100%);
+}
+
+.guitar-fret.selected {
+    background: linear-gradient(180deg, #4CAF50 0%, #388E3C 100%);
+}
+
+.guitar-fret.temp-selected {
+    background: linear-gradient(180deg, #FF9800 0%, #F57C00 100%);
+}
+
+.fret-note {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: transparent;
+    color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: bold;
+    z-index: 1;
+    user-select: none;
+}
+
+.guitar-fret.selected .fret-note {
+    background: #fff;
+    color: #333;
+}
+
+.guitar-fret.temp-selected .fret-note {
+    background: #fff;
+    color: #333;
+}
+
+.guitar-fret:hover .fret-note {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+}
+
+/* Fret numbers */
+.fret-numbers {
+    display: flex;
+    padding-left: 40px;
+    margin-top: 5px;
+}
+
+.fret-number {
+    width: 60px;
+    text-align: center;
+    color: #888;
+    font-size: 0.8rem;
+}
+
+/* Fret markers (dots) */
+.fret-markers {
+    display: flex;
+    padding-left: 40px;
+    margin-bottom: 5px;
+}
+
+.fret-marker {
+    width: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fret-marker .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+}
+
+.fret-marker.double .dot {
+    margin: 0 2px;
+}
+
+/* Information Section */
+.info-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.info-box {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.info-box.full-width {
+    grid-column: 1 / -1;
+}
+
+.info-box h4 {
+    color: #ffffff;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    border-bottom: 1px solid #4a4d52;
+    padding-bottom: 0.5rem;
+}
+
+.info-content {
+    color: #cccccc;
+    min-height: 40px;
+}
+
+.info-content .placeholder {
+    color: #666;
+    font-style: italic;
+}
+
+.note-badge {
+    display: inline-block;
+    background: #4CAF50;
+    color: #fff;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    margin: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.key-badge {
+    display: inline-block;
+    background: #2196F3;
+    color: #fff;
+    padding: 0.35rem 0.8rem;
+    border-radius: 4px;
+    margin: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.key-badge:hover {
+    background: #1976D2;
+    transform: scale(1.05);
+}
+
+.key-badge.active {
+    background: #FF9800;
+    border-color: #FFB74D;
+}
+
+.info-hint {
+    color: #888;
+    font-size: 0.8rem;
+    font-style: italic;
+    margin-bottom: 0.5rem;
+}
+
+.note-badge.temp {
+    background: #FF9800;
+}
+
+/* Inline select for sample key */
+.inline-select {
+    display: inline-block;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #4a4d52;
+    background: #1e1f22;
+    color: #ffffff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    margin: 0 0.25rem;
+}
+
+.inline-select:focus {
+    outline: none;
+    border-color: #6a6d72;
+}
+
+/* Transposition values */
+.transposition-note {
+    display: inline-block;
+    background: #673AB7;
+    color: #fff;
+    padding: 0.35rem 0.8rem;
+    border-radius: 4px;
+    margin: 0.2rem;
+    font-size: 0.85rem;
+    font-family: monospace;
+}
+
+.transposition-note.temp {
+    background: #FF9800;
+}
+
+.transposition-note .note-name {
+    font-weight: bold;
+}
+
+.transposition-note .trans-value {
+    opacity: 0.9;
+}
+
+.scale-notes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.scale-note {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: #393b40;
+    color: #fff;
+    border-radius: 50%;
+    font-weight: 500;
+}
+
+.scale-note.root {
+    background: #e91e63;
+}
+
+.scale-intervals {
+    margin-top: 1rem;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .key-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .info-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .info-box.full-width {
+        grid-column: 1;
+    }
 }
