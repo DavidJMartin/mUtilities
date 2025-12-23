@@ -191,7 +191,79 @@
         <section id="key-synth" class="page">
             <div class="container">
                 <h2>Key Synth</h2>
-                <p>Coming soon...</p>
+                <p class="page-description">Play the synthesizer using your QWERTY keyboard (A through L keys)</p>
+                
+                <div class="synth-controls">
+                    <div class="control-section">
+                        <h3>Oscillator</h3>
+                        <div class="control-item">
+                            <label for="waveform">Waveform:</label>
+                            <select id="waveform">
+                                <option value="sine">Sine</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="sawtooth" selected>Sawtooth</option>
+                                <option value="square">Square</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h3>Filter</h3>
+                        <div class="control-item">
+                            <label for="cutoff">Cutoff: <span id="cutoff-value">2000</span> Hz</label>
+                            <input type="range" id="cutoff" min="20" max="8000" value="2000" step="10">
+                        </div>
+                        <div class="control-item">
+                            <label for="resonance">Resonance: <span id="resonance-value">1</span></label>
+                            <input type="range" id="resonance" min="0.1" max="20" value="1" step="0.1">
+                        </div>
+                    </div>
+                    
+                    <div class="control-section">
+                        <h3>Envelope (ADSR)</h3>
+                        <div class="control-item">
+                            <label for="attack">Attack: <span id="attack-value">0.01</span> s</label>
+                            <input type="range" id="attack" min="0.001" max="2" value="0.01" step="0.001">
+                        </div>
+                        <div class="control-item">
+                            <label for="decay">Decay: <span id="decay-value">0.2</span> s</label>
+                            <input type="range" id="decay" min="0.001" max="2" value="0.2" step="0.001">
+                        </div>
+                        <div class="control-item">
+                            <label for="sustain">Sustain: <span id="sustain-value">0.5</span></label>
+                            <input type="range" id="sustain" min="0" max="1" value="0.5" step="0.01">
+                        </div>
+                        <div class="control-item">
+                            <label for="release">Release: <span id="release-value">0.8</span> s</label>
+                            <input type="range" id="release" min="0.001" max="3" value="0.8" step="0.001">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="keyboard-map">
+                    <h3>Keyboard Mapping</h3>
+                    <div class="key-info">
+                        <div class="key-row">
+                            <span class="key-label">A</span> → C4
+                            <span class="key-label">W</span> → C#4
+                            <span class="key-label">S</span> → D4
+                            <span class="key-label">E</span> → D#4
+                            <span class="key-label">D</span> → E4
+                            <span class="key-label">F</span> → F4
+                            <span class="key-label">T</span> → F#4
+                        </div>
+                        <div class="key-row">
+                            <span class="key-label">G</span> → G4
+                            <span class="key-label">Y</span> → G#4
+                            <span class="key-label">H</span> → A4
+                            <span class="key-label">U</span> → A#4
+                            <span class="key-label">J</span> → B4
+                            <span class="key-label">K</span> → C5
+                            <span class="key-label">O</span> → C#5
+                            <span class="key-label">L</span> → D5
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -200,6 +272,7 @@
         <p>&copy; 2025 mUtilities</p>
     </footer>
     
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script>
     <script src="./assets/js/app.js"></script>
 </body>
 </html>

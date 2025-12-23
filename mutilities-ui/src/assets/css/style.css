@@ -627,4 +627,146 @@ footer {
     .info-box.full-width {
         grid-column: 1;
     }
+
+/* ===== Key Synth Page Styles ===== */
+
+.synth-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.control-section {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.control-section h3 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4a4d52;
+    padding-bottom: 0.5rem;
+}
+
+.control-item {
+    margin-bottom: 1rem;
+}
+
+.control-item:last-child {
+    margin-bottom: 0;
+}
+
+.control-item label {
+    display: block;
+    color: #cccccc;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.control-item select {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 5px;
+    border: 1px solid #4a4d52;
+    background: #1e1f22;
+    color: #ffffff;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.control-item select:focus {
+    outline: none;
+    border-color: #6a6d72;
+}
+
+.control-item input[type="range"] {
+    width: 100%;
+    height: 6px;
+    border-radius: 3px;
+    background: #4a4d52;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.control-item input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.control-item input[type="range"]::-webkit-slider-thumb:hover {
+    background: #45a049;
+}
+
+.control-item input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+    border: none;
+    transition: background 0.2s ease;
+}
+
+.control-item input[type="range"]::-moz-range-thumb:hover {
+    background: #45a049;
+}
+
+.keyboard-map {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.keyboard-map h3 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.key-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.key-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    color: #cccccc;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.key-label {
+    display: inline-block;
+    background: #393b40;
+    color: #fff;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: bold;
+    min-width: 24px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .synth-controls {
+        grid-template-columns: 1fr;
+    }
+    
+    .key-row {
+        font-size: 0.8rem;
+        gap: 0.5rem;
+    }
+}
 }
