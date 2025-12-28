@@ -10,17 +10,17 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - random-melody-service
+      - melody-generation-service
     networks:
       - mutilities-network
     restart: unless-stopped
 
-  # Random Melody Service - Scala microservice
-  random-melody-service:
+  # Melody Generation Service - Scala microservice
+  melody-generation-service:
     build:
       context: .
-      dockerfile: random-melody-service/Dockerfile
-    container_name: random-melody-service
+      dockerfile: melody-generation-service/Dockerfile
+    container_name: melody-generation-service
     ports:
       - "8080:8080"
     environment:

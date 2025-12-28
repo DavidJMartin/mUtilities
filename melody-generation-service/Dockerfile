@@ -24,10 +24,10 @@ COPY build.sbt .
 COPY mutilities-common mutilities-common/
 
 # Copy service code
-COPY random-melody-service random-melody-service/
+COPY melody-generation-service melody-generation-service/
 
 # Build the fat JAR
-RUN sbt "project randomMelodyService" assembly
+RUN sbt "project melodyGenerationService" assembly
 
 # Stage 2: Create the runtime image
 FROM eclipse-temurin:21-jre-alpine
@@ -35,7 +35,7 @@ FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 
 # Copy the fat JAR from builder
-COPY --from=builder /build/random-melody-service/target/scala-3.7.4/random-melody-service.jar app.jar
+COPY --from=builder /build/melody-generation-service/target/scala-3.7.4/melody-generation-service.jar app.jar
 
 # Expose the service port
 EXPOSE 8080

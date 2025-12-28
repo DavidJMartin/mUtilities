@@ -19,11 +19,11 @@ lazy val root = (project in file("."))
   )
   .aggregate(
     common,
-    randomMelodyService
+    melodyGenerationService
   )
 
 // Module references - each module has its own build.sbt
 lazy val common = project in file("mutilities-common")
-lazy val randomMelodyService = (project in file("random-melody-service")).dependsOn(common)
+lazy val melodyGenerationService = (project in file("melody-generation-service")).dependsOn(common)
 
 // Note: mutilities-ui is served by nginx (not a Scala project)
