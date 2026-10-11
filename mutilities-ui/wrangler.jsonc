@@ -1,0 +1,8 @@
+// Cloudflare Worker serving the static UI at mutilities.dajama.dev
+{
+  "name": "mutilities",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./src"
+  }
+}

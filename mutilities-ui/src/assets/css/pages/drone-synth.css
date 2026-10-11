@@ -1,0 +1,234 @@
+/* Drone Synth */
+
+/* ===== Transport ===== */
+
+.drone__transport {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 14px;
+}
+
+.drone__transport .btn--play,
+.drone__transport .btn--outline {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 720px) {
+    .drone__transport {
+        grid-template-columns: auto 140px 220px auto;
+        justify-content: start;
+    }
+
+    .drone__transport .btn--play,
+    .drone__transport .btn--outline {
+        grid-column: auto;
+    }
+}
+
+/* ===== Effects ===== */
+
+.drone__fx {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 720px) {
+    .drone__fx {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+}
+
+.fx__params {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    transition: opacity .15s;
+}
+
+[data-off] > .fx__params {
+    opacity: .45;
+}
+
+/* ===== Oscillators ===== */
+
+.drone__oscs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 720px) {
+    .drone__oscs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (min-width: 1100px) {
+    .drone__oscs {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+.osc {
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.osc[data-off] {
+    box-shadow: none;
+}
+
+.osc__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+
+.osc[data-open] .osc__head {
+    border-bottom: var(--border) solid var(--card-border);
+}
+
+.osc__toggle {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+}
+
+.osc__id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.osc__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    color: var(--faint);
+}
+
+.osc__note {
+    font-family: var(--font-head);
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.03em;
+}
+
+.osc[data-off] .osc__note {
+    color: var(--faint);
+}
+
+.osc__summary {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+.osc__chev {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border: var(--border) solid var(--card-border);
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.osc__chev::before {
+    content: "+";
+}
+
+.osc[data-open] .osc__chev::before {
+    content: "−";
+}
+
+.osc__body {
+    display: none;
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+    transition: opacity .15s;
+}
+
+.osc[data-open] .osc__body {
+    display: flex;
+}
+
+.osc[data-off] .osc__body {
+    opacity: .55;
+}
+
+/* On larger screens every oscillator is always expanded */
+@media (min-width: 720px) {
+    .osc__body {
+        display: flex;
+    }
+
+    .osc .osc__head {
+        border-bottom: var(--border) solid var(--card-border);
+    }
+
+    .osc__chev {
+        display: none;
+    }
+}
+
+.osc .field--inline .select {
+    width: 110px;
+}
+
+.osc__voice {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Parameter groups (filter, LFOs) inside an oscillator */
+
+.param-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: var(--border) dashed var(--card-border);
+}
+
+.param-group__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.param-group__title {
+    font-size: 15px;
+    letter-spacing: -.01em;
+}
+
+.param-group__params {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: opacity .15s;
+}
+
+.param-group[data-off] .param-group__params {
+    opacity: .4;
+}

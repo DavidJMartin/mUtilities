@@ -48,6 +48,42 @@ docker-compose down -v
 
 http://localhost
 
+### Work on the UI on its own
+
+The UI is static HTML, CSS and ES modules with no build step. Modules don't load from `file://`, so serve the folder:
+
+```bash
+python3 -m http.server 8000 --directory mutilities-ui/src
+```
+
+Then open http://localhost:8000.
+
+## UI structure
+
+```
+mutilities-ui/src/
+├── index.html                 page markup; each tool is a <section data-page="...">
+└── assets/
+    ├── css/
+    │   ├── tokens.css         colours (light-dark()), type, spacing, breakpoints
+    │   ├── fonts.css          self-hosted Inter and DM Mono
+    │   ├── base.css           reset, element defaults, utilities
+    │   ├── layout.css         header, nav, page heading, footer
+    │   ├── components.css     panels, LCD readouts, buttons, sliders, switches...
+    │   ├── instruments.css    piano keyboard and guitar fretboard
+    │   └── pages/             one file per tool
+    ├── fonts/
+    └── js/
+        ├── main.js            entry point
+        ├── core/              DOM helpers, router, theme, breakpoints, audio
+        ├── layout/            site header and menu
+        ├── components/        keyboard, fretboard and form controls
+        ├── music/theory.js    notes, scales and pure helpers
+        └── tools/             one folder per tool (state, view, audio engine)
+```
+
+Light and dark themes follow the OS by default; the ◐ button pins one. Below 720px the layout switches to phones: one-octave piano, vertical guitar neck, single-column panels and collapsible oscillators.
+
 ## Technology Stack
 
 - **Backend**: Scala 3
@@ -79,3 +115,6 @@ Part of the reason for this project is to practice my own software engineering s
 The other half is creating tools that I'd like to use.
 
 I do not support the use of AI to generate art and the tools provided will not facilitate this. It may use rudimentary AI techniques to melodic or rhythmic ideas but the intention is for these to spark creativity.
+## Credits
+
+Fonts are self-hosted from [Fontsource](https://fontsource.org): [Inter](https://github.com/rsms/inter) and [DM Mono](https://github.com/googlefonts/dm-mono), both under the SIL Open Font License (licence files in `mutilities-ui/src/assets/fonts/`).

@@ -2,692 +2,290 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>mUtilities - Music Tools</title>
-    <link rel="stylesheet" href="./assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>mUtilities</title>
+    <meta name="description" content="Small music tools for composers and musicians: find the key you're in, play a drone, or noodle on a synth.">
+    <meta name="theme-color" content="#ece6da">
+
+    <!-- Apply a saved theme before first paint (see assets/js/core/theme.js) -->
+    <script>
+        try {
+            var savedTheme = localStorage.getItem('mutilities-theme');
+            if (savedTheme === 'light' || savedTheme === 'dark') document.documentElement.dataset.theme = savedTheme;
+        } catch (e) {}
+    </script>
+
+    <link rel="stylesheet" href="./assets/css/tokens.css">
+    <link rel="stylesheet" href="./assets/css/fonts.css">
+    <link rel="stylesheet" href="./assets/css/base.css">
+    <link rel="stylesheet" href="./assets/css/layout.css">
+    <link rel="stylesheet" href="./assets/css/components.css">
+    <link rel="stylesheet" href="./assets/css/instruments.css">
+    <link rel="stylesheet" href="./assets/css/pages/home.css">
+    <link rel="stylesheet" href="./assets/css/pages/in-key.css">
+    <link rel="stylesheet" href="./assets/css/pages/drone-synth.css">
+    <link rel="stylesheet" href="./assets/css/pages/key-synth.css">
+
+    <!-- Deferred scripts run in order once the page is parsed: Tone.js first, then the app -->
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js" defer></script>
+    <script type="module" src="./assets/js/main.js"></script>
 </head>
 <body>
-    <header>
-        <h1>mUtilities</h1>
-        <nav id="main-nav">
-            <ul>
-                <li><a href="#home" class="nav-link active">Home</a></li>
-                <li><a href="#in-key-assistance" class="nav-link">In Key Assistance</a></li>
-                <li><a href="#drone-synth" class="nav-link">Drone Synth</a></li>
-                <!-- Hidden until melody-generation-service is deployed -->
-                <!-- <li><a href="#random-melody" class="nav-link">Random Melody Generator</a></li> -->
-                <li><a href="#key-synth" class="nav-link">Key Synth</a></li>
-            </ul>
-        </nav>
+    <header class="site-header">
+        <div class="site-header__inner container">
+            <a class="brand" href="#home"><span class="brand__m">m</span>Utilities</a>
+
+            <nav class="site-nav" id="site-nav" aria-label="Tools">
+                <ul class="site-nav__list">
+                    <li><a class="site-nav__link" href="#home" data-nav="home"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Home</span><span class="site-nav__num" aria-hidden="true">01</span></a></li>
+                    <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">In Key Assistance</span><span class="site-nav__num" aria-hidden="true">02</span></a></li>
+                    <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Drone Synth</span><span class="site-nav__num" aria-hidden="true">03</span></a></li>
+                    <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Key Synth</span><span class="site-nav__num" aria-hidden="true">04</span></a></li>
+                </ul>
+            </nav>
+
+            <div class="site-header__actions">
+                <button type="button" class="theme-toggle" data-theme-toggle>
+                    <span class="theme-toggle__icon" aria-hidden="true">◐</span>
+                    <span class="theme-toggle__label" data-theme-label>Dark</span>
+                </button>
+                <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav">
+                    <span class="menu-toggle__label">Menu</span>
+                    <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
+                </button>
+            </div>
+        </div>
     </header>
-    
-    <main>
-        <!-- Home Page -->
-        <section id="home" class="page active">
-            <div class="container">
-                <h2>Welcome to mUtilities</h2>
-                <p>A collection of music tools and utilities for composers and musicians.</p>
-                
-                <div class="tools-grid">
-                    <div class="tool-card">
-                        <h3>In Key Assistance</h3>
-                        <p>Get help staying in key with intelligent suggestions and scale information.</p>
-                        <a href="#in-key-assistance" class="button">Launch Tool</a>
-                    </div>
-                    
-                    <div class="tool-card">
-                        <h3>Drone Synth</h3>
-                        <p>Create ambient drone sounds for meditation, practice, or composition.</p>
-                        <a href="#drone-synth" class="button">Launch Tool</a>
-                    </div>
-                    
-                    <!-- Hidden until melody-generation-service is deployed
-                    <div class="tool-card">
-                        <h3>Random Melody Generator</h3>
-                        <p>Generate random melodies to inspire your compositions.</p>
-                        <a href="#random-melody" class="button">Launch Tool</a>
-                    </div>
-                    -->
-                    
-                    <div class="tool-card">
-                        <h3>Key Synth</h3>
-                        <p>Interactive synthesizer with key detection and visualization.</p>
-                        <a href="#key-synth" class="button">Launch Tool</a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- In Key Assistance Page -->
-        <section id="in-key-assistance" class="page">
-            <div class="container">
-                <h2>In Key Assistance</h2>
-                <p class="page-description">Click on piano keys or guitar frets to select notes, or choose a key from the dropdowns below.</p>
-                
-                <!-- Key Selection Controls -->
-                <div class="key-controls">
-                    <div class="control-group">
-                        <label for="pitch-class-select">Root Note:</label>
-                        <select id="pitch-class-select">
-                            <option value="">-- Select Root --</option>
-                            <option value="C">C</option>
-                            <option value="C#">C# / Db</option>
-                            <option value="D">D</option>
-                            <option value="D#">D# / Eb</option>
-                            <option value="E">E</option>
-                            <option value="F">F</option>
-                            <option value="F#">F# / Gb</option>
-                            <option value="G">G</option>
-                            <option value="G#">G# / Ab</option>
-                            <option value="A">A</option>
-                            <option value="A#">A# / Bb</option>
-                            <option value="B">B</option>
-                        </select>
-                    </div>
-                    <div class="control-group">
-                        <label for="key-type-select">Scale Type:</label>
-                        <select id="key-type-select">
-                            <option value="">-- Select Scale --</option>
-                            <option value="major">Major</option>
-                            <option value="minor">Natural Minor</option>
-                            <option value="harmonicMinor">Harmonic Minor</option>
-                            <option value="melodicMinor">Melodic Minor</option>
-                            <option value="dorian">Dorian</option>
-                            <option value="phrygian">Phrygian</option>
-                            <option value="lydian">Lydian</option>
-                            <option value="mixolydian">Mixolydian</option>
-                            <option value="locrian">Locrian</option>
-                            <option value="pentatonicMajor">Pentatonic Major</option>
-                            <option value="pentatonicMinor">Pentatonic Minor</option>
-                            <option value="blues">Blues</option>
-                        </select>
-                    </div>
-                    <button id="clear-selection" class="button">Clear Selection</button>
-                </div>
-                
-                <!-- Piano Keyboard -->
-                <div class="instrument-section">
-                    <h3>Piano (2 Octaves)</h3>
-                    <div class="piano-container">
-                        <div id="piano" class="piano">
-                            <!-- Piano keys will be generated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Guitar Neck -->
-                <div class="instrument-section">
-                    <h3>Guitar (Frets 0-12)</h3>
-                    <div class="guitar-container">
-                        <div id="guitar-neck" class="guitar-neck">
-                            <!-- Guitar neck will be generated by JavaScript -->
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Information Display -->
-                <div class="info-section">
-                    <div class="info-box">
-                        <h4>Selected Notes</h4>
-                        <div id="selected-notes" class="info-content">
-                            <span class="placeholder">Click keys or frets to select notes</span>
-                        </div>
-                    </div>
-                    <div class="info-box">
-                        <h4>Possible Keys</h4>
-                        <p class="info-hint">Click a key to preview it</p>
-                        <div id="possible-keys" class="info-content">
-                            <span class="placeholder">Select notes to find matching keys</span>
-                        </div>
-                    </div>
-                    <div class="info-box full-width">
-                        <h4>Scale Information</h4>
-                        <div id="scale-info" class="info-content">
-                            <span class="placeholder">Select a key from the dropdowns or click a possible key to see scale information</span>
-                        </div>
-                    </div>
-                    <div class="info-box full-width">
-                        <h4>Semitone Transposition for Sample in Key
-                            <select id="sample-key-select" class="inline-select">
-                                <option value="C" selected>C</option>
-                                <option value="C#">C#</option>
-                                <option value="D">D</option>
-                                <option value="D#">D#</option>
-                                <option value="E">E</option>
-                                <option value="F">F</option>
-                                <option value="F#">F#</option>
-                                <option value="G">G</option>
-                                <option value="G#">G#</option>
-                                <option value="A">A</option>
-                                <option value="A#">A#</option>
-                                <option value="B">B</option>
-                            </select>
-                        </h4>
-                        <p class="info-hint">Transpose values when using a melodic one-shot sample</p>
-                        <div id="transposition-values" class="info-content">
-                            <span class="placeholder">Select notes to see transposition values</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <!-- Drone Synth Page -->
-        <section id="drone-synth" class="page">
-            <div class="container">
-                <h2>Drone Synth</h2>
-                <p class="page-description">Create continuous drone sounds with 4 oscillators, filters, and LFOs</p>
-                
-                <!-- Global Controls -->
-                <div class="drone-global-controls">
-                    <div class="control-row">
-                        <div class="control-group">
-                            <label for="drone-key-root">Key Root:</label>
-                            <select id="drone-key-root">
-                                <option value="C" selected>C</option>
-                                <option value="C#">C# / Db</option>
-                                <option value="D">D</option>
-                                <option value="D#">D# / Eb</option>
-                                <option value="E">E</option>
-                                <option value="F">F</option>
-                                <option value="F#">F# / Gb</option>
-                                <option value="G">G</option>
-                                <option value="G#">G# / Ab</option>
-                                <option value="A">A</option>
-                                <option value="A#">A# / Bb</option>
-                                <option value="B">B</option>
-                            </select>
-                        </div>
-                        <div class="control-group">
-                            <label for="drone-key-scale">Scale:</label>
-                            <select id="drone-key-scale">
-                                <option value="major" selected>Major</option>
-                                <option value="minor">Natural Minor</option>
-                                <option value="harmonicMinor">Harmonic Minor</option>
-                                <option value="melodicMinor">Melodic Minor</option>
-                                <option value="dorian">Dorian</option>
-                                <option value="phrygian">Phrygian</option>
-                                <option value="lydian">Lydian</option>
-                                <option value="mixolydian">Mixolydian</option>
-                                <option value="locrian">Locrian</option>
-                                <option value="pentatonicMajor">Pentatonic Major</option>
-                                <option value="pentatonicMinor">Pentatonic Minor</option>
-                                <option value="blues">Blues</option>
-                            </select>
-                        </div>
-                        <button id="drone-play-stop" class="button large">Play</button>
-                        <button id="drone-randomise" class="button">Randomise</button>
-                    </div>
-                </div>
-                
-                <!-- Effects Controls -->
-                <div class="effects-container">
-                    <!-- Reverb Controls -->
-                    <div class="reverb-controls">
-                        <h3>Reverb</h3>
-                        <div class="control-row">
-                            <div class="control-item">
-                                <label>
-                                    <input type="checkbox" id="reverb-enable" checked>
-                                    Enable Reverb
-                                </label>
-                            </div>
-                            <div class="control-item">
-                                <label for="reverb-decay">Decay: <span id="reverb-decay-value">10.0</span> s</label>
-                                <input type="range" id="reverb-decay" min="0.5" max="15" value="10" step="0.1">
-                            </div>
-                            <div class="control-item">
-                                <label for="reverb-mix">Mix: <span id="reverb-mix-value">100</span> %</label>
-                                <input type="range" id="reverb-mix" min="0" max="1" value="1.0" step="0.01">
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Distortion Controls -->
-                    <div class="distortion-controls">
-                        <h3>Distortion</h3>
-                        <div class="control-row">
-                            <div class="control-item">
-                                <label>
-                                    <input type="checkbox" id="distortion-enable" checked>
-                                    Enable Distortion
-                                </label>
-                            </div>
-                            <div class="control-item">
-                                <label for="distortion-amount">Amount: <span id="distortion-amount-value">0.80</span></label>
-                                <input type="range" id="distortion-amount" min="0" max="1" value="0.8" step="0.01">
-                            </div>
-                            <div class="control-item">
-                                <label for="distortion-mix">Mix: <span id="distortion-mix-value">50</span> %</label>
-                                <input type="range" id="distortion-mix" min="0" max="1" value="0.5" step="0.01">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Oscillators -->
-                <div class="oscillators-grid">
-<!-- Oscillator 1 -->
-<div class="oscillator-panel enabled" data-oscillator="0">
-    <div class="oscillator-header">
-        <h3>Oscillator 1</h3>
-        <label class="toggle-switch">
-            <input type="checkbox" id="drone-enable-0" checked>
-            <span class="toggle-slider"></span>
-        </label>
-    </div>
-    <div class="oscillator-controls">
-        <div class="control-item">
-            <label for="drone-note-0">Note:</label>
-            <select id="drone-note-0"></select>
-        </div>
-        <div class="control-item">
-            <label for="drone-shape-0">Shape:</label>
-            <select id="drone-shape-0">
-                <option value="sine" selected>Sine</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="square">Square</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-volume-0">Volume: <span id="drone-volume-value-0">-20.0</span> dB</label>
-            <input type="range" id="drone-volume-0" min="-40" max="0" value="-20" step="0.1">
-        </div>
-        <h4 class="section-title">Filter</h4>
-        <div class="control-item">
-            <label for="drone-filter-type-0">Type:</label>
-            <select id="drone-filter-type-0">
-                <option value="lowpass" selected>Lowpass</option>
-                <option value="highpass">Highpass</option>
-                <option value="bandpass">Bandpass</option>
-                <option value="notch">Notch</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-freq-0">Frequency: <span id="drone-filter-freq-value-0">2000</span> Hz</label>
-            <input type="range" id="drone-filter-freq-0" min="20" max="8000" value="2000" step="10">
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-res-0">Resonance: <span id="drone-filter-res-value-0">1.0</span></label>
-            <input type="range" id="drone-filter-res-0" min="0.1" max="20" value="1" step="0.1">
-        </div>
-        <h4 class="section-title">Filter LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="filter-lfo-enable-0" checked>
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-freq-0">Frequency: <span id="filter-lfo-freq-value-0">0.50</span> Hz</label>
-            <input type="range" id="filter-lfo-freq-0" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-depth-0">Depth: <span id="filter-lfo-depth-value-0">50.0</span> %</label>
-            <input type="range" id="filter-lfo-depth-0" min="0" max="100" value="50" step="1">
-        </div>
-        <h4 class="section-title">Volume LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="amp-lfo-enable-0">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-freq-0">Frequency: <span id="amp-lfo-freq-value-0">0.30</span> Hz</label>
-            <input type="range" id="amp-lfo-freq-0" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-depth-0">Depth: <span id="amp-lfo-depth-value-0">12.0</span> dB</label>
-            <input type="range" id="amp-lfo-depth-0" min="0" max="24" value="12" step="0.1">
-        </div>
-    </div>
-</div>
 
-<!-- Oscillator 2 -->
-<div class="oscillator-panel" data-oscillator="1">
-    <div class="oscillator-header">
-        <h3>Oscillator 2</h3>
-        <label class="toggle-switch">
-            <input type="checkbox" id="drone-enable-1">
-            <span class="toggle-slider"></span>
-        </label>
-    </div>
-    <div class="oscillator-controls">
-        <div class="control-item">
-            <label for="drone-note-1">Note:</label>
-            <select id="drone-note-1"></select>
-        </div>
-        <div class="control-item">
-            <label for="drone-shape-1">Shape:</label>
-            <select id="drone-shape-1">
-                <option value="sine" selected>Sine</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="square">Square</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-volume-1">Volume: <span id="drone-volume-value-1">-20.0</span> dB</label>
-            <input type="range" id="drone-volume-1" min="-40" max="0" value="-20" step="0.1">
-        </div>
-        <h4 class="section-title">Filter</h4>
-        <div class="control-item">
-            <label for="drone-filter-type-1">Type:</label>
-            <select id="drone-filter-type-1">
-                <option value="lowpass" selected>Lowpass</option>
-                <option value="highpass">Highpass</option>
-                <option value="bandpass">Bandpass</option>
-                <option value="notch">Notch</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-freq-1">Frequency: <span id="drone-filter-freq-value-1">2000</span> Hz</label>
-            <input type="range" id="drone-filter-freq-1" min="20" max="8000" value="2000" step="10">
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-res-1">Resonance: <span id="drone-filter-res-value-1">1.0</span></label>
-            <input type="range" id="drone-filter-res-1" min="0.1" max="20" value="1" step="0.1">
-        </div>
-        <h4 class="section-title">Filter LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="filter-lfo-enable-1">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-freq-1">Frequency: <span id="filter-lfo-freq-value-1">0.50</span> Hz</label>
-            <input type="range" id="filter-lfo-freq-1" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-depth-1">Depth: <span id="filter-lfo-depth-value-1">50.0</span> %</label>
-            <input type="range" id="filter-lfo-depth-1" min="0" max="100" value="50" step="1">
-        </div>
-        <h4 class="section-title">Volume LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="amp-lfo-enable-1">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-freq-1">Frequency: <span id="amp-lfo-freq-value-1">0.30</span> Hz</label>
-            <input type="range" id="amp-lfo-freq-1" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-depth-1">Depth: <span id="amp-lfo-depth-value-1">12.0</span> dB</label>
-            <input type="range" id="amp-lfo-depth-1" min="0" max="24" value="12" step="0.1">
-        </div>
-    </div>
-</div>
+    <main class="site-main">
 
-<!-- Oscillator 3 -->
-<div class="oscillator-panel" data-oscillator="2">
-    <div class="oscillator-header">
-        <h3>Oscillator 3</h3>
-        <label class="toggle-switch">
-            <input type="checkbox" id="drone-enable-2">
-            <span class="toggle-slider"></span>
-        </label>
-    </div>
-    <div class="oscillator-controls">
-        <div class="control-item">
-            <label for="drone-note-2">Note:</label>
-            <select id="drone-note-2"></select>
-        </div>
-        <div class="control-item">
-            <label for="drone-shape-2">Shape:</label>
-            <select id="drone-shape-2">
-                <option value="sine" selected>Sine</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="square">Square</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-volume-2">Volume: <span id="drone-volume-value-2">-20.0</span> dB</label>
-            <input type="range" id="drone-volume-2" min="-40" max="0" value="-20" step="0.1">
-        </div>
-        <h4 class="section-title">Filter</h4>
-        <div class="control-item">
-            <label for="drone-filter-type-2">Type:</label>
-            <select id="drone-filter-type-2">
-                <option value="lowpass" selected>Lowpass</option>
-                <option value="highpass">Highpass</option>
-                <option value="bandpass">Bandpass</option>
-                <option value="notch">Notch</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-freq-2">Frequency: <span id="drone-filter-freq-value-2">2000</span> Hz</label>
-            <input type="range" id="drone-filter-freq-2" min="20" max="8000" value="2000" step="10">
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-res-2">Resonance: <span id="drone-filter-res-value-2">1.0</span></label>
-            <input type="range" id="drone-filter-res-2" min="0.1" max="20" value="1" step="0.1">
-        </div>
-        <h4 class="section-title">Filter LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="filter-lfo-enable-2">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-freq-2">Frequency: <span id="filter-lfo-freq-value-2">0.50</span> Hz</label>
-            <input type="range" id="filter-lfo-freq-2" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-depth-2">Depth: <span id="filter-lfo-depth-value-2">50.0</span> %</label>
-            <input type="range" id="filter-lfo-depth-2" min="0" max="100" value="50" step="1">
-        </div>
-        <h4 class="section-title">Volume LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="amp-lfo-enable-2">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-freq-2">Frequency: <span id="amp-lfo-freq-value-2">0.30</span> Hz</label>
-            <input type="range" id="amp-lfo-freq-2" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-depth-2">Depth: <span id="amp-lfo-depth-value-2">12.0</span> dB</label>
-            <input type="range" id="amp-lfo-depth-2" min="0" max="24" value="12" step="0.1">
-        </div>
-    </div>
-</div>
-
-<!-- Oscillator 4 -->
-<div class="oscillator-panel" data-oscillator="3">
-    <div class="oscillator-header">
-        <h3>Oscillator 4</h3>
-        <label class="toggle-switch">
-            <input type="checkbox" id="drone-enable-3">
-            <span class="toggle-slider"></span>
-        </label>
-    </div>
-    <div class="oscillator-controls">
-        <div class="control-item">
-            <label for="drone-note-3">Note:</label>
-            <select id="drone-note-3"></select>
-        </div>
-        <div class="control-item">
-            <label for="drone-shape-3">Shape:</label>
-            <select id="drone-shape-3">
-                <option value="sine" selected>Sine</option>
-                <option value="triangle">Triangle</option>
-                <option value="sawtooth">Sawtooth</option>
-                <option value="square">Square</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-volume-3">Volume: <span id="drone-volume-value-3">-20.0</span> dB</label>
-            <input type="range" id="drone-volume-3" min="-40" max="0" value="-20" step="0.1">
-        </div>
-        <h4 class="section-title">Filter</h4>
-        <div class="control-item">
-            <label for="drone-filter-type-3">Type:</label>
-            <select id="drone-filter-type-3">
-                <option value="lowpass" selected>Lowpass</option>
-                <option value="highpass">Highpass</option>
-                <option value="bandpass">Bandpass</option>
-                <option value="notch">Notch</option>
-            </select>
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-freq-3">Frequency: <span id="drone-filter-freq-value-3">2000</span> Hz</label>
-            <input type="range" id="drone-filter-freq-3" min="20" max="8000" value="2000" step="10">
-        </div>
-        <div class="control-item">
-            <label for="drone-filter-res-3">Resonance: <span id="drone-filter-res-value-3">1.0</span></label>
-            <input type="range" id="drone-filter-res-3" min="0.1" max="20" value="1" step="0.1">
-        </div>
-        <h4 class="section-title">Filter LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="filter-lfo-enable-3">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-freq-3">Frequency: <span id="filter-lfo-freq-value-3">0.50</span> Hz</label>
-            <input type="range" id="filter-lfo-freq-3" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="filter-lfo-depth-3">Depth: <span id="filter-lfo-depth-value-3">50.0</span> %</label>
-            <input type="range" id="filter-lfo-depth-3" min="0" max="100" value="50" step="1">
-        </div>
-        <h4 class="section-title">Volume LFO</h4>
-        <div class="control-item">
-            <label>
-                <input type="checkbox" id="amp-lfo-enable-3">
-                Enable
-            </label>
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-freq-3">Frequency: <span id="amp-lfo-freq-value-3">0.30</span> Hz</label>
-            <input type="range" id="amp-lfo-freq-3" min="0.001" max="0.4" value="0.2" step="0.001">
-        </div>
-        <div class="control-item">
-            <label for="amp-lfo-depth-3">Depth: <span id="amp-lfo-depth-value-3">12.0</span> dB</label>
-            <input type="range" id="amp-lfo-depth-3" min="0" max="24" value="12" step="0.1">
-        </div>
-    </div>
-</div>
-
-                                </div>
-            </div>
-        </section>
-        
-        <!-- Random Melody Generator Page -->
-        <section id="random-melody" class="page">
-            <div class="container">
-                <h2>Random Melody Generator</h2>
-                <p>Generate random melodies based on musical patterns and scales.</p>
-                <button id="generate-melody" class="button">Generate Melody</button>
-                <div id="melody-result"></div>
-            </div>
-        </section>
-        
-        <!-- Key Synth Page -->
-        <section id="key-synth" class="page">
-            <div class="container">
-                <h2>Key Synth</h2>
-                <p class="page-description">Play the synthesizer using your QWERTY keyboard (A through L keys)</p>
-                
-                <div class="synth-controls">
-                    <div class="control-section">
-                        <h3>Oscillator</h3>
-                        <div class="control-item">
-                            <label for="waveform">Waveform:</label>
-                            <select id="waveform">
-                                <option value="sine">Sine</option>
-                                <option value="triangle">Triangle</option>
-                                <option value="sawtooth" selected>Sawtooth</option>
-                                <option value="square">Square</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div class="control-section">
-                        <h3>Filter</h3>
-                        <div class="control-item">
-                            <label for="cutoff">Cutoff: <span id="cutoff-value">2000</span> Hz</label>
-                            <input type="range" id="cutoff" min="20" max="8000" value="2000" step="10">
-                        </div>
-                        <div class="control-item">
-                            <label for="resonance">Resonance: <span id="resonance-value">1</span></label>
-                            <input type="range" id="resonance" min="0.1" max="20" value="1" step="0.1">
-                        </div>
-                    </div>
-                    
-                    <div class="control-section">
-                        <h3>Envelope (ADSR)</h3>
-                        <div class="control-item">
-                            <label for="attack">Attack: <span id="attack-value">0.01</span> s</label>
-                            <input type="range" id="attack" min="0.001" max="2" value="0.01" step="0.001">
-                        </div>
-                        <div class="control-item">
-                            <label for="decay">Decay: <span id="decay-value">0.2</span> s</label>
-                            <input type="range" id="decay" min="0.001" max="2" value="0.2" step="0.001">
-                        </div>
-                        <div class="control-item">
-                            <label for="sustain">Sustain: <span id="sustain-value">0.5</span></label>
-                            <input type="range" id="sustain" min="0" max="1" value="0.5" step="0.01">
-                        </div>
-                        <div class="control-item">
-                            <label for="release">Release: <span id="release-value">0.8</span> s</label>
-                            <input type="range" id="release" min="0.001" max="3" value="0.8" step="0.001">
-                        </div>
-                    </div>
+        <!-- ===== Home ===== -->
+        <section data-page="home" data-title="mUtilities">
+            <div class="page__inner home container">
+                <div class="home__intro">
+                    <h1 class="home__title">Welcome to mUtilities</h1>
+                    <p class="page-lead home__lead">A collection of music tools and utilities for composers and musicians.</p>
                 </div>
-                
-                <div class="keyboard-map">
-                    <h3>Keyboard Mapping</h3>
-                    <div class="key-info">
-                        <div class="key-row">
-                            <span class="key-label">A</span> → C4
-                            <span class="key-label">W</span> → C#4
-                            <span class="key-label">S</span> → D4
-                            <span class="key-label">E</span> → D#4
-                            <span class="key-label">D</span> → E4
-                            <span class="key-label">F</span> → F4
-                            <span class="key-label">T</span> → F#4
+
+                <div class="tool-grid">
+                    <a class="panel panel--raised tool-card" href="#in-key-assistance">
+                        <div class="tool-card__meta meta"><span>01</span><span>Theory</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <div class="mini-keys">
+                                <span data-state="selected"></span><span></span><span data-state="selected"></span><span></span>
+                                <span data-state="selected"></span><span data-state="preview"></span><span data-state="selected"></span>
+                            </div>
                         </div>
-                        <div class="key-row">
-                            <span class="key-label">G</span> → G4
-                            <span class="key-label">Y</span> → G#4
-                            <span class="key-label">H</span> → A4
-                            <span class="key-label">U</span> → A#4
-                            <span class="key-label">J</span> → B4
-                            <span class="key-label">K</span> → C5
-                            <span class="key-label">O</span> → C#5
-                            <span class="key-label">L</span> → D5
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">In Key Assistance</h2>
+                            <p class="tool-card__desc">Get help staying in key with intelligent suggestions and scale information.</p>
                         </div>
-                    </div>
+                    </a>
+
+                    <a class="panel panel--raised tool-card" href="#drone-synth">
+                        <div class="tool-card__meta meta"><span>02</span><span>Sound</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <div class="mini-drone">
+                                <span class="mini-drone__label">DRONING · C MAJOR</span>
+                                <span class="mini-drone__notes">C2 · G2 · E3</span>
+                            </div>
+                        </div>
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">Drone Synth</h2>
+                            <p class="tool-card__desc">Create ambient drone sounds for meditation, practice, or composition.</p>
+                        </div>
+                    </a>
+
+                    <a class="panel panel--raised tool-card" href="#key-synth">
+                        <div class="tool-card__meta meta"><span>03</span><span>Sound</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <div class="mini-caps">
+                                <span>A</span><span data-state="active">S</span><span>D</span><span>F</span>
+                            </div>
+                        </div>
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">Key Synth</h2>
+                            <p class="tool-card__desc">Interactive synthesizer with key detection and visualization.</p>
+                        </div>
+                    </a>
                 </div>
             </div>
         </section>
+
+        <!-- ===== In Key Assistance ===== -->
+        <section data-page="in-key-assistance" data-title="In Key Assistance · mUtilities" hidden>
+            <div class="page__inner in-key container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">In Key Assistance</h1>
+                        <p class="page-lead">Click on piano keys or guitar frets to select notes, or choose a key from the dropdowns below.</p>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label">Previewing</span>
+                        <span class="lcd__value" data-ref="lcd" aria-live="polite">— — —</span>
+                    </div>
+                </header>
+
+                <div class="in-key__controls">
+                    <label class="field in-key__root">
+                        <span class="field__label">Root note</span>
+                        <span class="select"><select data-ref="root"></select></span>
+                    </label>
+                    <label class="field in-key__scale">
+                        <span class="field__label">Scale type</span>
+                        <span class="select"><select data-ref="scale"></select></span>
+                    </label>
+                    <button type="button" class="btn btn--ink" data-ref="clear">Clear selection</button>
+                    <ul class="legend" aria-label="Colour key">
+                        <li class="legend__item"><span class="swatch swatch--accent" aria-hidden="true"></span>selected</li>
+                        <li class="legend__item"><span class="swatch swatch--cool" aria-hidden="true"></span>in previewed key</li>
+                    </ul>
+                </div>
+
+                <div class="in-key__instruments">
+                    <section class="panel panel--raised">
+                        <div class="panel__head">
+                            <h2 class="panel__title">Piano</h2>
+                            <span class="meta" data-ref="pianoRange"></span>
+                        </div>
+                        <div data-ref="piano"></div>
+                    </section>
+                    <section class="panel panel--raised in-key__guitar">
+                        <div class="panel__head">
+                            <h2 class="panel__title">Guitar</h2>
+                            <span class="meta">Standard · frets 0–12</span>
+                        </div>
+                        <div data-ref="guitar"></div>
+                    </section>
+                </div>
+
+                <div class="in-key__info">
+                    <section class="panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Possible keys</h2>
+                            <span class="meta" data-ref="keyCount"></span>
+                        </div>
+                        <div class="chip-list" data-ref="keys"></div>
+                    </section>
+                    <section class="panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title" data-ref="scaleTitle">No key previewed</h2>
+                        </div>
+                        <div class="degrees" data-ref="degrees"></div>
+                        <p class="note-line" data-ref="selectedLine"></p>
+                    </section>
+                    <section class="panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Transpose sample</h2>
+                            <span class="select select--pill"><select data-ref="sampleKey" aria-label="Key the sample was recorded in"></select></span>
+                        </div>
+                        <div class="transpose" data-ref="transpose"></div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== Drone Synth ===== -->
+        <section data-page="drone-synth" data-title="Drone Synth · mUtilities" hidden>
+            <div class="page__inner container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">Drone Synth</h1>
+                        <p class="page-lead">Create continuous drone sounds with 4 oscillators, filters, and LFOs.</p>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label"><span class="lcd__led" data-ref="lcdLed"></span><span data-ref="lcdLabel">Stopped</span></span>
+                        <span class="lcd__value" data-ref="lcdNotes">—</span>
+                    </div>
+                </header>
+
+                <p class="notice" data-ref="noAudio" hidden>The audio library didn't load, so the synth can't play. Check your connection and reload the page.</p>
+
+                <div class="panel panel--raised drone__transport">
+                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                    <label class="field">
+                        <span class="field__label">Key root</span>
+                        <span class="select"><select data-ref="root"></select></span>
+                    </label>
+                    <label class="field">
+                        <span class="field__label">Scale</span>
+                        <span class="select"><select data-ref="scale"></select></span>
+                    </label>
+                    <button type="button" class="btn btn--outline" data-ref="randomise">Randomise</button>
+                </div>
+
+                <div class="drone__fx" data-ref="fx"></div>
+                <div class="drone__oscs" data-ref="oscs"></div>
+            </div>
+        </section>
+
+        <!-- ===== Key Synth ===== -->
+        <section data-page="key-synth" data-title="Key Synth · mUtilities" hidden>
+            <div class="page__inner key-synth container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">Key Synth</h1>
+                        <p class="page-lead">
+                            <span class="only-wide">Play the synthesizer using your QWERTY keyboard (A through L keys), or click the keys.</span>
+                            <span class="only-compact">Tap the keys to play the synthesizer.</span>
+                        </p>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label" data-ref="lcdLabel">Last note</span>
+                        <span class="lcd__value" data-ref="lcdValue">— press a key —</span>
+                    </div>
+                </header>
+
+                <p class="notice" data-ref="noAudio" hidden>The audio library didn't load, so the synth can't play. Check your connection and reload the page.</p>
+
+                <section class="panel panel--raised">
+                    <div class="panel__head">
+                        <h2 class="panel__title">Keyboard</h2>
+                        <span class="meta">C4 – D5</span>
+                    </div>
+                    <div data-ref="keyboard"></div>
+                </section>
+
+                <div class="key-synth__controls">
+                    <div class="key-synth__col">
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title">Oscillator</h2>
+                            </div>
+                            <div data-ref="shape"></div>
+                        </section>
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title">Filter</h2>
+                            </div>
+                            <div class="stack" data-ref="filter"></div>
+                        </section>
+                    </div>
+                    <section class="panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Envelope</h2>
+                            <span class="meta">ADSR</span>
+                        </div>
+                        <div class="lcd-well envelope" aria-hidden="true">
+                            <svg class="envelope__graph" viewBox="0 0 400 100" preserveAspectRatio="none">
+                                <polygon class="envelope__fill" data-ref="envFill"></polygon>
+                                <polyline class="envelope__line" data-ref="envLine"></polyline>
+                            </svg>
+                            <div class="envelope__labels" data-ref="envLabels"><span>A</span><span>D</span><span>S</span><span>R</span></div>
+                        </div>
+                        <div class="envelope-controls" data-ref="envelope"></div>
+                    </section>
+                </div>
+            </div>
+        </section>
+
     </main>
-    
-    <footer>
-        <p>&copy; 2025 mUtilities</p>
+
+    <footer class="site-footer">
+        <div class="site-footer__inner container">
+            <span>mUtilities</span>
+            <a href="https://dajama.dev">dajama</a>
+        </div>
     </footer>
-    
-    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script>
-    <!-- Application JavaScript Modules (order matters - dependencies first) -->
-    <script src="./assets/js/music-theory.js"></script>
-    <script src="./assets/js/piano.js"></script>
-    <script src="./assets/js/guitar.js"></script>
-    <script src="./assets/js/in-key-assistance.js"></script>
-    <script src="./assets/js/navigation.js"></script>
-    <script src="./assets/js/melody-generator.js"></script>
-    <script src="./assets/js/drone-synth.js"></script>
-    <script src="./assets/js/key-synth.js"></script>
-    <script src="./assets/js/app.js"></script>
 </body>
 </html>

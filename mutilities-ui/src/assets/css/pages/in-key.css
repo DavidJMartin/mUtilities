@@ -1,0 +1,169 @@
+/* In Key Assistance */
+
+.in-key {
+    --panel-gap: 18px;
+}
+
+@media (min-width: 720px) {
+    .in-key {
+        --stack-gap: 28px;
+        --panel-gap: 24px;
+    }
+}
+
+/* ===== Key controls ===== */
+
+.in-key__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 12px;
+}
+
+.in-key__controls .btn,
+.in-key__controls .legend {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 720px) {
+    .in-key__controls {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .in-key__root { width: 150px; }
+    .in-key__scale { width: 220px; }
+
+    .in-key__controls .legend {
+        margin-left: auto;
+        padding-bottom: 12px;
+    }
+}
+
+/* ===== Instruments ===== */
+
+.in-key__instruments {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 1100px) {
+    .in-key__instruments {
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    }
+}
+
+.in-key__instruments .keyboard {
+    --keyboard-h: 170px;
+}
+
+@media (min-width: 720px) {
+    .in-key__instruments .keyboard {
+        --keyboard-h: 196px;
+    }
+}
+
+.in-key__guitar {
+    gap: 10px;
+}
+
+/* ===== Info panels ===== */
+
+.in-key__info {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 720px) {
+    .in-key__info {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+.in-key__info .panel {
+    padding: 18px 20px;
+}
+
+/* Scale degrees */
+
+.degrees {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.degree {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.degree__note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: var(--border) solid var(--card-border);
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.degree--root .degree__note {
+    background: var(--accent);
+    border-color: var(--key-border);
+    color: var(--on-accent);
+}
+
+.degree__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--faint);
+}
+
+/* Notes lists coloured by state (selected vs previewed) */
+
+.note-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+[data-state="selected"].tone-text { color: var(--accent-text); }
+[data-state="preview"].tone-text { color: var(--cool-text); }
+
+/* Transpose table */
+
+.transpose {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.transpose__row {
+    display: grid;
+    grid-template-columns: 1fr 56px 56px;
+    padding: 3px 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.transpose__down,
+.transpose__up {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.transpose__down {
+    color: var(--faint);
+}

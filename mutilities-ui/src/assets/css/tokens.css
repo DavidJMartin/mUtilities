@@ -1,0 +1,103 @@
+/*
+ * Design tokens
+ *
+ * Every colour is defined once with light-dark(). The page follows the OS
+ * theme by default; the theme toggle pins it by setting data-theme on <html>,
+ * which switches color-scheme and therefore every light-dark() value.
+ *
+ * Breakpoints (custom properties can't be used inside @media, so they're
+ * listed here and mirrored in assets/js/core/media.js):
+ *   compact   < 720px   phone layout: one-octave piano, vertical guitar neck,
+ *                       single-column panels, collapsible oscillators
+ *   nav       < 960px   header nav collapses into the Menu button
+ *   wide      >= 1100px side-by-side instruments, four oscillator columns
+ */
+
+:root {
+    color-scheme: light dark;
+
+    /* Surfaces and text */
+    --page: light-dark(#ece6da, #1b1916);
+    --card: light-dark(#f6f2ea, #262320);
+    --ink: light-dark(#2a2622, #ece4d6);
+    --muted: light-dark(#5e574e, #a89e90);
+    --faint: #8a8174;
+    --line: light-dark(#cfc6b6, #3d3832);
+    --card-border: light-dark(#2a2622, #6b6359);
+    --shadow: light-dark(#2a2622, #0b0a09);
+
+    /* Accent (selected) and cool (previewed / modulation) spot colours */
+    --accent: light-dark(#d9694a, #e8805f);
+    --on-accent: light-dark(#1f1b18, #1b1916);
+    --accent-text: light-dark(#b8502f, #ee8f6f);
+    --cool: light-dark(#4f6f8f, #86a3c2);
+    --on-cool: light-dark(#ffffff, #1b1916);
+    --cool-text: light-dark(#4f6f8f, #93b0cf);
+
+    /* Instruments */
+    --key-border: light-dark(#2a2622, #0f0e0c);
+    --white-key: light-dark(#f6f2ea, #e6ddcd);
+    --white-key-text: light-dark(#8a8174, #7a7166);
+    --black-key: light-dark(#2a2622, #0f0e0c);
+    --black-key-text: light-dark(#bdb4a6, #8a8174);
+    --string: light-dark(#8a8174, #6b6359);
+
+    /* LCD readouts */
+    --lcd: light-dark(#2a2622, #0f0e0c);
+    --lcd-border: light-dark(#2a2622, #3d3832);
+    --lcd-label: light-dark(#a39a8c, #7f776b);
+    --lcd-text: #ee8a68;
+
+    /* Type */
+    --font-body: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-head: var(--font-body);
+    --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+
+    /* Shape */
+    --border: 1.5px;
+    --radius-sm: 8px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+    --shadow-raised: 4px 4px 0 var(--shadow);
+    --shadow-control: 2px 2px 0 var(--shadow);
+
+    /* Layout (phone first; widened in layout.css) */
+    --content-max: 1360px;
+    --gutter: 20px;
+    --page-pad-top: 24px;
+    --page-pad-bottom: 40px;
+    --stack-gap: 20px;
+    --panel-gap: 16px;
+    --panel-pad: 16px;
+
+    /* Touch-friendly control sizes on phones; tightened for fine pointers */
+    --control-h: 46px;
+    --slider-h: 32px;
+    --segment-h: 40px;
+    --segment-sm-h: 32px;
+
+    --theme-transition: background-color .25s, color .25s, border-color .25s;
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+@media (min-width: 720px) {
+    :root {
+        --gutter: 40px;
+        --page-pad-top: 44px;
+        --page-pad-bottom: 52px;
+        --stack-gap: 24px;
+        --panel-gap: 20px;
+        --panel-pad: 18px 20px;
+    }
+}
+
+@media (min-width: 720px) and (pointer: fine) {
+    :root {
+        --slider-h: 22px;
+        --segment-h: 32px;
+        --segment-sm-h: 24px;
+    }
+}

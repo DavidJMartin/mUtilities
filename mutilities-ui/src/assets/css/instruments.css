@@ -1,0 +1,266 @@
+/*
+ * Piano keyboard and guitar fretboard.
+ *
+ * Both are rendered by components in assets/js/components/. Visual state is
+ * driven by a data-state attribute on each key or fret cell:
+ *   selected / active  -> accent colour
+ *   preview            -> cool colour
+ */
+
+/* ===== Piano keyboard ===== */
+
+.keyboard {
+    --keyboard-h: 196px;
+    position: relative;
+    display: flex;
+    height: var(--keyboard-h);
+    overflow: hidden;
+    border: var(--border) solid var(--key-border);
+    border-radius: var(--radius-md);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.keyboard--playable {
+    touch-action: none;
+}
+
+.keyboard__key {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    transition: background-color .06s, color .06s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.keyboard__key--white {
+    flex: 1;
+    gap: 8px;
+    padding-bottom: 10px;
+    background: var(--white-key);
+    color: var(--white-key-text);
+    border-right: var(--border) solid var(--key-border);
+    font-size: 11px;
+}
+
+.keyboard__key--white[data-last] {
+    border-right: none;
+}
+
+.keyboard__key--black {
+    position: absolute;
+    z-index: 2;
+    top: -2px;
+    left: calc(100% * var(--pos) / var(--whites));
+    width: calc(100% / var(--whites) * .62);
+    height: 60%;
+    gap: 6px;
+    padding-bottom: 6px;
+    transform: translateX(-50%);
+    background: var(--black-key);
+    color: var(--black-key-text);
+    border: var(--border) solid var(--key-border);
+    border-radius: 0 0 7px 7px;
+    font-size: 9px;
+}
+
+.keyboard__key[data-state="selected"],
+.keyboard__key[data-state="active"] {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.keyboard__key[data-state="preview"] {
+    background: var(--cool);
+    color: var(--on-cool);
+}
+
+/* QWERTY key caps (shown only where a physical keyboard is likely) */
+.keyboard__cap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: var(--border) solid currentColor;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.keyboard__key--black .keyboard__cap {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+@media (max-width: 719.98px) {
+    .keyboard__cap {
+        display: none;
+    }
+}
+
+/* ===== Guitar fretboard =====
+ * One set of cells, laid out by CSS grid. Each cell carries its grid position
+ * for both orientations (--h-row/--h-col, --v-row/--v-col), so switching to the
+ * vertical neck on phones needs no re-render.
+ */
+
+.fretboard {
+    display: grid;
+    grid-template-columns: 22px repeat(13, minmax(0, 1fr));
+    grid-template-rows: repeat(6, 31px) auto;
+}
+
+.fretboard__string-label {
+    grid-row: var(--h-row);
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.fretboard__fret-num {
+    grid-row: 7;
+    grid-column: var(--h-col);
+    margin-top: 6px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--faint);
+}
+
+.fretboard__fret-num[data-marker] {
+    color: var(--accent-text);
+}
+
+.fretboard__cell {
+    position: relative;
+    grid-row: var(--h-row);
+    grid-column: var(--h-col);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: var(--border) solid var(--line);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.fretboard__cell[data-fret="0"] {
+    border-left: none;
+}
+
+.fretboard__cell[data-fret="1"] {
+    border-left: 4px solid var(--ink);
+}
+
+/* The string itself, drawn through the cell */
+.fretboard__cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: var(--gauge);
+    transform: translateY(-50%);
+    background: var(--string);
+}
+
+.fretboard__dot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: var(--border) solid transparent;
+    border-radius: 50%;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    font-weight: 500;
+    color: transparent;
+    transition: background-color .1s, color .1s;
+}
+
+@media (hover: hover) {
+    .fretboard__cell:hover .fretboard__dot {
+        background: var(--card);
+        border-color: var(--line);
+        color: var(--muted);
+    }
+}
+
+.fretboard__cell[data-state] .fretboard__dot {
+    border-color: var(--key-border);
+}
+
+.fretboard__cell[data-state="selected"] .fretboard__dot {
+    background: var(--accent);
+    color: var(--on-accent);
+}
+
+.fretboard__cell[data-state="preview"] .fretboard__dot {
+    background: var(--cool);
+    color: var(--on-cool);
+}
+
+/* Vertical neck on phones: frets run down the screen, low E on the left */
+@media (max-width: 719.98px) {
+    .fretboard {
+        grid-template-columns: 30px repeat(6, minmax(0, 1fr));
+        grid-template-rows: auto repeat(13, 44px);
+    }
+
+    .fretboard__string-label {
+        grid-row: 1;
+        grid-column: var(--v-col);
+        justify-content: center;
+        padding-bottom: 6px;
+    }
+
+    .fretboard__fret-num {
+        grid-row: var(--v-row);
+        grid-column: 1;
+        display: flex;
+        align-items: center;
+        margin-top: 0;
+        border-bottom: var(--border) solid var(--line);
+    }
+
+    .fretboard__fret-num[data-fret="0"] {
+        border-bottom: 4px solid var(--ink);
+    }
+
+    .fretboard__cell,
+    .fretboard__cell[data-fret="1"] {
+        grid-row: var(--v-row);
+        grid-column: var(--v-col);
+        border-left: none;
+        border-bottom: var(--border) solid var(--line);
+    }
+
+    .fretboard__cell[data-fret="0"] {
+        border-bottom: 4px solid var(--ink);
+    }
+
+    .fretboard__cell::before {
+        left: 50%;
+        right: auto;
+        top: 0;
+        bottom: 0;
+        width: var(--gauge);
+        height: auto;
+        transform: translateX(-50%);
+    }
+
+    .fretboard__dot {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+    }
+}

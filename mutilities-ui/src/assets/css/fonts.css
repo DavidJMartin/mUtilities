@@ -1,0 +1,29 @@
+/*
+ * Self-hosted fonts (no requests to Google, so no visitor IPs leave the site).
+ * Licences for both families are in assets/fonts/. Until the files are present
+ * the stacks in tokens.css fall back to system fonts.
+ */
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url('../fonts/inter-latin-wght-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/dm-mono-latin-400-normal.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: 'DM Mono';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url('../fonts/dm-mono-latin-500-normal.woff2') format('woff2');
+}

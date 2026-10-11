@@ -1,0 +1,111 @@
+/* Key Synth */
+
+.key-synth .keyboard {
+    --keyboard-h: 200px;
+}
+
+@media (min-width: 720px) {
+    .key-synth .keyboard {
+        --keyboard-h: 230px;
+    }
+}
+
+.key-synth .keyboard__key--white {
+    padding-bottom: 12px;
+}
+
+.key-synth .keyboard__key--black {
+    height: 58%;
+    padding-bottom: 8px;
+}
+
+/* ===== Controls ===== */
+
+.key-synth__controls {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 960px) {
+    .key-synth__controls {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+    }
+}
+
+.key-synth__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--panel-gap);
+}
+
+.key-synth__col .panel:last-child {
+    flex: 1;
+}
+
+.key-synth .segmented__option {
+    height: 44px;
+}
+
+@media (min-width: 720px) and (pointer: fine) {
+    .key-synth .segmented__option {
+        height: 36px;
+    }
+}
+
+/* ===== Envelope ===== */
+
+.envelope {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    height: 130px;
+    padding: 14px 14px 10px;
+}
+
+@media (min-width: 720px) {
+    .envelope {
+        height: 150px;
+    }
+}
+
+.envelope__graph {
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    overflow: visible;
+}
+
+.envelope__fill {
+    fill: var(--lcd-text);
+    fill-opacity: .14;
+}
+
+.envelope__line {
+    fill: none;
+    stroke: var(--lcd-text);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+}
+
+.envelope__labels {
+    display: grid;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--lcd-label);
+}
+
+.envelope-controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 22px;
+}
+
+@media (min-width: 960px) {
+    .envelope-controls {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
