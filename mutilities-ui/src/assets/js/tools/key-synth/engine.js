@@ -1,3 +1,5 @@
+import * as Tone from 'tone';
+
 export const DEFAULT_PATCH = {
     shape: 'sawtooth',
     cutoff: 2000,
@@ -16,8 +18,6 @@ const LIMITER_THRESHOLD_DB = -1;
 
 export class KeySynthEngine {
     constructor(patch) {
-        const Tone = window.Tone;
-
         this.limiter = new Tone.Limiter(LIMITER_THRESHOLD_DB).toDestination();
         this.filter = new Tone.Filter({
             type: 'lowpass',

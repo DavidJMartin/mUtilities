@@ -45,7 +45,9 @@ build/
 node_modules/
 npm-debug.log
 yarn-error.log
-package-lock.json
+
+### Vite build output ###
+mutilities-ui/dist/
 
 ### OS Files ###
 .DS_Store
@@ -55,5 +57,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
-### Local planning notes ###
+### Local planning notes and Claude Code config ###
 .scratch/
+.claude/

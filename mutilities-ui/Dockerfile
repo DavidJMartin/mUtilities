@@ -1,12 +1,18 @@
+# Stage 1: build the site with Vite
+FROM node:22-alpine AS build
+
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --no-fund --no-audit
+COPY . .
+RUN npm run build
+
+# Stage 2: serve the built files with nginx
 FROM nginx:alpine
 
-# Copy nginx configuration
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=build /app/dist/ /usr/share/nginx/html/
 
-# Copy static files (assets are now inside src/)
-COPY src/ /usr/share/nginx/html/
-
-# Expose port 80
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

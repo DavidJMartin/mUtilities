@@ -6,6 +6,8 @@
 // the engine applies only what changed, since some Tone setters (e.g.
 // oscillator type) rebuild nodes.
 
+import * as Tone from 'tone';
+
 // Tone's distortion gets harsh fast, so the Amount slider's full range maps
 // onto the gentler bottom half of it.
 const DISTORTION_MAX = 0.5;
@@ -26,8 +28,6 @@ function distortionMakeupGain(amount) {
 
 export class DroneEngine {
     constructor(fx, voices) {
-        const Tone = window.Tone;
-
         this.playing = false;
 
         this.limiter = new Tone.Limiter(LIMITER_THRESHOLD_DB).toDestination();
@@ -45,8 +45,6 @@ export class DroneEngine {
     }
 
     #createVoice(state) {
-        const Tone = window.Tone;
-
         const volume = new Tone.Volume(state.volume).connect(this.reverb);
         const tremolo = new Tone.Gain(1).connect(volume);
         const filter = new Tone.Filter({ type: state.filterType, frequency: state.filterFreq, Q: state.filterRes }).connect(tremolo);
@@ -172,6 +170,6 @@ export class DroneEngine {
         const depth = filterLfoDepth / 100;
         voice.filterLfo.min = filterFreq * (1 - depth);
         voice.filterLfo.max = filterFreq * (1 + depth);
-        voice.ampLfo.min = window.Tone.dbToGain(-ampLfoDepth);
+        voice.ampLfo.min = Tone.dbToGain(-ampLfoDepth);
     }
 }

@@ -6,8 +6,11 @@
     <title>mUtilities</title>
     <meta name="description" content="Small music tools for composers and musicians: find the key you're in, play a drone, or noodle on a synth.">
     <meta name="theme-color" content="#ece6da">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-    <!-- Apply a saved theme before first paint (see assets/js/core/theme.js) -->
+    <!-- Apply a saved theme before first paint (see src/assets/js/core/theme.js) -->
     <script>
         try {
             var savedTheme = localStorage.getItem('mutilities-theme');
@@ -15,20 +18,9 @@
         } catch (e) {}
     </script>
 
-    <link rel="stylesheet" href="./assets/css/tokens.css">
-    <link rel="stylesheet" href="./assets/css/fonts.css">
-    <link rel="stylesheet" href="./assets/css/base.css">
-    <link rel="stylesheet" href="./assets/css/layout.css">
-    <link rel="stylesheet" href="./assets/css/components.css">
-    <link rel="stylesheet" href="./assets/css/instruments.css">
-    <link rel="stylesheet" href="./assets/css/pages/home.css">
-    <link rel="stylesheet" href="./assets/css/pages/in-key.css">
-    <link rel="stylesheet" href="./assets/css/pages/drone-synth.css">
-    <link rel="stylesheet" href="./assets/css/pages/key-synth.css">
+    <link rel="stylesheet" href="/src/assets/css/main.css">
 
-    <!-- Deferred scripts run in order once the page is parsed: Tone.js first, then the app -->
-    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js" defer></script>
-    <script type="module" src="./assets/js/main.js"></script>
+    <script type="module" src="/src/assets/js/main.js"></script>
 </head>
 <body>
     <header class="site-header">
@@ -199,8 +191,6 @@
                     </div>
                 </header>
 
-                <p class="notice" data-ref="noAudio" hidden>The audio library didn't load, so the synth can't play. Check your connection and reload the page.</p>
-
                 <div class="panel panel--raised drone__transport">
                     <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
                     <label class="field">
@@ -235,8 +225,6 @@
                         <span class="lcd__value" data-ref="lcdValue">— press a key —</span>
                     </div>
                 </header>
-
-                <p class="notice" data-ref="noAudio" hidden>The audio library didn't load, so the synth can't play. Check your connection and reload the page.</p>
 
                 <section class="panel panel--raised">
                     <div class="panel__head">

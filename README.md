@@ -50,21 +50,30 @@ http://localhost
 
 ### Work on the UI on its own
 
-The UI is static HTML, CSS and ES modules with no build step. Modules don't load from `file://`, so serve the folder:
+The UI is plain HTML, CSS and JavaScript modules, built with [Vite](https://vite.dev). From `mutilities-ui/`:
 
 ```bash
-python3 -m http.server 8000 --directory mutilities-ui/src
+npm install
 ```
 
-Then open http://localhost:8000.
+```bash
+npm run dev
+```
+
+That serves the site at http://localhost:5173 and reloads as you edit. `npm run build` writes the production site to `dist/` (bundled, minified, with fingerprinted filenames so browsers never keep stale files), and `npm run preview` serves that build locally.
+
+The Cloudflare Worker deploys `dist/`: its build command is `npm ci && npm run build`, and `wrangler.jsonc` points at the output.
 
 ## UI structure
 
 ```
-mutilities-ui/src/
+mutilities-ui/
 ├── index.html                 page markup; each tool is a <section data-page="...">
-└── assets/
+├── public/                    favicons, copied into the build as-is
+├── package.json               Tone.js, plus Vite for development and builds
+└── src/assets/
     ├── css/
+    │   ├── main.css           entry point that imports the files below
     │   ├── tokens.css         colours (light-dark()), type, spacing, breakpoints
     │   ├── fonts.css          self-hosted Inter and DM Mono
     │   ├── base.css           reset, element defaults, utilities
