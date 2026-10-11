@@ -58,12 +58,16 @@ main {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
     background: #1e1f22;
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+#drone-synth .container {
+    max-width: 100%;
 }
 
 .container h2 {
@@ -627,6 +631,7 @@ footer {
     .info-box.full-width {
         grid-column: 1;
     }
+}
 
 /* ===== Key Synth Page Styles ===== */
 
@@ -769,4 +774,266 @@ footer {
         gap: 0.5rem;
     }
 }
+
+/* ===== Drone Synth Page Styles ===== */
+
+.drone-global-controls {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+/* Effects Container */
+.effects-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Reverb Controls */
+.reverb-controls {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.reverb-controls h3 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4a4d52;
+    padding-bottom: 0.5rem;
+}
+
+.reverb-controls .control-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.reverb-controls .control-item {
+    min-width: 150px;
+}
+
+.reverb-controls .control-item:first-child {
+    min-width: auto;
+}
+
+/* Distortion Controls */
+.distortion-controls {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.distortion-controls h3 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4a4d52;
+    padding-bottom: 0.5rem;
+}
+
+.distortion-controls .control-row {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.distortion-controls .control-item {
+    min-width: 150px;
+}
+
+.distortion-controls .control-item:first-child {
+    min-width: auto;
+}
+
+.control-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.button.large {
+    padding: 0.75rem 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.button.playing {
+    background: #e74c3c;
+}
+
+.button.playing:hover {
+    background: #c0392b;
+}
+
+/* LFO Controls */
+.lfo-controls-section {
+    margin-bottom: 1.5rem;
+}
+
+.lfo-controls-section h3 {
+    color: #ffffff;
+    margin-bottom: 1rem;
+}
+
+.lfo-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.lfo-control-group {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.lfo-control-group h4 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #4a4d52;
+    padding-bottom: 0.5rem;
+}
+
+.control-item input[type="checkbox"] {
+    width: auto;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+.control-item label input[type="checkbox"] {
+    width: auto;
+}
+
+/* Oscillators Grid */
+.oscillators-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.oscillator-panel {
+    background: #2b2d30;
+    border-radius: 8px;
+    padding: 1rem;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.oscillator-panel.enabled {
+    opacity: 1;
+    border-color: #4CAF50;
+}
+
+.oscillator-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #4a4d52;
+}
+
+.oscillator-header h3 {
+    color: #ffffff;
+    font-size: 1rem;
+    margin: 0;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #4a4d52;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: #4CAF50;
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(26px);
+}
+
+.oscillator-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* Responsive Drone Synth */
+@media (max-width: 768px) {
+    .effects-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .oscillators-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .lfo-controls {
+        grid-template-columns: 1fr;
+    }
+    
+    .control-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .button.large {
+        width: 100%;
+    }
+}
+
+.section-title {
+    color: #ffffff;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: 1px solid #4a4d52;
+}
+
+.section-title:first-of-type {
+    margin-top: 0.5rem;
 }

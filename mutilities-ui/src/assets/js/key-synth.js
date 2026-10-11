@@ -41,7 +41,7 @@ function initKeySynth() {
     }).toDestination();
     
     // Create synth with ADSR envelope
-    synth = new Tone.AMSynth(Tone.Synth, {
+    synth = new Tone.PolySynth(Tone.Synth, {
         oscillator: {
             type: 'sawtooth'
         },

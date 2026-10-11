@@ -173,7 +173,410 @@
         <section id="drone-synth" class="page">
             <div class="container">
                 <h2>Drone Synth</h2>
-                <p>Coming soon...</p>
+                <p class="page-description">Create continuous drone sounds with 4 oscillators, filters, and LFOs</p>
+                
+                <!-- Global Controls -->
+                <div class="drone-global-controls">
+                    <div class="control-row">
+                        <div class="control-group">
+                            <label for="drone-key-root">Key Root:</label>
+                            <select id="drone-key-root">
+                                <option value="C" selected>C</option>
+                                <option value="C#">C# / Db</option>
+                                <option value="D">D</option>
+                                <option value="D#">D# / Eb</option>
+                                <option value="E">E</option>
+                                <option value="F">F</option>
+                                <option value="F#">F# / Gb</option>
+                                <option value="G">G</option>
+                                <option value="G#">G# / Ab</option>
+                                <option value="A">A</option>
+                                <option value="A#">A# / Bb</option>
+                                <option value="B">B</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label for="drone-key-scale">Scale:</label>
+                            <select id="drone-key-scale">
+                                <option value="major" selected>Major</option>
+                                <option value="minor">Natural Minor</option>
+                                <option value="harmonicMinor">Harmonic Minor</option>
+                                <option value="melodicMinor">Melodic Minor</option>
+                                <option value="dorian">Dorian</option>
+                                <option value="phrygian">Phrygian</option>
+                                <option value="lydian">Lydian</option>
+                                <option value="mixolydian">Mixolydian</option>
+                                <option value="locrian">Locrian</option>
+                                <option value="pentatonicMajor">Pentatonic Major</option>
+                                <option value="pentatonicMinor">Pentatonic Minor</option>
+                                <option value="blues">Blues</option>
+                            </select>
+                        </div>
+                        <button id="drone-play-stop" class="button large">Play</button>
+                        <button id="drone-randomise" class="button">Randomise</button>
+                    </div>
+                </div>
+                
+                <!-- Effects Controls -->
+                <div class="effects-container">
+                    <!-- Reverb Controls -->
+                    <div class="reverb-controls">
+                        <h3>Reverb</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="reverb-enable" checked>
+                                    Enable Reverb
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label for="reverb-decay">Decay: <span id="reverb-decay-value">10.0</span> s</label>
+                                <input type="range" id="reverb-decay" min="0.5" max="15" value="10" step="0.1">
+                            </div>
+                            <div class="control-item">
+                                <label for="reverb-mix">Mix: <span id="reverb-mix-value">100</span> %</label>
+                                <input type="range" id="reverb-mix" min="0" max="1" value="1.0" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Distortion Controls -->
+                    <div class="distortion-controls">
+                        <h3>Distortion</h3>
+                        <div class="control-row">
+                            <div class="control-item">
+                                <label>
+                                    <input type="checkbox" id="distortion-enable" checked>
+                                    Enable Distortion
+                                </label>
+                            </div>
+                            <div class="control-item">
+                                <label for="distortion-amount">Amount: <span id="distortion-amount-value">0.80</span></label>
+                                <input type="range" id="distortion-amount" min="0" max="1" value="0.8" step="0.01">
+                            </div>
+                            <div class="control-item">
+                                <label for="distortion-mix">Mix: <span id="distortion-mix-value">50</span> %</label>
+                                <input type="range" id="distortion-mix" min="0" max="1" value="0.5" step="0.01">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Oscillators -->
+                <div class="oscillators-grid">
+<!-- Oscillator 1 -->
+<div class="oscillator-panel enabled" data-oscillator="0">
+    <div class="oscillator-header">
+        <h3>Oscillator 1</h3>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drone-enable-0" checked>
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+    <div class="oscillator-controls">
+        <div class="control-item">
+            <label for="drone-note-0">Note:</label>
+            <select id="drone-note-0"></select>
+        </div>
+        <div class="control-item">
+            <label for="drone-shape-0">Shape:</label>
+            <select id="drone-shape-0">
+                <option value="sine" selected>Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-volume-0">Volume: <span id="drone-volume-value-0">-20.0</span> dB</label>
+            <input type="range" id="drone-volume-0" min="-40" max="0" value="-20" step="0.1">
+        </div>
+        <h4 class="section-title">Filter</h4>
+        <div class="control-item">
+            <label for="drone-filter-type-0">Type:</label>
+            <select id="drone-filter-type-0">
+                <option value="lowpass" selected>Lowpass</option>
+                <option value="highpass">Highpass</option>
+                <option value="bandpass">Bandpass</option>
+                <option value="notch">Notch</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-freq-0">Frequency: <span id="drone-filter-freq-value-0">2000</span> Hz</label>
+            <input type="range" id="drone-filter-freq-0" min="20" max="8000" value="2000" step="10">
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-res-0">Resonance: <span id="drone-filter-res-value-0">1.0</span></label>
+            <input type="range" id="drone-filter-res-0" min="0.1" max="20" value="1" step="0.1">
+        </div>
+        <h4 class="section-title">Filter LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="filter-lfo-enable-0" checked>
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-freq-0">Frequency: <span id="filter-lfo-freq-value-0">0.50</span> Hz</label>
+            <input type="range" id="filter-lfo-freq-0" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-depth-0">Depth: <span id="filter-lfo-depth-value-0">50.0</span> %</label>
+            <input type="range" id="filter-lfo-depth-0" min="0" max="100" value="50" step="1">
+        </div>
+        <h4 class="section-title">Volume LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="amp-lfo-enable-0">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-freq-0">Frequency: <span id="amp-lfo-freq-value-0">0.30</span> Hz</label>
+            <input type="range" id="amp-lfo-freq-0" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-depth-0">Depth: <span id="amp-lfo-depth-value-0">12.0</span> dB</label>
+            <input type="range" id="amp-lfo-depth-0" min="0" max="24" value="12" step="0.1">
+        </div>
+    </div>
+</div>
+
+<!-- Oscillator 2 -->
+<div class="oscillator-panel" data-oscillator="1">
+    <div class="oscillator-header">
+        <h3>Oscillator 2</h3>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drone-enable-1">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+    <div class="oscillator-controls">
+        <div class="control-item">
+            <label for="drone-note-1">Note:</label>
+            <select id="drone-note-1"></select>
+        </div>
+        <div class="control-item">
+            <label for="drone-shape-1">Shape:</label>
+            <select id="drone-shape-1">
+                <option value="sine" selected>Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-volume-1">Volume: <span id="drone-volume-value-1">-20.0</span> dB</label>
+            <input type="range" id="drone-volume-1" min="-40" max="0" value="-20" step="0.1">
+        </div>
+        <h4 class="section-title">Filter</h4>
+        <div class="control-item">
+            <label for="drone-filter-type-1">Type:</label>
+            <select id="drone-filter-type-1">
+                <option value="lowpass" selected>Lowpass</option>
+                <option value="highpass">Highpass</option>
+                <option value="bandpass">Bandpass</option>
+                <option value="notch">Notch</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-freq-1">Frequency: <span id="drone-filter-freq-value-1">2000</span> Hz</label>
+            <input type="range" id="drone-filter-freq-1" min="20" max="8000" value="2000" step="10">
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-res-1">Resonance: <span id="drone-filter-res-value-1">1.0</span></label>
+            <input type="range" id="drone-filter-res-1" min="0.1" max="20" value="1" step="0.1">
+        </div>
+        <h4 class="section-title">Filter LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="filter-lfo-enable-1">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-freq-1">Frequency: <span id="filter-lfo-freq-value-1">0.50</span> Hz</label>
+            <input type="range" id="filter-lfo-freq-1" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-depth-1">Depth: <span id="filter-lfo-depth-value-1">50.0</span> %</label>
+            <input type="range" id="filter-lfo-depth-1" min="0" max="100" value="50" step="1">
+        </div>
+        <h4 class="section-title">Volume LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="amp-lfo-enable-1">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-freq-1">Frequency: <span id="amp-lfo-freq-value-1">0.30</span> Hz</label>
+            <input type="range" id="amp-lfo-freq-1" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-depth-1">Depth: <span id="amp-lfo-depth-value-1">12.0</span> dB</label>
+            <input type="range" id="amp-lfo-depth-1" min="0" max="24" value="12" step="0.1">
+        </div>
+    </div>
+</div>
+
+<!-- Oscillator 3 -->
+<div class="oscillator-panel" data-oscillator="2">
+    <div class="oscillator-header">
+        <h3>Oscillator 3</h3>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drone-enable-2">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+    <div class="oscillator-controls">
+        <div class="control-item">
+            <label for="drone-note-2">Note:</label>
+            <select id="drone-note-2"></select>
+        </div>
+        <div class="control-item">
+            <label for="drone-shape-2">Shape:</label>
+            <select id="drone-shape-2">
+                <option value="sine" selected>Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-volume-2">Volume: <span id="drone-volume-value-2">-20.0</span> dB</label>
+            <input type="range" id="drone-volume-2" min="-40" max="0" value="-20" step="0.1">
+        </div>
+        <h4 class="section-title">Filter</h4>
+        <div class="control-item">
+            <label for="drone-filter-type-2">Type:</label>
+            <select id="drone-filter-type-2">
+                <option value="lowpass" selected>Lowpass</option>
+                <option value="highpass">Highpass</option>
+                <option value="bandpass">Bandpass</option>
+                <option value="notch">Notch</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-freq-2">Frequency: <span id="drone-filter-freq-value-2">2000</span> Hz</label>
+            <input type="range" id="drone-filter-freq-2" min="20" max="8000" value="2000" step="10">
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-res-2">Resonance: <span id="drone-filter-res-value-2">1.0</span></label>
+            <input type="range" id="drone-filter-res-2" min="0.1" max="20" value="1" step="0.1">
+        </div>
+        <h4 class="section-title">Filter LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="filter-lfo-enable-2">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-freq-2">Frequency: <span id="filter-lfo-freq-value-2">0.50</span> Hz</label>
+            <input type="range" id="filter-lfo-freq-2" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-depth-2">Depth: <span id="filter-lfo-depth-value-2">50.0</span> %</label>
+            <input type="range" id="filter-lfo-depth-2" min="0" max="100" value="50" step="1">
+        </div>
+        <h4 class="section-title">Volume LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="amp-lfo-enable-2">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-freq-2">Frequency: <span id="amp-lfo-freq-value-2">0.30</span> Hz</label>
+            <input type="range" id="amp-lfo-freq-2" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-depth-2">Depth: <span id="amp-lfo-depth-value-2">12.0</span> dB</label>
+            <input type="range" id="amp-lfo-depth-2" min="0" max="24" value="12" step="0.1">
+        </div>
+    </div>
+</div>
+
+<!-- Oscillator 4 -->
+<div class="oscillator-panel" data-oscillator="3">
+    <div class="oscillator-header">
+        <h3>Oscillator 4</h3>
+        <label class="toggle-switch">
+            <input type="checkbox" id="drone-enable-3">
+            <span class="toggle-slider"></span>
+        </label>
+    </div>
+    <div class="oscillator-controls">
+        <div class="control-item">
+            <label for="drone-note-3">Note:</label>
+            <select id="drone-note-3"></select>
+        </div>
+        <div class="control-item">
+            <label for="drone-shape-3">Shape:</label>
+            <select id="drone-shape-3">
+                <option value="sine" selected>Sine</option>
+                <option value="triangle">Triangle</option>
+                <option value="sawtooth">Sawtooth</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-volume-3">Volume: <span id="drone-volume-value-3">-20.0</span> dB</label>
+            <input type="range" id="drone-volume-3" min="-40" max="0" value="-20" step="0.1">
+        </div>
+        <h4 class="section-title">Filter</h4>
+        <div class="control-item">
+            <label for="drone-filter-type-3">Type:</label>
+            <select id="drone-filter-type-3">
+                <option value="lowpass" selected>Lowpass</option>
+                <option value="highpass">Highpass</option>
+                <option value="bandpass">Bandpass</option>
+                <option value="notch">Notch</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-freq-3">Frequency: <span id="drone-filter-freq-value-3">2000</span> Hz</label>
+            <input type="range" id="drone-filter-freq-3" min="20" max="8000" value="2000" step="10">
+        </div>
+        <div class="control-item">
+            <label for="drone-filter-res-3">Resonance: <span id="drone-filter-res-value-3">1.0</span></label>
+            <input type="range" id="drone-filter-res-3" min="0.1" max="20" value="1" step="0.1">
+        </div>
+        <h4 class="section-title">Filter LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="filter-lfo-enable-3">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-freq-3">Frequency: <span id="filter-lfo-freq-value-3">0.50</span> Hz</label>
+            <input type="range" id="filter-lfo-freq-3" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="filter-lfo-depth-3">Depth: <span id="filter-lfo-depth-value-3">50.0</span> %</label>
+            <input type="range" id="filter-lfo-depth-3" min="0" max="100" value="50" step="1">
+        </div>
+        <h4 class="section-title">Volume LFO</h4>
+        <div class="control-item">
+            <label>
+                <input type="checkbox" id="amp-lfo-enable-3">
+                Enable
+            </label>
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-freq-3">Frequency: <span id="amp-lfo-freq-value-3">0.30</span> Hz</label>
+            <input type="range" id="amp-lfo-freq-3" min="0.001" max="0.4" value="0.2" step="0.001">
+        </div>
+        <div class="control-item">
+            <label for="amp-lfo-depth-3">Depth: <span id="amp-lfo-depth-value-3">12.0</span> dB</label>
+            <input type="range" id="amp-lfo-depth-3" min="0" max="24" value="12" step="0.1">
+        </div>
+    </div>
+</div>
+
+                                </div>
             </div>
         </section>
         
@@ -280,6 +683,7 @@
     <script src="./assets/js/in-key-assistance.js"></script>
     <script src="./assets/js/navigation.js"></script>
     <script src="./assets/js/melody-generator.js"></script>
+    <script src="./assets/js/drone-synth.js"></script>
     <script src="./assets/js/key-synth.js"></script>
     <script src="./assets/js/app.js"></script>
 </body>
