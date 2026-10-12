@@ -33,6 +33,7 @@
                     <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">In Key Assistance</span><span class="site-nav__num" aria-hidden="true">02</span></a></li>
                     <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Drone Synth</span><span class="site-nav__num" aria-hidden="true">03</span></a></li>
                     <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Key Synth</span><span class="site-nav__num" aria-hidden="true">04</span></a></li>
+                    <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Logical Drums</span><span class="site-nav__num" aria-hidden="true">05</span></a></li>
                 </ul>
             </nav>
 
@@ -98,6 +99,22 @@
                         <div class="tool-card__text">
                             <h2 class="tool-card__title">Key Synth</h2>
                             <p class="tool-card__desc">Interactive synthesizer with key detection and visualization.</p>
+                        </div>
+                    </a>
+
+                    <a class="panel panel--raised tool-card" href="#logical-drums">
+                        <div class="tool-card__meta meta"><span>04</span><span>Rhythm</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <div class="mini-logic">
+                                <span class="mini-logic__sig" data-state="on">A</span>
+                                <span class="mini-logic__op">XOR</span>
+                                <span class="mini-logic__sig">B</span>
+                                <span class="mini-logic__out" data-state="on"></span>
+                            </div>
+                        </div>
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">Logical Drums</h2>
+                            <p class="tool-card__desc">An algorithmic drum machine built from clock dividers, Euclidean rhythms and logic gates.</p>
                         </div>
                     </a>
                 </div>
@@ -283,6 +300,49 @@
                         <div class="envelope-controls" data-ref="envelope"></div>
                     </section>
                 </div>
+            </div>
+        </section>
+
+        <!-- ===== Logical Drums ===== -->
+        <section data-page="logical-drums" data-title="Logical Drums · mUtilities" hidden>
+            <div class="page__inner logical-drums container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">Logical Drums</h1>
+                        <p class="page-lead">Rhythms from a clock, six signals and logic gates. There are no steps to program.</p>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label"><span class="lcd__led" data-ref="lcdLed"></span><span data-ref="lcdLabel">Stopped</span></span>
+                        <span class="lcd__value" data-ref="lcdValue">—.—.—</span>
+                    </div>
+                </header>
+
+                <div class="panel panel--raised logical__transport">
+                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                    <div class="logical__tempo" data-ref="tempo">
+                        <button type="button" class="logical__tap" data-ref="tap" aria-label="Tap tempo">Tap</button>
+                    </div>
+                    <div class="logical__bars" data-ref="bars"></div>
+                    <button type="button" class="btn btn--outline" data-ref="export">Export MIDI</button>
+                </div>
+
+                <section class="logical__signals">
+                    <div class="panel__head">
+                        <h2 class="panel__title">Signals</h2>
+                        <span class="meta" data-ref="loop"></span>
+                    </div>
+                    <div class="signal-tiles" data-ref="tiles"></div>
+                    <div class="signal-grid" data-ref="signals"></div>
+                    <p class="logical__tip"><span data-ref="gateIcon"></span><span>Gates stay open for the first half of each cycle.</span></p>
+                </section>
+
+                <section class="panel logical__drums">
+                    <div class="panel__head panel__head--ruled">
+                        <h2 class="panel__title">Drums</h2>
+                        <button type="button" class="logical__clear" data-ref="clear">Clear</button>
+                    </div>
+                    <div class="drum-rows" data-ref="rows"></div>
+                </section>
             </div>
         </section>
 

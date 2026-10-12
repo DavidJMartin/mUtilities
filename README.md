@@ -17,10 +17,10 @@ Playing a drone or soundscape within a key can often assist with writing melodie
 ### Key Synth
 A simple playable synth, using your computer keyboard or the on-screen keys.
 
-## Planned
+### Logical Drums
+An algorithmic drum machine in the spirit of modular sequencers. Six signal generators (clock multipliers, dividers and Euclidean rhythms, as triggers or gates) feed drum voices through chains of logic gates. Patterns can be exported as MIDI.
 
-### Algorithmic rhythm generator
-Experience with modular synths and sequencers has made me appreciate algorithmic methods of building rhythms, this will include euclidean and polyrhythmic generators.
+## Planned
 
 ### Melody generation
 Backend services to generate melodies using different techniques. Web interface should allow parameters to influence this generation.

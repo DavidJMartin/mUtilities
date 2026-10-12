@@ -160,3 +160,48 @@
     background: var(--accent);
     color: var(--on-accent);
 }
+
+.mini-logic {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+.mini-logic__sig {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: var(--border) solid var(--lcd-label);
+    border-radius: 7px;
+    font-size: 15px;
+    color: var(--lcd-text);
+}
+
+.mini-logic__sig[data-state="on"] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+}
+
+.mini-logic__op {
+    font-size: 11px;
+    letter-spacing: .1em;
+    color: var(--lcd-label);
+}
+
+.mini-logic__out {
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+    border-radius: 50%;
+    border: var(--border) solid var(--lcd-label);
+}
+
+.mini-logic__out[data-state="on"] {
+    background: var(--lcd-text);
+    border-color: var(--lcd-text);
+}
