@@ -4,6 +4,7 @@ import { ensureAudioRunning } from '../../core/audio.js';
 import { createSegmented, createSelect, createSlider, createSwitch } from '../../components/controls.js';
 import { SCALES, rootOptions, scaleOptions } from '../../music/theory.js';
 import { DroneEngine } from './engine.js';
+import { SATURATION_MODES } from './saturation.js';
 import {
     FILTER_TYPES,
     RANGES,
@@ -66,9 +67,16 @@ export function initDroneSynth(root) {
             slider(RANGES.reverbDecay, fx.reverb.decay, decay => setFx('reverb', { decay })),
             slider(RANGES.reverbMix, fx.reverb.mix, mix => setFx('reverb', { mix })),
         ]),
-        createFxPanel('Distortion', fx.distortion.on, on => setFx('distortion', { on }), [
-            slider(RANGES.distortionAmount, fx.distortion.amount, amount => setFx('distortion', { amount })),
-            slider(RANGES.distortionMix, fx.distortion.mix, mix => setFx('distortion', { mix })),
+        createFxPanel('Saturation', fx.saturation.on, on => setFx('saturation', { on }), [
+            createSegmented({
+                label: 'Saturation mode',
+                options: SATURATION_MODES,
+                value: fx.saturation.mode,
+                onChange: mode => setFx('saturation', { mode }),
+            }),
+            slider(RANGES.saturationDrive, fx.saturation.drive, drive => setFx('saturation', { drive })),
+            slider(RANGES.saturationTone, fx.saturation.tone, tone => setFx('saturation', { tone })),
+            slider(RANGES.saturationMix, fx.saturation.mix, mix => setFx('saturation', { mix })),
         ])
     );
 
@@ -114,7 +122,7 @@ function slider(range, value, onInput, tone) {
     return createSlider({ ...range, value, onInput, tone });
 }
 
-function createFxPanel(name, on, onToggle, sliders) {
+function createFxPanel(name, on, onToggle, controls) {
     const panel = el('section', { class: 'panel' });
     const setOff = (isOn) => toggleData(panel, 'off', !isOn);
 
@@ -132,7 +140,7 @@ function createFxPanel(name, on, onToggle, sliders) {
             el('h2', { class: 'panel__title', text: name }),
             toggle.el
         ),
-        el('div', { class: 'fx__params' }, sliders.map(s => s.el))
+        el('div', { class: 'fx__params' }, controls.map(c => c.el))
     );
     setOff(on);
     return panel;

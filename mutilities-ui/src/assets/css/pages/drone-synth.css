@@ -47,6 +47,17 @@
     transition: opacity .15s;
 }
 
+/* Mode buttons span the row; sliders then flow into the columns */
+.fx__params > .segmented {
+    grid-column: 1 / -1;
+}
+
+@media (min-width: 720px) {
+    .fx__params:has(> .segmented) {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
 [data-off] > .fx__params {
     opacity: .45;
 }

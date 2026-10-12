@@ -9,12 +9,10 @@ import sttp.tapir.server.http4s.Http4sServerInterpreter
 
 object Routes:
   
-  // Define case classes for responses
   case class HealthResponse(status: String)
   case class GenerateResponse(message: String)
   case class ServiceInfoResponse(service: String, version: String, status: String)
   
-  // Define Tapir endpoints
   val healthEndpoint: PublicEndpoint[Unit, Unit, HealthResponse, Any] = 
     endpoint.get
       .in("health")

@@ -1,5 +1,9 @@
-// Per voice: Synth -> Filter -> Tremolo gain -> Volume -> shared Reverb
-// Shared:    Reverb -> dry / (Distortion -> makeup gain) crossfade -> Limiter -> out
+// Per voice: Synth -> Filter -> Tremolo gain -> Volume -> shared bus
+// Shared:    bus -> dry / (Saturation -> DC block -> Tone) switch
+//            -> Reverb -> Limiter -> out
+//
+// Saturation sits before the reverb so the reverb smooths the grit rather
+// than the tail itself being distorted.
 //
 // The volume LFO drives its own tremolo gain stage so the Volume slider keeps
 // working while it's on. Callers pass whole state objects (see params.js) and
@@ -7,37 +11,30 @@
 // oscillator type) rebuild nodes.
 
 import * as Tone from 'tone';
+import { saturationCurve, toneFrequency } from './saturation.js';
 
-// Tone's distortion gets harsh fast, so the Amount slider's full range maps
-// onto the gentler bottom half of it.
-const DISTORTION_MAX = 0.5;
 const LIMITER_THRESHOLD_DB = -1;
-
-// Tames the jump in level when distortion is switched on. Tone's curve
-// boosts quiet signals by (3 + k) / 9 (k = amount * 100), but it also
-// squashes peaks, so fully dividing that out overcorrects. An exponent of
-// 0.75 measured as level-matched at the default drone levels; 0.6 leaves a
-// deliberate lift of roughly 3 dB at higher amounts so distortion still has
-// some impact.
-const MAKEUP_EXPONENT = 0.6;
-
-function distortionMakeupGain(amount) {
-    const k = amount * DISTORTION_MAX * 100;
-    return 3 * Math.pow(3 / (3 + k), MAKEUP_EXPONENT);
-}
 
 export class DroneEngine {
     constructor(fx, voices) {
         this.playing = false;
 
         this.limiter = new Tone.Limiter(LIMITER_THRESHOLD_DB).toDestination();
-        this.distortionMix = new Tone.CrossFade(0).connect(this.limiter);
-        this.distortionMakeup = new Tone.Gain(1).connect(this.distortionMix.b);
-        this.distortion = new Tone.Distortion({ wet: 1, oversample: '2x' }).connect(this.distortionMakeup);
+        this.reverb = new Tone.Reverb({ decay: fx.reverb.decay, preDelay: 0.01, wet: 0 }).connect(this.limiter);
 
-        this.reverb = new Tone.Reverb({ decay: fx.reverb.decay, preDelay: 0.01, wet: 0 });
-        this.reverb.connect(this.distortionMix.a);
-        this.reverb.connect(this.distortion);
+        // Switches between the dry bus and the saturated path; the dry/wet
+        // Mix itself happens inside the saturation curve
+        this.saturationSwitch = new Tone.CrossFade(0).connect(this.reverb);
+        this.saturationTone = new Tone.Filter({ type: 'lowpass', rolloff: -12 }).connect(this.saturationSwitch.b);
+        // The tube curve is asymmetric, which leaves a DC offset to filter out
+        this.dcBlock = new Tone.Filter({ type: 'highpass', frequency: 10 }).connect(this.saturationTone);
+        this.saturator = new Tone.WaveShaper();
+        this.saturator.oversample = '4x';
+        this.saturator.connect(this.dcBlock);
+
+        this.bus = new Tone.Gain(1);
+        this.bus.connect(this.saturationSwitch.a);
+        this.bus.connect(this.saturator);
         this.fx = null;
         this.setFx(fx);
 
@@ -45,7 +42,7 @@ export class DroneEngine {
     }
 
     #createVoice(state) {
-        const volume = new Tone.Volume(state.volume).connect(this.reverb);
+        const volume = new Tone.Volume(state.volume).connect(this.bus);
         const tremolo = new Tone.Gain(1).connect(volume);
         const filter = new Tone.Filter({ type: state.filterType, frequency: state.filterFreq, Q: state.filterRes }).connect(tremolo);
         const synth = new Tone.Synth({
@@ -107,12 +104,14 @@ export class DroneEngine {
         this.fx = fx;
 
         if (!prev || fx.reverb.decay !== prev.reverb.decay) this.reverb.decay = fx.reverb.decay;
-        if (!prev || fx.distortion.amount !== prev.distortion.amount) {
-            this.distortion.distortion = fx.distortion.amount * DISTORTION_MAX;
-            this.distortionMakeup.gain.value = distortionMakeupGain(fx.distortion.amount);
+        const sat = fx.saturation;
+        const prevSat = prev?.saturation;
+        if (!prevSat || sat.mode !== prevSat.mode || sat.drive !== prevSat.drive || sat.mix !== prevSat.mix) {
+            this.saturator.curve = saturationCurve(sat.mode, sat.drive, sat.mix);
         }
+        this.saturationTone.frequency.value = toneFrequency(sat.tone);
         this.reverb.wet.value = fx.reverb.on ? fx.reverb.mix : 0;
-        this.distortionMix.fade.value = fx.distortion.on ? fx.distortion.mix : 0;
+        this.saturationSwitch.fade.value = sat.on ? 1 : 0;
     }
 
     #syncVoice(voice) {

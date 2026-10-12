@@ -1,5 +1,6 @@
 import { WAVEFORMS as SHAPES } from '../../core/audio.js';
 import { scaleNotesInOctaves } from '../../music/theory.js';
+import { toneFrequency } from './saturation.js';
 
 export { SHAPES };
 
@@ -16,6 +17,7 @@ export const FILTER_TYPES = [
 
 const hz = (decimals) => (v) => `${v.toFixed(decimals)} Hz`;
 const percent = (v) => `${Math.round(v * 100)} %`;
+const formatHz = (hz) => (hz < 1000 ? `${Math.round(hz)} Hz` : `${(hz / 1000).toFixed(1)} kHz`);
 
 export const RANGES = {
     volume: { label: 'Volume', min: -40, max: 0, step: 0.1, format: v => `${v.toFixed(1)} dB` },
@@ -27,14 +29,15 @@ export const RANGES = {
     ampLfoDepth: { label: 'Depth', min: 0, max: 24, step: 0.1, format: v => `${v.toFixed(1)} dB` },
     reverbDecay: { label: 'Decay', min: 0.5, max: 15, step: 0.1, format: v => `${v.toFixed(1)} s` },
     reverbMix: { label: 'Mix', min: 0, max: 1, step: 0.01, format: percent },
-    distortionAmount: { label: 'Amount', min: 0, max: 1, step: 0.01, format: percent },
-    distortionMix: { label: 'Mix', min: 0, max: 1, step: 0.01, format: percent },
+    saturationDrive: { label: 'Drive', min: 0, max: 1, step: 0.01, format: percent },
+    saturationTone: { label: 'Tone', min: 0, max: 1, step: 0.01, format: v => formatHz(toneFrequency(v)) },
+    saturationMix: { label: 'Mix', min: 0, max: 1, step: 0.01, format: percent },
 };
 
 export function defaultFx() {
     return {
         reverb: { on: true, decay: 10, mix: 1 },
-        distortion: { on: false, amount: 0.5, mix: 0.5 },
+        saturation: { on: false, mode: 'tube', drive: 0.5, tone: 0.6, mix: 0.5 },
     };
 }
 
