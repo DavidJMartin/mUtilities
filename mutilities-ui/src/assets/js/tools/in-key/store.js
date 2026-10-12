@@ -10,6 +10,7 @@ import {
     scalePitchClasses,
     sortPitchClasses,
 } from '../../music/theory.js';
+import { chordId } from '../../music/chords.js';
 
 // Above this many matches the list isn't useful, so ask for more notes
 const MAX_LISTED_KEYS = 26;
@@ -19,6 +20,8 @@ export function createInKeyStore() {
         selected: new Set(),
         preview: null, // { root, type } | null
         sampleKey: 'C',
+        chordGroup: 'all',
+        chords: [], // [{ id, root, type, voicing }] in the order picked; voicing indexes the fingerings
     };
     const listeners = new Set();
 
@@ -61,6 +64,33 @@ export function createInKeyStore() {
         clear() {
             update({ selected: new Set(), preview: null });
         },
+
+        setChordGroup(group) {
+            update({ chordGroup: group });
+        },
+
+        toggleChord(root, type) {
+            const id = chordId(root, type);
+            const chords = state.chords.some(c => c.id === id)
+                ? state.chords.filter(c => c.id !== id)
+                : [...state.chords, { id, root, type, voicing: 0 }];
+            update({ chords });
+        },
+
+        removeChord(id) {
+            update({ chords: state.chords.filter(c => c.id !== id) });
+        },
+
+        /** Step through a chord's fingerings, wrapping at either end */
+        stepVoicing(id, delta, count) {
+            update({
+                chords: state.chords.map(c => (c.id === id ? { ...c, voicing: (c.voicing + delta + count) % count } : c)),
+            });
+        },
+
+        clearChords() {
+            update({ chords: [] });
+        },
     };
 }
 
@@ -83,6 +113,7 @@ export function deriveView(state) {
         preview: preview && {
             id: keyId(preview.root, preview.type),
             name: keyName(preview.root, preview.type),
+            type: preview.type,
             pitchClasses: previewPcs,
         },
     };

@@ -167,3 +167,211 @@
 .transpose__down {
     color: var(--faint);
 }
+
+/* ===== Chords ===== */
+
+.in-key__chords .panel__head--ruled {
+    flex-wrap: wrap;
+}
+
+.chord-palette {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chord-row {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+}
+
+.chord-row__degree {
+    padding-top: 7px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--faint);
+}
+
+.in-key__progression {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.in-key__progression-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.in-key__progression-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.in-key__progression-actions .btn {
+    height: 40px;
+}
+
+.chord-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 720px) {
+    .chord-cards {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+}
+
+.chord-cards > .placeholder {
+    grid-column: 1 / -1;
+}
+
+/* ===== Chord card ===== */
+
+.chord-card {
+    gap: 10px;
+    padding: 14px;
+    transition: var(--theme-transition), box-shadow .15s;
+}
+
+.chord-card[data-playing] {
+    box-shadow: var(--shadow-raised);
+    border-color: var(--accent);
+}
+
+.chord-card__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chord-card__name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-right: auto;
+    font-family: var(--font-head);
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+.chord-card__play {
+    font-size: 11px;
+    color: var(--accent-text);
+}
+
+.chord-card__remove {
+    width: 28px;
+    height: 28px;
+    border: var(--border) solid var(--card-border);
+    border-radius: 50%;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.chord-card__tones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.chord-card__tones b {
+    color: var(--ink);
+    font-weight: 500;
+}
+
+.chord-card__voicing {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.chord-card__tab {
+    text-align: center;
+}
+
+.chord-card__count {
+    flex: 1;
+    text-align: center;
+}
+
+.chord-card__step {
+    width: 32px;
+    height: 32px;
+    flex: none;
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-sm);
+    font-size: 20px;
+    line-height: 1;
+}
+
+/* ===== Chord diagram ===== */
+
+.chord-diagram {
+    width: 100%;
+    max-width: 180px;
+    margin-inline: auto;
+}
+
+.chord-diagram__string,
+.chord-diagram__fret {
+    stroke: var(--string);
+    stroke-width: 1;
+}
+
+.chord-diagram__nut {
+    stroke: var(--ink);
+    stroke-width: 4;
+}
+
+.chord-diagram__barre {
+    fill: var(--faint);
+    opacity: .45;
+}
+
+.chord-diagram__dot {
+    fill: var(--ink);
+}
+
+.chord-diagram__dot--root {
+    fill: var(--accent);
+}
+
+.chord-diagram__tone {
+    fill: var(--card);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    font-weight: 500;
+}
+
+.chord-diagram__dot--root + .chord-diagram__tone {
+    fill: var(--on-accent);
+}
+
+.chord-diagram__open,
+.chord-diagram__position {
+    fill: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 9px;
+}
+
+.chip--outside {
+    border-style: dashed;
+}
+
+.chord-card__outside {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--cool-text);
+}

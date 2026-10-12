@@ -174,6 +174,25 @@
                         <div class="transpose" data-ref="transpose"></div>
                     </section>
                 </div>
+
+                <section class="panel in-key__chords">
+                    <div class="panel__head panel__head--ruled">
+                        <h2 class="panel__title" data-ref="chordsTitle">Chords in key</h2>
+                        <div class="segmented segmented--sm" role="group" aria-label="Chord types" data-ref="chordGroup"></div>
+                    </div>
+                    <div class="chord-palette" data-ref="chordPalette"></div>
+                </section>
+
+                <section class="in-key__progression">
+                    <div class="in-key__progression-head">
+                        <h2 class="panel__title">Your chords</h2>
+                        <div class="in-key__progression-actions">
+                            <button type="button" class="btn btn--outline" data-ref="clearChords" hidden>Clear</button>
+                            <button type="button" class="btn btn--ink" data-ref="playChords" hidden>▶ Play all</button>
+                        </div>
+                    </div>
+                    <div class="chord-cards" data-ref="chordCards"></div>
+                </section>
             </div>
         </section>
 

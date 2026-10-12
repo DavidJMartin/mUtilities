@@ -5,12 +5,13 @@ import { createFretboard } from '../../components/fretboard.js';
 import {
     ENHARMONIC_NAMES,
     PITCH_CLASSES,
-    degreeLabel,
+    scaleDegreeLabels,
     rootOptions,
     scaleOptions,
     semitoneShifts,
 } from '../../music/theory.js';
 import { createInKeyStore, deriveView } from './store.js';
+import { initChordsView } from './chords-view.js';
 
 const PIANO_RANGES = {
     wide: { from: 'C3', to: 'B4', showOctave: true, meta: 'C3 – B4' },
@@ -22,6 +23,7 @@ const EMPTY_OPTION = { value: '', label: '—' };
 export function initInKey(root) {
     const r = refs(root);
     const store = createInKeyStore();
+    const chordsView = initChordsView(r, store);
 
     setOptions(r.root, [EMPTY_OPTION, ...rootOptions()], '');
     setOptions(r.scale, [EMPTY_OPTION, ...scaleOptions()], '');
@@ -61,6 +63,7 @@ export function initInKey(root) {
 
     function render(state) {
         const view = deriveView(state);
+        chordsView.render(state);
         renderInstruments(view);
         renderKeyControls(state, view);
         renderPossibleKeys(state, view);
@@ -126,10 +129,11 @@ export function initInKey(root) {
     function renderScale(view) {
         r.scaleTitle.textContent = view.preview ? view.preview.name : 'No key previewed';
 
+        const labels = view.preview ? scaleDegreeLabels(view.preview.type) : [];
         r.degrees.replaceChildren(...(view.preview
             ? view.preview.pitchClasses.map((pc, i) => el('div', { class: ['degree', i === 0 && 'degree--root'] },
                 el('span', { class: 'degree__note', text: pc }),
-                el('span', { class: 'degree__label', text: degreeLabel(i) })
+                el('span', { class: 'degree__label', text: labels[i] })
             ))
             : [el('p', { class: 'placeholder', text: 'Pick a possible key or choose one above to see its scale.' })]
         ));

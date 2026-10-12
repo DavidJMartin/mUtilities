@@ -34,7 +34,7 @@ export const GUITAR_STRINGS = [
     { name: 'E', pc: 'E', octave: 2 },
 ];
 
-function pitchClassIndex(pc) {
+export function pitchClassIndex(pc) {
     return PITCH_CLASSES.indexOf(pc);
 }
 
@@ -59,12 +59,16 @@ export function sortPitchClasses(pcs) {
     return [...pcs].sort((a, b) => pitchClassIndex(a) - pitchClassIndex(b));
 }
 
-/** 0 -> 'Root', 1 -> '2nd', 2 -> '3rd' ... */
-export function degreeLabel(index) {
-    if (index === 0) return 'Root';
-    const n = index + 1;
-    const suffix = n === 2 ? 'nd' : n === 3 ? 'rd' : 'th';
-    return `${n}${suffix}`;
+const INTERVAL_LABELS = ['Root', '♭2', '2', '♭3', '3', '4', '♭5', '5', '♭6', '6', '♭7', '7'];
+
+/** Interval of each scale note from the root, e.g. blues: Root ♭3 4 ♭5 5 ♭7 */
+export function scaleDegreeLabels(scaleType) {
+    const { intervals } = SCALES[scaleType];
+    return intervals.map(semitones => {
+        // Six semitones is a ♯4 in scales without a natural 4th (Lydian)
+        if (semitones === 6 && !intervals.includes(5)) return '♯4';
+        return INTERVAL_LABELS[semitones];
+    });
 }
 
 /** Every key (root + scale type) that contains all the given pitch classes */

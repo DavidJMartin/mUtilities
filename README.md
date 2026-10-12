@@ -2,15 +2,22 @@
 
 A collection of inspiring music tools built as a web interface with Scala backend microservices.
 
+Try it at **[mutilities.dajama.dev](https://mutilities.dajama.dev)**.
+
 The name might change.
 
-## Planned tools
+## Tools
 
-### Musical Key Reference
+### In Key Assistance
 Interface showing keyboard, guitar and midi note display to help with improvising in key.
 
-### Drone synth
-Playing a drone or soundscape within a key can often assist with writing melodies. This tool should allow you to generate and modify the soundscape while it plays.
+### Drone Synth
+Playing a drone or soundscape within a key can often assist with writing melodies. This tool lets you generate and modify the soundscape while it plays.
+
+### Key Synth
+A simple playable synth, using your computer keyboard or the on-screen keys.
+
+## Planned
 
 ### Algorithmic rhythm generator
 Experience with modular synths and sequencers has made me appreciate algorithmic methods of building rhythms, this will include euclidean and polyrhythmic generators.
@@ -18,104 +25,11 @@ Experience with modular synths and sequencers has made me appreciate algorithmic
 ### Melody generation
 Backend services to generate melodies using different techniques. Web interface should allow parameters to influence this generation.
 
-## Getting Started
+## Technology
 
-### Prerequisites
-- Java 21+
-- SBT 1.10+
-- Docker & Docker Compose
-
-### Run with Docker Compose
-
-```bash
-# Build and start all services
-docker-compose up --build
-
-# Run in detached mode
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-
-# Stop and remove volumes
-docker-compose down -v
-```
-
-### Access Service locally
-
-http://localhost
-
-### Work on the UI on its own
-
-The UI is plain HTML, CSS and JavaScript modules, built with [Vite](https://vite.dev). From `mutilities-ui/`:
-
-```bash
-npm install
-```
-
-```bash
-npm run dev
-```
-
-That serves the site at http://localhost:5173 and reloads as you edit. `npm run build` writes the production site to `dist/` (bundled, minified, with fingerprinted filenames so browsers never keep stale files), and `npm run preview` serves that build locally.
-
-The Cloudflare Worker deploys `dist/`: its build command is `npm ci && npm run build`, and `wrangler.jsonc` points at the output.
-
-## UI structure
-
-```
-mutilities-ui/
-├── index.html                 page markup; each tool is a <section data-page="...">
-├── public/                    favicons, copied into the build as-is
-├── package.json               Tone.js, plus Vite for development and builds
-└── src/assets/
-    ├── css/
-    │   ├── main.css           entry point that imports the files below
-    │   ├── tokens.css         colours (light-dark()), type, spacing, breakpoints
-    │   ├── fonts.css          self-hosted Inter and DM Mono
-    │   ├── base.css           reset, element defaults, utilities
-    │   ├── layout.css         header, nav, page heading, footer
-    │   ├── components.css     panels, LCD readouts, buttons, sliders, switches...
-    │   ├── instruments.css    piano keyboard and guitar fretboard
-    │   └── pages/             one file per tool
-    ├── fonts/
-    └── js/
-        ├── main.js            entry point
-        ├── core/              DOM helpers, router, theme, breakpoints, audio
-        ├── layout/            site header and menu
-        ├── components/        keyboard, fretboard and form controls
-        ├── music/theory.js    notes, scales and pure helpers
-        └── tools/             one folder per tool (state, view, audio engine)
-```
-
-Light and dark themes follow the OS by default; the ◐ button pins one. Below 720px the layout switches to phones: one-octave piano, vertical guitar neck, single-column panels and collapsible oscillators.
-
-## Technology Stack
-
-- **Backend**: Scala 3
-- **HTTP**: http4s 
-- **JSON**: Circe
-- **Messaging**: Kafka [Not yet used]
-- **Database**: PostgreSQL [Not yet used]
-- **Frontend**: HTML/CSS/JavaScript
-- **Web Server**: Nginx
-- **Build**: SBT with Assembly & Docker plugins
-
-## Architecture
-
-### Microservices Pattern
-- **Independent modules**: Each service has its own `build.sbt` for maximum independence
-- **Shared common library**: Common code, models, and utilities in `mutilities-common`
-- **Communication**: Services communicate via HTTP/gRPC or Kafka
-- **Frontend**: Static files served by nginx, proxies API calls to microservices
-
-### Infrastructure Components
-- **Nginx**: Serves UI and reverse proxies API requests
-- **PostgreSQL**: Shared database for persistent storage [Not yet used]
-- **Kafka + Zookeeper**: Message broker for async communication between services [Not yet used]
+- **Frontend**: HTML, CSS and JavaScript modules built with Vite, audio with Tone.js, hosted on Cloudflare
+- **Backend**: Scala 3, http4s, Tapir and Circe, as independent services sharing a common library (`mutilities-common`)
+- **Planned**: PostgreSQL, deployed services on a VPS
 
 ## A Note on Generative AI
 My plan is for these tools to inspire creativity, provide theoretical assistance and to be fun!
@@ -124,6 +38,7 @@ Part of the reason for this project is to practice my own software engineering s
 The other half is creating tools that I'd like to use.
 
 I do not support the use of AI to generate art and the tools provided will not facilitate this. It may use rudimentary AI techniques to melodic or rhythmic ideas but the intention is for these to spark creativity.
+
 ## Credits
 
 Fonts are self-hosted from [Fontsource](https://fontsource.org): [Inter](https://github.com/rsms/inter) and [DM Mono](https://github.com/googlefonts/dm-mono), both under the SIL Open Font License (licence files in `mutilities-ui/src/assets/fonts/`).
