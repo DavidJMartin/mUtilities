@@ -1,30 +1,36 @@
 // Per voice: Synth -> Filter -> Tremolo gain -> Volume -> shared bus
 // Shared:    bus -> dry / (Saturation -> DC block -> Tone) switch
-//            -> Reverb -> Limiter -> out
+//            -> Space (reverb + tail modulation, see space.js) -> Limiter -> out
 //
 // Saturation sits before the reverb so the reverb smooths the grit rather
 // than the tail itself being distorted.
 //
-// The volume LFO drives its own tremolo gain stage so the Volume slider keeps
+// The volume LFO sweeps in decibels, not linear gain: a linear sweep sounds
+// near full volume for most of its cycle with a quick dip, while a dB sweep
+// spends real time faded. The LFO runs -1..1 through a curve that maps it to
+// 0 dB … −depth. It drives its own tremolo gain stage so the Volume slider keeps
 // working while it's on. Callers pass whole state objects (see params.js) and
 // the engine applies only what changed, since some Tone setters (e.g.
 // oscillator type) rebuild nodes.
 
 import * as Tone from 'tone';
 import { saturationCurve, toneFrequency } from './saturation.js';
+import { Space } from './space.js';
+import { TextureEngine } from './texture.js';
 
 const LIMITER_THRESHOLD_DB = -1;
 
 export class DroneEngine {
-    constructor(fx, voices) {
+    constructor(fx, voices, texture) {
         this.playing = false;
 
         this.limiter = new Tone.Limiter(LIMITER_THRESHOLD_DB).toDestination();
-        this.reverb = new Tone.Reverb({ decay: fx.reverb.decay, preDelay: 0.01, wet: 0 }).connect(this.limiter);
+        this.space = new Space(fx.reverb);
+        this.space.output.connect(this.limiter);
 
         // Switches between the dry bus and the saturated path; the dry/wet
         // Mix itself happens inside the saturation curve
-        this.saturationSwitch = new Tone.CrossFade(0).connect(this.reverb);
+        this.saturationSwitch = new Tone.CrossFade(0).connect(this.space.input);
         this.saturationTone = new Tone.Filter({ type: 'lowpass', rolloff: -12 }).connect(this.saturationSwitch.b);
         // The tube curve is asymmetric, which leaves a DC offset to filter out
         this.dcBlock = new Tone.Filter({ type: 'highpass', frequency: 10 }).connect(this.saturationTone);
@@ -39,6 +45,21 @@ export class DroneEngine {
         this.setFx(fx);
 
         this.voices = voices.map(state => this.#createVoice(state));
+
+        // The bed goes through the reverb; crackle joins after it, dry
+        this.texture = new TextureEngine(texture, { wet: this.space.input, dry: this.limiter });
+        this.textureOn = texture.on;
+    }
+
+    setTexture(params) {
+        this.textureOn = params.on;
+        this.texture.set(params);
+        this.texture.setActive(this.playing && this.textureOn);
+    }
+
+    /** Pitch drift: move a voice's detune (cents) over the given time */
+    setDetune(index, cents, seconds) {
+        this.voices[index].synth.detune.rampTo(cents, seconds);
     }
 
     #createVoice(state) {
@@ -51,10 +72,12 @@ export class DroneEngine {
         }).connect(filter);
 
         const filterLfo = new Tone.LFO({ frequency: state.filterLfoRate });
-        const ampLfo = new Tone.LFO({ frequency: state.ampLfoRate, max: 1 });
+        const ampLfo = new Tone.LFO({ frequency: state.ampLfoRate, min: -1, max: 1 });
+        const ampCurve = new Tone.WaveShaper(() => 1, 1024);
+        ampLfo.connect(ampCurve);
 
         const voice = {
-            synth, filter, tremolo, volume, filterLfo, ampLfo,
+            synth, filter, tremolo, volume, filterLfo, ampLfo, ampCurve,
             state,
             sounding: false,
             filterLfoConnected: false,
@@ -67,14 +90,17 @@ export class DroneEngine {
     start() {
         this.playing = true;
         this.voices.forEach(voice => this.#syncVoice(voice));
+        this.texture.setActive(this.textureOn);
     }
 
     stop() {
         this.playing = false;
         this.voices.forEach(voice => this.#syncVoice(voice));
+        this.texture.setActive(false);
     }
 
-    setVoice(index, next) {
+    /** glide: seconds to slide to a new note instead of jumping (used by drift) */
+    setVoice(index, next, { glide = 0 } = {}) {
         const voice = this.voices[index];
         const prev = voice.state;
         voice.state = next;
@@ -93,8 +119,14 @@ export class DroneEngine {
             this.#updateLfoRanges(voice);
         }
 
-        // Glide straight to a new note rather than retriggering the slow attack
-        if (next.note !== prev.note && voice.sounding) voice.synth.setNote(next.note);
+        // Change pitch rather than retriggering the slow attack
+        if (next.note !== prev.note && voice.sounding) {
+            if (glide > 0) {
+                voice.synth.frequency.exponentialRampTo(Tone.Frequency(next.note).toFrequency(), glide);
+            } else {
+                voice.synth.setNote(next.note);
+            }
+        }
 
         this.#syncVoice(voice);
     }
@@ -103,14 +135,13 @@ export class DroneEngine {
         const prev = this.fx;
         this.fx = fx;
 
-        if (!prev || fx.reverb.decay !== prev.reverb.decay) this.reverb.decay = fx.reverb.decay;
+        this.space.set(fx.reverb);
         const sat = fx.saturation;
         const prevSat = prev?.saturation;
         if (!prevSat || sat.mode !== prevSat.mode || sat.drive !== prevSat.drive || sat.mix !== prevSat.mix) {
             this.saturator.curve = saturationCurve(sat.mode, sat.drive, sat.mix);
         }
         this.saturationTone.frequency.value = toneFrequency(sat.tone);
-        this.reverb.wet.value = fx.reverb.on ? fx.reverb.mix : 0;
         this.saturationSwitch.fade.value = sat.on ? 1 : 0;
     }
 
@@ -148,11 +179,13 @@ export class DroneEngine {
         voice.ampLfoConnected = wanted;
 
         if (wanted) {
-            voice.ampLfo.connect(voice.tremolo.gain);
+            // The curve's output adds to the gain's own value, so zero that
+            voice.tremolo.gain.value = 0;
+            voice.ampCurve.connect(voice.tremolo.gain);
             voice.ampLfo.start();
         } else {
             voice.ampLfo.stop();
-            voice.ampLfo.disconnect();
+            voice.ampCurve.disconnect();
             voice.tremolo.gain.value = 1;
         }
     }
@@ -169,6 +202,7 @@ export class DroneEngine {
         const depth = filterLfoDepth / 100;
         voice.filterLfo.min = filterFreq * (1 - depth);
         voice.filterLfo.max = filterFreq * (1 + depth);
-        voice.ampLfo.min = Tone.dbToGain(-ampLfoDepth);
+        // LFO at +1 = full volume, at −1 = −depth dB, evenly in dB between
+        voice.ampCurve.setMap(x => Tone.dbToGain((-ampLfoDepth * (1 - x)) / 2));
     }
 }

@@ -4,13 +4,16 @@ import { ensureAudioRunning } from '../../core/audio.js';
 import { createSegmented, createSelect, createSlider, createSwitch } from '../../components/controls.js';
 import { SCALES, rootOptions, scaleOptions } from '../../music/theory.js';
 import { DroneEngine } from './engine.js';
+import { createDrift } from './drift.js';
 import { SATURATION_MODES } from './saturation.js';
 import {
     FILTER_TYPES,
     RANGES,
     SHAPES,
+    DEFAULT_DRIFT,
     createVoices,
     defaultFx,
+    defaultTexture,
     noteForKey,
     noteOptionsForKey,
     randomiseVoice,
@@ -22,10 +25,22 @@ export function initDroneSynth(root) {
     const key = { root: 'C', scale: 'major' };
     let noteOptions = noteOptionsForKey(key.root, key.scale);
     let fx = defaultFx();
+    let texture = defaultTexture();
     let voices = createVoices(noteOptions);
     let playing = false;
 
-    const engine = new DroneEngine(fx, voices);
+    const engine = new DroneEngine(fx, voices, texture);
+
+    const drift = createDrift({
+        engine,
+        getVoices: () => voices,
+        getNoteOptions: () => noteOptions,
+        changeNote: (index, note, glide) => {
+            updateVoice(index, { note }, { glide });
+            oscPanels[index].sync();
+        },
+    });
+    drift.setAmount(DEFAULT_DRIFT);
 
     setOptions(r.root, rootOptions(), key.root);
     setOptions(r.scale, scaleOptions(), key.scale);
@@ -49,6 +64,7 @@ export function initDroneSynth(root) {
         } else {
             engine.stop();
         }
+        drift.setRunning(playing);
         renderTransport();
     });
 
@@ -62,10 +78,26 @@ export function initDroneSynth(root) {
         engine.setFx(fx);
     };
 
+    r.transport.append(slider(RANGES.drift, DEFAULT_DRIFT, v => drift.setAmount(v), 'cool').el);
+
+    const setTexture = (patch) => {
+        texture = { ...texture, ...patch };
+        engine.setTexture(texture);
+    };
+    const texturePanel = createFxPanel('Texture', texture.on, on => setTexture({ on }), [
+        slider(RANGES.textureLevel, texture.level, level => setTexture({ level })),
+        slider(RANGES.textureTone, texture.tone, tone => setTexture({ tone })),
+        slider(RANGES.textureCrackle, texture.crackle, crackle => setTexture({ crackle })),
+        slider(RANGES.textureMotion, texture.motion, motion => setTexture({ motion }), 'cool'),
+    ]);
+    texturePanel.classList.add('drone__texture');
+    r.texture.append(texturePanel);
+
     r.fx.append(
         createFxPanel('Reverb', fx.reverb.on, on => setFx('reverb', { on }), [
             slider(RANGES.reverbDecay, fx.reverb.decay, decay => setFx('reverb', { decay })),
             slider(RANGES.reverbMix, fx.reverb.mix, mix => setFx('reverb', { mix })),
+            slider(RANGES.reverbModulation, fx.reverb.modulation, modulation => setFx('reverb', { modulation }), 'cool'),
         ]),
         createFxPanel('Saturation', fx.saturation.on, on => setFx('saturation', { on }), [
             createSegmented({
@@ -80,9 +112,9 @@ export function initDroneSynth(root) {
         ])
     );
 
-    function updateVoice(index, patch) {
+    function updateVoice(index, patch, options) {
         voices = voices.map((voice, i) => (i === index ? { ...voice, ...patch } : voice));
-        engine.setVoice(index, voices[index]);
+        engine.setVoice(index, voices[index], options);
         oscPanels[index]?.renderSummary();
         renderLcd();
     }

@@ -2,14 +2,13 @@
 // are placed in beats, so the clip plays at whatever tempo the DAW is set to.
 // Shuffle is baked into the note positions.
 
-import { TICKS_PER_BAR, TICKS_PER_BEAT, rowAt, rowFires, swingTicks } from './logic.js';
+import { ACCENT_ROW, TICKS_PER_BAR, TICKS_PER_BEAT, rowAt, rowFires, swingTicks } from './logic.js';
 import { GM_NOTES } from './voices.js';
 
 const PPQ = 96;
 const SCALE = PPQ / TICKS_PER_BEAT;
 const NOTE_LENGTH = PPQ / 8;
 const BASE_VELOCITY = 90;
-const ACCENT_ROW = 6;
 
 function vlq(n) {
     const out = [n & 0x7f];

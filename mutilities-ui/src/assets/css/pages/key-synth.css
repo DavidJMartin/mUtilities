@@ -109,3 +109,23 @@
         grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
+
+/* ===== Octave switch (in the keyboard panel head) ===== */
+
+.key-synth__octave {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.key-synth__octave .stepper__value {
+    min-width: 28px;
+}
+
+/* Phones: the keys already show their note names, so the range label goes to
+   leave room for the octave switch */
+@media (max-width: 719.98px) {
+    .key-synth__octave [data-ref="range"] {
+        display: none;
+    }
+}

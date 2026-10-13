@@ -32,6 +32,23 @@
     font-size: clamp(16px, 14.7px + .34vw, 19px);
 }
 
+.home__credit {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.home__credit a {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.home__credit a:hover {
+    color: var(--ink);
+}
+
 .tool-grid {
     display: grid;
     grid-template-columns: minmax(0, 1fr);

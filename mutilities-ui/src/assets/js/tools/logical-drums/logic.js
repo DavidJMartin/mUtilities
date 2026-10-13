@@ -21,6 +21,11 @@ export const GATES = [
 ];
 
 export const LETTERS = 'ABCDEF';
+
+/** Drum rows in order; the accent row comes after the drums */
+export const DRUM = { kick: 0, snare: 1, clap: 2, lowTom: 3, highTom: 4, closedHat: 5, openHat: 6, rim: 7 };
+export const DRUM_COUNT = 8;
+export const ACCENT_ROW = DRUM_COUNT;
 export const SHUFFLES = [50, 54, 58, 62, 66, 70, 75];
 export const MAX_SIGNALS = 3;
 export const EUCLID_MAX_STEPS = 16;
@@ -130,8 +135,8 @@ const row = (sig = null) => ({ sigs: [sig], gates: [], shuffle: 50, swing: '16' 
 export function defaultPatch() {
     return {
         gens: [md(-2), md(-2, 4), md(2), md(4), md(3), md(-4)],
-        // kick, snare, tom, closed hat, open hat, woodblock, accent
-        rows: [row(0), row(1), row(), row(2), row(), row(), row()],
+        // kick, snare, clap, low tom, high tom, closed hat, open hat, rim, accent
+        rows: [row(0), row(1), row(), row(), row(), row(2), row(), row(), row()],
     };
 }
 

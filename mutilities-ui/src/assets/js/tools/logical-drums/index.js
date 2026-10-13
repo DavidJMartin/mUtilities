@@ -2,6 +2,7 @@ import { el, refs, toggleData } from '../../core/dom.js';
 import { ensureAudioRunning } from '../../core/audio.js';
 import { createSegmented, createSelect, createSlider, createStepper } from '../../components/controls.js';
 import {
+    ACCENT_ROW,
     GATES,
     LETTERS,
     MAX_SIGNALS,
@@ -23,9 +24,9 @@ import {
 import { DrumEngine } from './engine.js';
 import { VOICE_NAMES } from './voices.js';
 import { downloadMidi } from './midi.js';
+import { randomPatch } from './random.js';
 
 const ROW_NAMES = [...VOICE_NAMES, 'Accent'];
-const ACCENT_ROW = 6;
 const BPM_MIN = 40;
 const BPM_MAX = 240;
 const TRIGGER_FLASH_MS = 90;
@@ -335,6 +336,21 @@ export function initLogicalDrums(root) {
         renderLoop();
     });
 
+    // Randomise and Set to default replace the whole patch: signals and drums.
+    // Tempo, accent amount and MIDI length are left alone.
+    function applyPatch(patch) {
+        if (!patch) return;
+        state.gens = patch.gens;
+        state.rows = patch.rows;
+        picker = null;
+        generatorViews.forEach(view => view.sync());
+        rowViews.forEach(view => view.render());
+        renderLoop();
+    }
+
+    r.randomise.addEventListener('click', () => applyPatch(randomPatch(state.rows)));
+    r.reset.addEventListener('click', () => applyPatch(defaultPatch()));
+
     function updateRow(index, change) {
         state.rows[index] = { ...state.rows[index], ...change };
         picker = null;
@@ -352,7 +368,19 @@ export function initLogicalDrums(root) {
     function createRow(index, label) {
         const isAccent = index === ACCENT_ROW;
         const status = el('span', { class: 'drum-row__status', text: isAccent ? 'off' : 'silent' });
-        const name = el('div', { class: 'drum-row__name' },
+        // Tapping a drum's name plays it; the accent has no sound of its own
+        const name = el(isAccent ? 'div' : 'button', {
+            class: 'drum-row__name',
+            type: isAccent ? null : 'button',
+            'aria-label': isAccent ? null : `Play ${label.toLowerCase()}`,
+            on: isAccent ? {} : {
+                click: async () => {
+                    await ensureAudioRunning();
+                    engine.audition(index);
+                    flashDrum(index, false);
+                },
+            },
+        },
             el('span', { class: 'drum-row__label', text: label }),
             !isAccent && el('span', { class: 'drum-row__acc', text: 'ACC' }),
             status
@@ -404,6 +432,7 @@ export function initLogicalDrums(root) {
             const row = state.rows[index];
             toggleData(name, 'silent', isSilent(row));
             shuffle?.set(`${row.shuffle}%`);
+            swingUnit?.set(row.swing);
             const canAdd = row.sigs.length < MAX_SIGNALS;
             chain.replaceChildren(
                 ...row.sigs.map((sig, link) => createLink(index, link)),

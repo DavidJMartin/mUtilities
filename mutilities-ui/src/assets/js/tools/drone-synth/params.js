@@ -1,5 +1,5 @@
 import { WAVEFORMS as SHAPES } from '../../core/audio.js';
-import { scaleNotesInOctaves } from '../../music/theory.js';
+import { frequency, scaleNotesInOctaves } from '../../music/theory.js';
 import { toneFrequency } from './saturation.js';
 
 export { SHAPES };
@@ -15,7 +15,12 @@ export const FILTER_TYPES = [
     { value: 'notch', label: 'NOTCH' },
 ];
 
-const hz = (decimals) => (v) => `${v.toFixed(decimals)} Hz`;
+// LFO rates also show how long one cycle takes, which is easier to feel
+const lfoRate = (v) => {
+    const seconds = 1 / v;
+    const cycle = seconds >= 60 ? `${Math.floor(seconds / 60)}m ${Math.round(seconds % 60)}s` : `${Math.round(seconds)}s`;
+    return `${v < 0.1 ? v.toFixed(3) : v.toFixed(2)} Hz · ${cycle}`;
+};
 const percent = (v) => `${Math.round(v * 100)} %`;
 const formatHz = (hz) => (hz < 1000 ? `${Math.round(hz)} Hz` : `${(hz / 1000).toFixed(1)} kHz`);
 
@@ -23,23 +28,38 @@ export const RANGES = {
     volume: { label: 'Volume', min: -40, max: 0, step: 0.1, format: v => `${v.toFixed(1)} dB` },
     filterFreq: { label: 'Frequency', min: 20, max: 8000, step: 10, format: v => `${Math.round(v)} Hz` },
     filterRes: { label: 'Resonance', min: 0.1, max: 20, step: 0.1, format: v => v.toFixed(1) },
-    filterLfoRate: { label: 'Rate', min: 0.001, max: 0.4, step: 0.001, format: hz(3) },
+    // Log sliders: the slow end, where drones live, gets most of the travel
+    filterLfoRate: { label: 'Rate', min: 0.005, max: 0.4, scale: 'log', format: lfoRate },
     filterLfoDepth: { label: 'Depth', min: 0, max: 100, step: 1, format: v => `${Math.round(v)} %` },
-    ampLfoRate: { label: 'Rate', min: 0.001, max: 0.4, step: 0.001, format: hz(3) },
-    ampLfoDepth: { label: 'Depth', min: 0, max: 24, step: 0.1, format: v => `${v.toFixed(1)} dB` },
+    ampLfoRate: { label: 'Rate', min: 0.005, max: 0.4, scale: 'log', format: lfoRate },
+    // How far below the Volume setting the LFO dips; 48 dB is close to silent
+    ampLfoDepth: { label: 'Depth', min: 0, max: 48, step: 0.5, format: v => `−${v.toFixed(1)} dB` },
     reverbDecay: { label: 'Decay', min: 0.5, max: 15, step: 0.1, format: v => `${v.toFixed(1)} s` },
     reverbMix: { label: 'Mix', min: 0, max: 1, step: 0.01, format: percent },
+    reverbModulation: { label: 'Modulation', min: 0, max: 1, step: 0.01, format: percent },
     saturationDrive: { label: 'Drive', min: 0, max: 1, step: 0.01, format: percent },
     saturationTone: { label: 'Tone', min: 0, max: 1, step: 0.01, format: v => formatHz(toneFrequency(v)) },
     saturationMix: { label: 'Mix', min: 0, max: 1, step: 0.01, format: percent },
+    textureLevel: { label: 'Level', min: 0, max: 1, step: 0.01, format: percent },
+    textureTone: { label: 'Tone', min: 0, max: 1, step: 0.01, format: v => (v < 0.34 ? 'Dark' : v < 0.67 ? 'Warm' : 'Bright') },
+    textureCrackle: { label: 'Crackle', min: 0, max: 1, step: 0.01, format: percent },
+    textureMotion: { label: 'Motion', min: 0, max: 1, step: 0.01, format: percent },
+    drift: { label: 'Drift', min: 0, max: 1, step: 0.01, format: v => (v > 0.5 ? `${Math.round(v * 100)} % · notes` : `${Math.round(v * 100)} %`) },
 };
 
 export function defaultFx() {
     return {
-        reverb: { on: true, decay: 10, mix: 1 },
+        reverb: { on: true, decay: 10, mix: 1, modulation: 0.35 },
         saturation: { on: false, mode: 'tube', drive: 0.5, tone: 0.6, mix: 0.5 },
     };
 }
+
+// Off by default. Crackle starts at 0: it's a specific flavour to add when wanted
+export function defaultTexture() {
+    return { on: false, level: 0.5, tone: 0.45, crackle: 0, motion: 0.5 };
+}
+
+export const DEFAULT_DRIFT = 0.2;
 
 export function noteOptionsForKey(root, scaleType) {
     return scaleNotesInOctaves(root, scaleType, NOTE_OCTAVES.from, NOTE_OCTAVES.to);
@@ -47,6 +67,15 @@ export function noteOptionsForKey(root, scaleType) {
 
 const randomIn = (min, max) => min + Math.random() * (max - min);
 const pick = (list) => list[Math.floor(Math.random() * list.length)];
+
+// Spread evenly across orders of magnitude, so 0.01 Hz is as likely as 0.1 Hz
+const logIn = (min, max) => min * (max / min) ** Math.random();
+
+// Randomised LFOs lean slow, so the drone evolves over a minute or so rather
+// than wobbling: mostly 17–200 s cycles, now and then a quicker 7–17 s one for
+// movement. Each voice gets its own rate, so they drift in and out of phase.
+const FAST_LFO_CHANCE = 0.1;
+const slowLfoRate = () => (Math.random() < FAST_LFO_CHANCE ? logIn(0.06, 0.15) : logIn(0.005, 0.06));
 
 // Voices start with randomised notes, filters and LFOs so every visit sounds
 // a bit different. filterLfoDepth is a % of filterFreq either side;
@@ -69,18 +98,65 @@ export function createVoices(noteOptions) {
     }, noteOptions, { keepShape: true }));
 }
 
-// Level, filter type and which modulators are switched on stay as the user
-// set them.
+function weighted(weights) {
+    const entries = Object.entries(weights);
+    let roll = Math.random() * entries.reduce((sum, [, w]) => sum + w, 0);
+    for (const [value, w] of entries) {
+        roll -= w;
+        if (roll < 0) return value;
+    }
+    return entries[0][0];
+}
+
+// A filter can only shape harmonics that are there, so Randomise leans
+// heavily towards saw. Square is kept rare by taste; sine and triangle have
+// (almost) no harmonics, so they're occasional too.
+const SHAPE_WEIGHTS = { sine: 1, triangle: 1.2, sawtooth: 6, square: 0.8 };
+
+// Cutoff is set relative to the voice's note, in octaves above its
+// fundamental, so it always lands among that note's harmonics. Resonance means
+// different things per type in Web Audio: for low/high-pass it's the height of
+// the resonant peak (dB), for band-pass and notch it's how narrow the band is.
+const FILTERS_RICH = {
+    lowpass: { weight: 4, octaves: [0.5, 4.5], res: [1, 16] },
+    bandpass: { weight: 3, octaves: [1, 4], res: [2, 10] },
+    highpass: { weight: 1.5, octaves: [0.5, 3], res: [1, 12] },
+    notch: { weight: 1.5, octaves: [0.5, 3.5], res: [1, 6] },
+};
+// Sine and triangle: keep the filter around the fundamental, where a resonant
+// peak or a narrow band can still make it swell and fade as the LFO sweeps
+const FILTERS_PURE = {
+    lowpass: { weight: 3, octaves: [-0.3, 1.5], res: [2, 16] },
+    bandpass: { weight: 1, octaves: [-0.15, 0.15], res: [1, 4] },
+};
+
+function randomFilter(note, shape) {
+    const options = shape === 'sine' || shape === 'triangle' ? FILTERS_PURE : FILTERS_RICH;
+    const type = weighted(Object.fromEntries(Object.entries(options).map(([t, o]) => [t, o.weight])));
+    const { octaves, res } = options[type];
+    const hz = frequency(note) * 2 ** randomIn(...octaves);
+    return {
+        filterType: type,
+        filterFreq: Math.round(Math.min(RANGES.filterFreq.max, Math.max(40, hz)) / 10) * 10,
+        // Skewed towards gentler settings, with the odd screamer
+        filterRes: Math.round((res[0] + (res[1] - res[0]) * Math.random() ** 1.4) * 10) / 10,
+    };
+}
+
+// Level and which modulators are switched on stay as the user set them.
 export function randomiseVoice(voice, noteOptions, { keepShape = false } = {}) {
+    const note = pick(noteOptions);
+    const shape = keepShape ? voice.shape : weighted(SHAPE_WEIGHTS);
     return {
         ...voice,
-        note: pick(noteOptions),
-        shape: keepShape ? voice.shape : pick(SHAPES).value,
-        filterFreq: Math.round(randomIn(300, 1000)),
-        filterLfoRate: randomIn(0.001, 0.4),
-        filterLfoDepth: randomIn(20, 80),
-        ampLfoRate: randomIn(0.001, 0.4),
-        ampLfoDepth: randomIn(6, 18),
+        note,
+        shape,
+        ...randomFilter(note, shape),
+        filterLfoRate: slowLfoRate(),
+        filterLfoDepth: randomIn(45, 90),
+        ampLfoRate: slowLfoRate(),
+        // Deep enough that voices properly fade in and out
+        ampLfoDepth: Math.round(randomIn(18, 42) * 2) / 2,
     };
 }
 

@@ -1,15 +1,20 @@
 import { refs } from '../../core/dom.js';
 import { WAVEFORMS, ensureAudioRunning } from '../../core/audio.js';
 import { createKeyboard } from '../../components/keyboard.js';
-import { createSegmented, createSlider } from '../../components/controls.js';
+import { createSegmented, createSlider, createStepper } from '../../components/controls.js';
 import { frequency, midiNumber, parseNote } from '../../music/theory.js';
 import { DEFAULT_PATCH, KeySynthEngine } from './engine.js';
 import { drawEnvelope } from './envelope-graph.js';
 
 const PAGE_ID = 'key-synth';
+// At octave 0; the octave switch shifts the whole range
 const RANGE = { from: 'C4', to: 'D5' };
+const OCTAVE_LIMIT = 2;
 
-// Laid out like a piano across the home row of a QWERTY keyboard
+// Z / X step the octave down / up, as in most DAWs
+const OCTAVE_KEYS = { z: -1, x: 1 };
+
+// Laid out like a piano across the home row of a QWERTY keyboard (at octave 0)
 const KEY_MAP = {
     a: 'C4', w: 'C#4', s: 'D4', e: 'D#4', d: 'E4', f: 'F4', t: 'F#4', g: 'G4',
     y: 'G#4', h: 'A4', u: 'A#4', j: 'B4', k: 'C5', o: 'C#5', l: 'D5',
@@ -76,9 +81,42 @@ export function initKeySynth(root, router) {
         render();
     }
 
-    const caps = Object.fromEntries(Object.entries(KEY_MAP).map(([key, note]) => [note, key.toUpperCase()]));
-    const keyboard = createKeyboard({ ...RANGE, caps, playable: true, label: 'Synth keyboard' });
-    r.keyboard.append(keyboard);
+    // Octave shift: the on-screen keys and the QWERTY keys both move, so
+    // what's shown is always what plays
+    let octave = 0;
+    const shifted = (note) => {
+        const { pc, octave: o } = parseNote(note);
+        return `${pc}${o + octave}`;
+    };
+    const keyFor = (key) => (KEY_MAP[key] ? shifted(KEY_MAP[key]) : null);
+
+    // Listeners live on the container, so the keyboard can be rebuilt per octave
+    const keyboard = r.keyboard;
+    const buildKeyboard = () => {
+        const caps = Object.fromEntries(Object.entries(KEY_MAP).map(([key, note]) => [shifted(note), key.toUpperCase()]));
+        const from = shifted(RANGE.from);
+        const to = shifted(RANGE.to);
+        keyboard.replaceChildren(createKeyboard({ from, to, caps, playable: true, label: 'Synth keyboard' }));
+        r.range.textContent = `${from} – ${to}`;
+    };
+
+    const octaveControl = createStepper({
+        label: 'Octave',
+        inline: true,
+        onStep: dir => setOctave(octave + dir),
+    });
+    r.octave.append(octaveControl.el);
+
+    function setOctave(next) {
+        const clamped = Math.max(-OCTAVE_LIMIT, Math.min(OCTAVE_LIMIT, next));
+        if (clamped === octave) return;
+        // Held notes belong to the old octave; let them go rather than leave them hanging
+        releaseAll();
+        pointers.clear();
+        octave = clamped;
+        octaveControl.set(octave > 0 ? `+${octave}` : String(octave));
+        buildKeyboard();
+    }
 
     // pointer id -> note under it
     const pointers = new Map();
@@ -128,15 +166,22 @@ export function initKeySynth(root, router) {
 
     document.addEventListener('keydown', (event) => {
         if (router.current() !== PAGE_ID || event.repeat || event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return;
-        const note = KEY_MAP[event.key.toLowerCase()];
+        const key = event.key.toLowerCase();
+        if (key in OCTAVE_KEYS) {
+            event.preventDefault();
+            setOctave(octave + OCTAVE_KEYS[key]);
+            return;
+        }
+        const note = keyFor(key);
         if (!note) return;
         event.preventDefault();
-        press(note, `key:${event.key.toLowerCase()}`);
+        press(note, `key:${key}`);
     });
 
     document.addEventListener('keyup', (event) => {
-        const note = KEY_MAP[event.key.toLowerCase()];
-        if (note) release(note, `key:${event.key.toLowerCase()}`);
+        const key = event.key.toLowerCase();
+        const note = keyFor(key);
+        if (note) release(note, `key:${key}`);
     });
 
     // Never leave notes hanging
@@ -194,6 +239,8 @@ export function initKeySynth(root, router) {
     }
 
     drawEnvelope({ line: r.envLine, fill: r.envFill, labels: r.envLabels }, patch);
+    octaveControl.set('0');
+    buildKeyboard();
     render();
 }
 

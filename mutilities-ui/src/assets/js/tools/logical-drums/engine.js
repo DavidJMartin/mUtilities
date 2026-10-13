@@ -7,10 +7,9 @@
 // straight away without restarting.
 
 import * as Tone from 'tone';
-import { TICKS_PER_BEAT, TICKS_PER_STEP, rowAt, rowFires, signalAt, swingTicks } from './logic.js';
+import { ACCENT_ROW, TICKS_PER_BEAT, TICKS_PER_STEP, rowAt, rowFires, signalAt, swingTicks } from './logic.js';
 import { DrumKit } from './voices.js';
 
-const ACCENT_ROW = 6;
 const BASE_VELOCITY = 0.7;
 
 export class DrumEngine {
@@ -44,6 +43,13 @@ export class DrumEngine {
         this.setBpm(bpm);
         this.repeatId = Tone.Transport.scheduleRepeat(time => this.#step(time), '16n', 0);
         Tone.Transport.start('+0.05');
+    }
+
+    /** Play one drum now, e.g. when its name is tapped. Works whether or not the pattern is running */
+    audition(index, velocity = 0.85) {
+        this.kit ??= new DrumKit();
+        this.kit.start();
+        this.kit.trigger(index, Tone.now() + 0.01, velocity);
     }
 
     stop() {

@@ -3,32 +3,43 @@
 
 import { el, uid, setOptions } from '../core/dom.js';
 
-export function createSlider({ label, min, max, step, value, format, onInput, tone = 'accent' }) {
+// With scale: 'log' the track maps to the value logarithmically, so each
+// doubling takes the same distance; useful when the low end matters most (e.g.
+// LFO rates). min must then be above 0, and step is ignored.
+const LOG_STEPS = 1000;
+
+export function createSlider({ label, min, max, step, value, format, onInput, tone = 'accent', scale = 'linear' }) {
     const id = uid('slider');
+    const log = scale === 'log';
+    const toValue = pos => (log ? min * (max / min) ** (pos / LOG_STEPS) : pos);
+    const toPos = v => (log ? (Math.log(v / min) / Math.log(max / min)) * LOG_STEPS : v);
+
     const output = el('output', { class: 'slider__value', for: id });
     const input = el('input', {
         class: 'slider__input',
         type: 'range',
         id,
-        min,
-        max,
-        step,
+        min: log ? 0 : min,
+        max: log ? LOG_STEPS : max,
+        step: log ? 1 : step,
     });
 
     const render = (v) => {
-        const pct = Math.min(100, Math.max(0, ((v - min) / (max - min)) * 100));
+        const lo = log ? 0 : min;
+        const hi = log ? LOG_STEPS : max;
+        const pct = Math.min(100, Math.max(0, ((toPos(v) - lo) / (hi - lo)) * 100));
         input.style.setProperty('--pct', `${pct}%`);
         output.textContent = format(v);
     };
 
     input.addEventListener('input', () => {
-        const v = Number(input.value);
+        const v = toValue(Number(input.value));
         render(v);
         onInput(v);
     });
 
     const set = (v) => {
-        input.value = String(v);
+        input.value = String(toPos(v));
         render(v);
     };
     set(value);

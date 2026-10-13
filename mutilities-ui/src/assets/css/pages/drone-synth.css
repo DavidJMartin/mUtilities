@@ -10,19 +10,36 @@
 }
 
 .drone__transport .btn--play,
-.drone__transport .btn--outline {
+.drone__transport .btn--outline,
+.drone__transport .slider {
     grid-column: 1 / -1;
 }
 
 @media (min-width: 720px) {
+    /* Drift sits at the far right: the last column takes the spare width and it aligns to the end */
     .drone__transport {
-        grid-template-columns: auto 140px 220px auto;
-        justify-content: start;
+        grid-template-columns: auto 140px 220px auto minmax(0, 1fr);
+    }
+
+    /* Bottom-aligned like the other fields, with its track level with the buttons */
+    .drone__transport .slider {
+        grid-column: -2;
+        justify-self: end;
+        width: min(100%, 280px);
+        padding-bottom: calc((var(--control-h) - var(--slider-h)) / 2);
     }
 
     .drone__transport .btn--play,
     .drone__transport .btn--outline {
         grid-column: auto;
+    }
+}
+
+/* ===== Texture: full width, its four controls in a row on larger screens ===== */
+
+@media (min-width: 720px) {
+    .drone__texture .fx__params {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 
@@ -53,7 +70,8 @@
 }
 
 @media (min-width: 720px) {
-    .fx__params:has(> .segmented) {
+    .fx__params:has(> .segmented),
+    .fx__params:has(> :nth-child(3):last-child) {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 }

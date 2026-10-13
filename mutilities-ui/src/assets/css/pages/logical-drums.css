@@ -34,9 +34,22 @@
     gap: 14px;
 }
 
-.logical__transport .btn--play,
-.logical__tempo {
+.logical__transport > * {
     grid-column: 1 / -1;
+}
+
+/* Randomise / Set to default, and MIDI length / Export: pairs that split the
+   row on phones */
+.logical__patch,
+.logical__midi {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+    gap: 8px;
+}
+
+.logical__midi {
+    gap: 14px;
 }
 
 .logical__tempo {
@@ -82,18 +95,32 @@
     color: var(--card);
 }
 
+/* Wider screens: one line when it fits; otherwise the MIDI group wraps onto
+   a second line, still pushed to the right */
 @media (min-width: 720px) {
     .logical__transport {
-        grid-template-columns: auto minmax(0, 320px) minmax(0, 1fr) 150px auto;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
     }
 
-    .logical__transport .btn--play,
     .logical__tempo {
-        grid-column: auto;
+        flex: 0 1 320px;
+        min-width: 260px;
+    }
+
+    .logical__patch,
+    .logical__midi {
+        display: flex;
+    }
+
+    .logical__midi {
+        margin-left: auto;
     }
 
     .logical__bars {
-        grid-column: 4;
+        width: 150px;
     }
 }
 
@@ -297,12 +324,14 @@
 .drum-row {
     --chip-h: 44px;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
+    /* Phones: name and shuffle settings on top, the chain gets the full width
+       below so a gate and signal fit beside the first signal */
+    grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-areas:
-        "name right"
-        "chain unit";
+        "name right unit"
+        "chain chain chain";
     align-items: center;
-    gap: 10px 16px;
+    gap: 10px 8px;
     padding: 12px 0;
     border-top: var(--border) solid var(--line);
 }
@@ -320,8 +349,16 @@
 @media (min-width: 720px) {
     .drum-row {
         --chip-h: 38px;
+    }
+}
+
+/* One line per lane once the chain has room for a gate and signal beside the
+   first signal; narrower screens keep the chain on its own full-width line */
+@media (min-width: 960px) {
+    .drum-row {
         grid-template-columns: 170px minmax(0, 1fr) auto auto;
         grid-template-areas: "name chain right unit";
+        column-gap: 16px;
     }
 }
 
@@ -337,6 +374,17 @@
     border: var(--border) solid var(--card-border);
     border-radius: var(--radius-md);
     transition: background-color .06s, color .06s;
+}
+
+/* Drum names are buttons that play the drum */
+button.drum-row__name {
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+button.drum-row__name:hover:not([data-on]) {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 .drum-row__label {
@@ -389,7 +437,7 @@
     color: var(--faint);
 }
 
-@media (min-width: 720px) {
+@media (min-width: 960px) {
     .drum-row__name[data-silent]:not([data-on]) .drum-row__status {
         display: inline;
     }
@@ -410,14 +458,35 @@
     min-width: 40px;
 }
 
-/* The phone layout has no room for the label, so the value says it instead */
+/* Phones: no room for the "Shuffle" label (it's still the buttons' accessible
+   name); the 8th/16th toggle beside the value gives the context. Slightly
+   smaller buttons leave the drum name room. */
 @media (max-width: 719.98px) {
     .drum-row__right .stepper--inline .stepper__head {
         display: none;
     }
 
-    .drum-row__right .stepper--inline .stepper__value::after {
-        content: " shuf";
+    .drum-row__right .stepper__controls {
+        --stepper-size: 34px;
+        gap: 4px;
+    }
+
+    .drum-row__right .stepper__value {
+        min-width: 36px;
+    }
+
+    /* Room for the longest name ("Closed hat") beside both shuffle controls */
+    .drum-row__name {
+        padding: 0 10px;
+    }
+
+    .drum-row__label {
+        font-size: 15px;
+    }
+
+    .drum-row__unit .segmented__option {
+        min-width: 32px;
+        padding: 0 5px;
     }
 }
 
@@ -438,7 +507,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
+    /* Extra row gap leaves room for joined links' outlines when the chain wraps */
+    gap: 12px 8px;
     min-width: 0;
 }
 
@@ -452,6 +522,9 @@
     padding: 3px 3px 3px 4px;
     border: var(--border) dashed var(--line);
     border-radius: 12px;
+    /* The outline hangs into the row's spacing rather than making the row
+       taller, so adding a gate doesn't change the lane height */
+    margin-block: calc(-3px - var(--border));
 }
 
 .chain__anchor {
