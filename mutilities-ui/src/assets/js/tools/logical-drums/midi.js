@@ -4,6 +4,7 @@
 
 import { ACCENT_ROW, TICKS_PER_BAR, TICKS_PER_BEAT, rowAt, rowFires, swingTicks } from './logic.js';
 import { GM_NOTES } from './voices.js';
+import { downloadBlob, timestamp } from '../../core/files.js';
 
 const PPQ = 96;
 const SCALE = PPQ / TICKS_PER_BEAT;
@@ -46,19 +47,7 @@ export function buildMidi({ gens, rows, accentAmount }, bars) {
     return new Uint8Array([...header, 0x4d, 0x54, 0x72, 0x6b, ...u32(track.length), ...track]);
 }
 
-/** Local time as 20261012-193045, so repeated exports never share a name */
-function timestamp(d) {
-    const pad = n => String(n).padStart(2, '0');
-    return `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
-}
-
 export function downloadMidi(state, bars) {
-    const url = URL.createObjectURL(new Blob([buildMidi(state, bars)], { type: 'audio/midi' }));
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `logical-drums-${bars}bar${bars > 1 ? 's' : ''}-${timestamp(new Date())}.mid`;
-    document.body.append(link);
-    link.click();
-    link.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    const blob = new Blob([buildMidi(state, bars)], { type: 'audio/midi' });
+    downloadBlob(blob, `logical-drums-${bars}bar${bars > 1 ? 's' : ''}-${timestamp()}.mid`);
 }

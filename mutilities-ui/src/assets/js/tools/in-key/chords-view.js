@@ -156,5 +156,9 @@ export function initChordsView(r, store) {
         );
     }
 
-    return { render };
+    return {
+        render,
+        /** How many fingerings a chord has, so imported voicing numbers can be checked */
+        voicingCount: chord => voicingsFor(chord).length,
+    };
 }

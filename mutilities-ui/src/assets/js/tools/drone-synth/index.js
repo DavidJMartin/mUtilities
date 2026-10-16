@@ -3,6 +3,7 @@ import { MEDIA, watchMedia } from '../../core/media.js';
 import { ensureAudioRunning } from '../../core/audio.js';
 import { createSegmented, createSelect, createSlider, createSwitch } from '../../components/controls.js';
 import { SCALES, rootOptions, scaleOptions } from '../../music/theory.js';
+import { createPatchMenu } from '../../components/patch-menu.js';
 import { DroneEngine } from './engine.js';
 import { createDrift } from './drift.js';
 import { SATURATION_MODES } from './saturation.js';
@@ -17,6 +18,7 @@ import {
     noteForKey,
     noteOptionsForKey,
     randomiseVoice,
+    sanitizeDroneSettings,
 } from './params.js';
 
 export function initDroneSynth(root) {
@@ -27,6 +29,7 @@ export function initDroneSynth(root) {
     let fx = defaultFx();
     let texture = defaultTexture();
     let voices = createVoices(noteOptions);
+    let driftAmount = DEFAULT_DRIFT;
     let playing = false;
 
     const engine = new DroneEngine(fx, voices, texture);
@@ -78,39 +81,86 @@ export function initDroneSynth(root) {
         engine.setFx(fx);
     };
 
-    r.transport.append(slider(RANGES.drift, DEFAULT_DRIFT, v => drift.setAmount(v), 'cool').el);
+    const setDrift = (amount) => {
+        driftAmount = amount;
+        drift.setAmount(amount);
+    };
+    const driftSlider = slider(RANGES.drift, driftAmount, setDrift, 'cool');
+    r.transport.append(driftSlider.el);
 
     const setTexture = (patch) => {
         texture = { ...texture, ...patch };
         engine.setTexture(texture);
     };
-    const texturePanel = createFxPanel('Texture', texture.on, on => setTexture({ on }), [
-        slider(RANGES.textureLevel, texture.level, level => setTexture({ level })),
-        slider(RANGES.textureTone, texture.tone, tone => setTexture({ tone })),
-        slider(RANGES.textureCrackle, texture.crackle, crackle => setTexture({ crackle })),
-        slider(RANGES.textureMotion, texture.motion, motion => setTexture({ motion }), 'cool'),
-    ]);
-    texturePanel.classList.add('drone__texture');
-    r.texture.append(texturePanel);
 
-    r.fx.append(
-        createFxPanel('Reverb', fx.reverb.on, on => setFx('reverb', { on }), [
-            slider(RANGES.reverbDecay, fx.reverb.decay, decay => setFx('reverb', { decay })),
-            slider(RANGES.reverbMix, fx.reverb.mix, mix => setFx('reverb', { mix })),
-            slider(RANGES.reverbModulation, fx.reverb.modulation, modulation => setFx('reverb', { modulation }), 'cool'),
-        ]),
-        createFxPanel('Saturation', fx.saturation.on, on => setFx('saturation', { on }), [
-            createSegmented({
+    // Controls are kept by name so an imported patch can move them
+    const textureControls = {
+        level: slider(RANGES.textureLevel, texture.level, level => setTexture({ level })),
+        tone: slider(RANGES.textureTone, texture.tone, tone => setTexture({ tone })),
+        crackle: slider(RANGES.textureCrackle, texture.crackle, crackle => setTexture({ crackle })),
+        motion: slider(RANGES.textureMotion, texture.motion, motion => setTexture({ motion }), 'cool'),
+    };
+    const texturePanel = createFxPanel('Texture', texture.on, on => setTexture({ on }), Object.values(textureControls));
+    texturePanel.el.classList.add('drone__texture');
+    r.texture.append(texturePanel.el);
+
+    const fxControls = {
+        reverb: {
+            decay: slider(RANGES.reverbDecay, fx.reverb.decay, decay => setFx('reverb', { decay })),
+            mix: slider(RANGES.reverbMix, fx.reverb.mix, mix => setFx('reverb', { mix })),
+            modulation: slider(RANGES.reverbModulation, fx.reverb.modulation, modulation => setFx('reverb', { modulation }), 'cool'),
+        },
+        saturation: {
+            mode: createSegmented({
                 label: 'Saturation mode',
                 options: SATURATION_MODES,
                 value: fx.saturation.mode,
                 onChange: mode => setFx('saturation', { mode }),
             }),
-            slider(RANGES.saturationDrive, fx.saturation.drive, drive => setFx('saturation', { drive })),
-            slider(RANGES.saturationTone, fx.saturation.tone, tone => setFx('saturation', { tone })),
-            slider(RANGES.saturationMix, fx.saturation.mix, mix => setFx('saturation', { mix })),
-        ])
-    );
+            drive: slider(RANGES.saturationDrive, fx.saturation.drive, drive => setFx('saturation', { drive })),
+            tone: slider(RANGES.saturationTone, fx.saturation.tone, tone => setFx('saturation', { tone })),
+            mix: slider(RANGES.saturationMix, fx.saturation.mix, mix => setFx('saturation', { mix })),
+        },
+    };
+    const fxPanels = {
+        reverb: createFxPanel('Reverb', fx.reverb.on, on => setFx('reverb', { on }), Object.values(fxControls.reverb)),
+        saturation: createFxPanel('Saturation', fx.saturation.on, on => setFx('saturation', { on }), Object.values(fxControls.saturation)),
+    };
+    r.fx.append(fxPanels.reverb.el, fxPanels.saturation.el);
+
+    // Export / import everything on the page: key, oscillators, effects, texture and drift
+    r.patch.append(createPatchMenu({
+        tool: 'drone-synth',
+        version: 1,
+        getSettings: () => ({ key, voices, fx, texture, drift: driftAmount }),
+        applySettings: (settings) => {
+            const next = sanitizeDroneSettings(settings, { key, voices, fx, texture, drift: driftAmount });
+
+            r.root.value = next.key.root;
+            r.scale.value = next.key.scale;
+            key.root = next.key.root;
+            key.scale = next.key.scale;
+            noteOptions = noteOptionsForKey(key.root, key.scale);
+            oscPanels.forEach(panel => panel.refreshNoteOptions());
+
+            next.voices.forEach((voice, i) => updateVoice(i, voice));
+            oscPanels.forEach(panel => panel.sync());
+
+            for (const name of ['reverb', 'saturation']) {
+                setFx(name, next.fx[name]);
+                fxPanels[name].set(next.fx[name].on);
+                Object.entries(fxControls[name]).forEach(([param, control]) => control.set(next.fx[name][param]));
+            }
+
+            setTexture(next.texture);
+            texturePanel.set(next.texture.on);
+            Object.entries(textureControls).forEach(([param, control]) => control.set(next.texture[param]));
+
+            setDrift(next.drift);
+            driftSlider.set(next.drift);
+            renderLcd();
+        },
+    }));
 
     function updateVoice(index, patch, options) {
         voices = voices.map((voice, i) => (i === index ? { ...voice, ...patch } : voice));
@@ -175,7 +225,14 @@ function createFxPanel(name, on, onToggle, controls) {
         el('div', { class: 'fx__params' }, controls.map(c => c.el))
     );
     setOff(on);
-    return panel;
+
+    return {
+        el: panel,
+        set(isOn) {
+            toggle.set(isOn);
+            setOff(isOn);
+        },
+    };
 }
 
 function createOscPanel({ index, getVoice, getNoteOptions, update }) {

@@ -5,12 +5,15 @@ import { createFretboard } from '../../components/fretboard.js';
 import {
     ENHARMONIC_NAMES,
     PITCH_CLASSES,
+    SCALES,
     scaleDegreeLabels,
     rootOptions,
     scaleOptions,
     semitoneShifts,
 } from '../../music/theory.js';
 import { createInKeyStore, deriveView } from './store.js';
+import { createPatchMenu } from '../../components/patch-menu.js';
+import { CHORD_GROUPS, CHORD_TYPES, chordId } from '../../music/chords.js';
 import { initChordsView } from './chords-view.js';
 
 const PIANO_RANGES = {
@@ -55,6 +58,47 @@ export function initInKey(root) {
     });
 
     r.sampleKey.addEventListener('change', () => store.setSampleKey(r.sampleKey.value));
+
+    // Export / import the selection, previewed key and chord progression
+    r.patch.append(createPatchMenu({
+        tool: 'in-key-assistance',
+        version: 1,
+        getSettings: () => {
+            const { selected, preview, sampleKey, chordGroup, chords } = store.getState();
+            return {
+                selected: [...selected],
+                preview,
+                sampleKey,
+                chordGroup,
+                chords: chords.map(({ root, type, voicing }) => ({ root, type, voicing })),
+            };
+        },
+        applySettings: (settings) => {
+            const pc = value => PITCH_CLASSES.includes(value);
+            const preview = settings.preview && pc(settings.preview.root) && settings.preview.type in SCALES
+                ? { root: settings.preview.root, type: settings.preview.type }
+                : null;
+            const chords = (Array.isArray(settings.chords) ? settings.chords : [])
+                .filter(c => pc(c?.root) && CHORD_TYPES.some(t => t.id === c.type))
+                .map(({ root, type, voicing }) => {
+                    const chord = { id: chordId(root, type), root, type, voicing: 0 };
+                    const count = chordsView.voicingCount(chord);
+                    chord.voicing = Number.isInteger(voicing) && voicing >= 0 && voicing < count ? voicing : 0;
+                    return chord;
+                })
+                .filter((c, i, all) => all.findIndex(o => o.id === c.id) === i);
+
+            const sampleKey = pc(settings.sampleKey) ? settings.sampleKey : 'C';
+            r.sampleKey.value = sampleKey;
+            store.load({
+                selected: (Array.isArray(settings.selected) ? settings.selected : []).filter(pc),
+                preview,
+                sampleKey,
+                chordGroup: CHORD_GROUPS.some(g => g.value === settings.chordGroup) ? settings.chordGroup : 'all',
+                chords,
+            });
+        },
+    }));
     r.clear.addEventListener('click', () => {
         r.root.value = '';
         r.scale.value = '';

@@ -14,6 +14,7 @@ import {
     TICKS_PER_STEP,
     clampGenerator,
     defaultPatch,
+    sanitizeSettings,
     emptyRow,
     isSilent,
     loopText,
@@ -25,6 +26,7 @@ import { DrumEngine } from './engine.js';
 import { VOICE_NAMES } from './voices.js';
 import { downloadMidi } from './midi.js';
 import { randomPatch } from './random.js';
+import { createPatchMenu } from '../../components/patch-menu.js';
 
 const ROW_NAMES = [...VOICE_NAMES, 'Accent'];
 const BPM_MIN = 40;
@@ -85,6 +87,7 @@ export function initLogicalDrums(root) {
     }
 
     const rowViews = [];
+    let accentSlider = null;
     const drumTimers = [];
 
     function flashDrum(index, accented) {
@@ -150,12 +153,13 @@ export function initLogicalDrums(root) {
         setTimeout(() => toggleData(r.tap, 'on', false), 100);
     });
 
-    r.bars.append(createSelect({
+    const barsSelect = createSelect({
         label: 'MIDI length',
         options: BAR_OPTIONS,
         value: String(state.bars),
         onChange: (v) => { state.bars = Number(v); },
-    }).el);
+    });
+    r.bars.append(barsSelect.el);
 
     r.export.addEventListener('click', () => downloadMidi(state, state.bars));
 
@@ -349,6 +353,31 @@ export function initLogicalDrums(root) {
     }
 
     r.randomise.addEventListener('click', () => applyPatch(randomPatch(state.rows)));
+
+    // Export / import the whole tool: patch plus tempo, accent amount and MIDI length
+    r.patch.append(createPatchMenu({
+        tool: 'logical-drums',
+        version: 1,
+        getSettings: () => ({
+            gens: state.gens,
+            rows: state.rows,
+            accentAmount: state.accentAmount,
+            bpm: state.bpm,
+            bars: state.bars,
+        }),
+        applySettings: (settings) => {
+            applyPatch(sanitizeSettings(settings));
+            if (Number.isFinite(settings.bpm)) setBpm(settings.bpm);
+            if (Number.isFinite(settings.accentAmount)) {
+                state.accentAmount = Math.min(1, Math.max(0, settings.accentAmount));
+                accentSlider.set(state.accentAmount);
+            }
+            if (BAR_OPTIONS.some(o => o.value === String(settings.bars))) {
+                state.bars = settings.bars;
+                barsSelect.set(String(settings.bars));
+            }
+        },
+    }));
     r.reset.addEventListener('click', () => applyPatch(defaultPatch()));
 
     function updateRow(index, change) {
@@ -391,7 +420,7 @@ export function initLogicalDrums(root) {
         let shuffle;
         let swingUnit;
         if (isAccent) {
-            right = createSlider({
+            accentSlider = createSlider({
                 label: 'Amount',
                 min: 0,
                 max: 1,
@@ -400,7 +429,8 @@ export function initLogicalDrums(root) {
                 format: v => `${Math.round(v * 100)}%`,
                 tone: 'cool',
                 onInput: (v) => { state.accentAmount = v; },
-            }).el;
+            });
+            right = accentSlider.el;
             right.classList.add('drum-row__amount');
         } else {
             shuffle = createStepper({

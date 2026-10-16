@@ -3,6 +3,7 @@ import { WAVEFORMS, ensureAudioRunning } from '../../core/audio.js';
 import { createKeyboard } from '../../components/keyboard.js';
 import { createSegmented, createSlider, createStepper } from '../../components/controls.js';
 import { frequency, midiNumber, parseNote } from '../../music/theory.js';
+import { createPatchMenu } from '../../components/patch-menu.js';
 import { DEFAULT_PATCH, KeySynthEngine } from './engine.js';
 import { drawEnvelope } from './envelope-graph.js';
 
@@ -199,23 +200,49 @@ export function initKeySynth(root, router) {
         drawEnvelope({ line: r.envLine, fill: r.envFill, labels: r.envLabels }, patch);
     };
 
-    r.shape.append(createSegmented({
+    const shapeControl = createSegmented({
         label: 'Waveform',
         options: WAVEFORMS,
         value: patch.shape,
         onChange: (shape) => setPatch({ shape }),
-    }).el);
+    });
+    r.shape.append(shapeControl.el);
 
+    // Sliders kept by patch key so an imported patch can move them
+    const sliders = {};
     const mountSliders = (container, specs, tone) => {
-        container.append(...specs.map(({ key, ...spec }) => createSlider({
-            ...spec,
-            tone,
-            value: patch[key],
-            onInput: (v) => setPatch({ [key]: v }),
-        }).el));
+        container.append(...specs.map(({ key, ...spec }) => {
+            sliders[key] = createSlider({
+                ...spec,
+                tone,
+                value: patch[key],
+                onInput: (v) => setPatch({ [key]: v }),
+            });
+            return sliders[key].el;
+        }));
     };
     mountSliders(r.filter, SLIDERS.filter);
     mountSliders(r.envelope, SLIDERS.envelope, 'cool');
+
+    // Export / import the sound and the octave
+    const specs = [...SLIDERS.filter, ...SLIDERS.envelope];
+    r.patch.append(createPatchMenu({
+        tool: 'key-synth',
+        version: 1,
+        getSettings: () => ({ patch, octave }),
+        applySettings: (settings) => {
+            const next = {};
+            if (WAVEFORMS.some(w => w.value === settings.patch?.shape)) next.shape = settings.patch.shape;
+            for (const { key, min, max } of specs) {
+                const v = settings.patch?.[key];
+                if (Number.isFinite(v)) next[key] = Math.min(max, Math.max(min, v));
+            }
+            setPatch(next);
+            shapeControl.set(patch.shape);
+            Object.entries(sliders).forEach(([key, control]) => control.set(patch[key]));
+            if (Number.isInteger(settings.octave)) setOctave(settings.octave);
+        },
+    }));
 
     function render() {
         keyboard.querySelectorAll('.keyboard__key').forEach(key => {

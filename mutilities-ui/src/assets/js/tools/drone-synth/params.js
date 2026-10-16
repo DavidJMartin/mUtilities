@@ -1,6 +1,6 @@
 import { WAVEFORMS as SHAPES } from '../../core/audio.js';
-import { frequency, scaleNotesInOctaves } from '../../music/theory.js';
-import { toneFrequency } from './saturation.js';
+import { PITCH_CLASSES, SCALES, frequency, scaleNotesInOctaves } from '../../music/theory.js';
+import { SATURATION_MODES, toneFrequency } from './saturation.js';
 
 export { SHAPES };
 
@@ -162,4 +162,82 @@ export function randomiseVoice(voice, noteOptions, { keepShape = false } = {}) {
 
 export function noteForKey(note, noteOptions) {
     return noteOptions.includes(note) ? note : pick(noteOptions);
+}
+
+// ===== Importing settings =====
+
+const clampTo = (range, value, fallback) => (
+    Number.isFinite(value) ? Math.min(range.max, Math.max(range.min, value)) : fallback
+);
+const oneOf = (options, value, fallback) => (options.some(o => o.value === value) ? value : fallback);
+const bool = (value, fallback) => (typeof value === 'boolean' ? value : fallback);
+
+/**
+ * Check an imported patch against the current state (`current` supplies the
+ * fallback for anything missing or invalid). Numbers are clamped to their
+ * slider ranges, choices checked against their options, and notes moved into
+ * the patch's key.
+ */
+export function sanitizeDroneSettings(settings, current) {
+    const key = {
+        root: PITCH_CLASSES.includes(settings.key?.root) ? settings.key.root : current.key.root,
+        scale: settings.key?.scale in SCALES ? settings.key.scale : current.key.scale,
+    };
+    const notes = noteOptionsForKey(key.root, key.scale);
+
+    if (!Array.isArray(settings.voices) || settings.voices.length !== current.voices.length) {
+        throw new Error('Expected four oscillators');
+    }
+    const voices = settings.voices.map((v, i) => {
+        const was = current.voices[i];
+        return {
+            ...was,
+            on: bool(v?.on, was.on),
+            note: noteForKey(typeof v?.note === 'string' ? v.note : was.note, notes),
+            shape: oneOf(SHAPES, v?.shape, was.shape),
+            volume: clampTo(RANGES.volume, v?.volume, was.volume),
+            filterType: oneOf(FILTER_TYPES, v?.filterType, was.filterType),
+            filterFreq: clampTo(RANGES.filterFreq, v?.filterFreq, was.filterFreq),
+            filterRes: clampTo(RANGES.filterRes, v?.filterRes, was.filterRes),
+            filterLfoOn: bool(v?.filterLfoOn, was.filterLfoOn),
+            filterLfoRate: clampTo(RANGES.filterLfoRate, v?.filterLfoRate, was.filterLfoRate),
+            filterLfoDepth: clampTo(RANGES.filterLfoDepth, v?.filterLfoDepth, was.filterLfoDepth),
+            ampLfoOn: bool(v?.ampLfoOn, was.ampLfoOn),
+            ampLfoRate: clampTo(RANGES.ampLfoRate, v?.ampLfoRate, was.ampLfoRate),
+            ampLfoDepth: clampTo(RANGES.ampLfoDepth, v?.ampLfoDepth, was.ampLfoDepth),
+        };
+    });
+
+    const rv = settings.fx?.reverb ?? {};
+    const sat = settings.fx?.saturation ?? {};
+    const tx = settings.texture ?? {};
+    const { fx, texture } = current;
+
+    return {
+        key,
+        voices,
+        fx: {
+            reverb: {
+                on: bool(rv.on, fx.reverb.on),
+                decay: clampTo(RANGES.reverbDecay, rv.decay, fx.reverb.decay),
+                mix: clampTo(RANGES.reverbMix, rv.mix, fx.reverb.mix),
+                modulation: clampTo(RANGES.reverbModulation, rv.modulation, fx.reverb.modulation),
+            },
+            saturation: {
+                on: bool(sat.on, fx.saturation.on),
+                mode: oneOf(SATURATION_MODES, sat.mode, fx.saturation.mode),
+                drive: clampTo(RANGES.saturationDrive, sat.drive, fx.saturation.drive),
+                tone: clampTo(RANGES.saturationTone, sat.tone, fx.saturation.tone),
+                mix: clampTo(RANGES.saturationMix, sat.mix, fx.saturation.mix),
+            },
+        },
+        texture: {
+            on: bool(tx.on, texture.on),
+            level: clampTo(RANGES.textureLevel, tx.level, texture.level),
+            tone: clampTo(RANGES.textureTone, tx.tone, texture.tone),
+            crackle: clampTo(RANGES.textureCrackle, tx.crackle, texture.crackle),
+            motion: clampTo(RANGES.textureMotion, tx.motion, texture.motion),
+        },
+        drift: clampTo(RANGES.drift, settings.drift, current.drift),
+    };
 }

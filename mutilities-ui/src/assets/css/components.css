@@ -560,3 +560,148 @@
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
 }
+
+/* ===== Patch menu (Export ▾ / Import ▾) ===== */
+
+.patch-menu {
+    display: flex;
+    gap: 8px;
+}
+
+.patch-menu__anchor {
+    position: relative;
+}
+
+.patch-menu__button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: var(--border) solid var(--ink);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    transition: var(--theme-transition);
+}
+
+.patch-menu__button:hover,
+.patch-menu__button[aria-expanded="true"] {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.patch-menu__list {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 190px;
+    padding: 6px;
+    background: var(--card);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+}
+
+.patch-menu__list[hidden] {
+    display: none;
+}
+
+.patch-menu__item {
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 7px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.patch-menu__item:hover,
+.patch-menu__item:focus-visible {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* ===== Toast ===== */
+
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 100;
+    max-width: min(90vw, 420px);
+    padding: 10px 16px;
+    border: var(--border) solid var(--ink);
+    border-radius: var(--radius-md);
+    background: var(--ink);
+    color: var(--card);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-control);
+    opacity: 0;
+    transform: translate(-50%, 8px);
+    transition: opacity .2s, transform .2s;
+    pointer-events: none;
+}
+
+.toast[data-show] {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+.toast[data-error] {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
+}
+
+/* ===== Paste dialog (clipboard fallback) ===== */
+
+.paste-dialog {
+    /* The base reset zeroes margins, which undoes the browser's centring */
+    margin: auto;
+    width: min(92vw, 480px);
+    padding: 0;
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-lg);
+    background: var(--card);
+    color: var(--ink);
+    box-shadow: var(--shadow-raised);
+}
+
+.paste-dialog::backdrop {
+    background: color-mix(in srgb, var(--shadow) 45%, transparent);
+}
+
+.paste-dialog__form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+}
+
+.paste-dialog__hint {
+    font-size: 14px;
+    color: var(--muted);
+}
+
+.paste-dialog__area {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--page);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    resize: vertical;
+}
+
+.paste-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}

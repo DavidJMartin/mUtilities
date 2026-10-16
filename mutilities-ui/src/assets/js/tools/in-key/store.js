@@ -91,6 +91,11 @@ export function createInKeyStore() {
         clearChords() {
             update({ chords: [] });
         },
+
+        /** Replace the whole state, e.g. from an imported patch (already checked by the caller) */
+        load(next) {
+            update({ ...next, selected: new Set(next.selected) });
+        },
     };
 }
 

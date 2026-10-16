@@ -142,3 +142,38 @@ export function defaultPatch() {
 
 /** Clearing keeps each drum's shuffle settings */
 export const emptyRow = ({ shuffle, swing }) => ({ sigs: [null], gates: [], shuffle, swing });
+
+const intOr = (value, fallback) => (Number.isInteger(value) ? value : fallback);
+
+/**
+ * Check imported generators and rows, filling anything missing or invalid
+ * with safe values. Throws if the overall shape is wrong.
+ */
+export function sanitizeSettings(settings) {
+    const { gens, rows } = settings;
+    if (!Array.isArray(gens) || gens.length !== LETTERS.length) throw new Error('Expected six signals');
+    if (!Array.isArray(rows) || rows.length !== ACCENT_ROW + 1) throw new Error('Expected eight drums and an accent');
+
+    return {
+        gens: gens.map(g => clampGenerator({
+            type: g?.type === 'euclid' ? 'euclid' : 'md',
+            rate: RATES.includes(g?.rate) ? g.rate : 1,
+            mode: g?.mode === 'gate' ? 'gate' : 'trig',
+            shift: intOr(g?.shift, 0),
+            k: intOr(g?.k, 3),
+            n: intOr(g?.n, 8),
+        })),
+        rows: rows.map((row) => {
+            const sigs = (Array.isArray(row?.sigs) ? row.sigs : [])
+                .slice(0, MAX_SIGNALS)
+                .map(s => (Number.isInteger(s) && s >= 0 && s < LETTERS.length ? s : null));
+            if (!sigs.length) sigs.push(null);
+            return {
+                sigs,
+                gates: sigs.slice(1).map((_, i) => (GATES.some(g => g.value === row.gates?.[i]) ? row.gates[i] : 'OR')),
+                shuffle: SHUFFLES.includes(row?.shuffle) ? row.shuffle : 50,
+                swing: row?.swing === '8' ? '8' : '16',
+            };
+        }),
+    };
+}
