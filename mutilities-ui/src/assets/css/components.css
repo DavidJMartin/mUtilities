@@ -151,6 +151,27 @@
     color: var(--card);
 }
 
+/* Join: another rhythmic tool is already playing, so this one comes in on the
+   next bar (core/clock.js). Pulses while it waits. */
+.btn--play[data-look="join"] {
+    background: var(--cool);
+    color: var(--on-cool);
+}
+
+.btn--play[data-look="join"][aria-pressed="true"] {
+    animation: join-wait 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes join-wait {
+    to { opacity: .55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .btn--play[data-look="join"][aria-pressed="true"] {
+        animation: none;
+    }
+}
+
 .btn--play:active {
     transform: translate(1px, 1px);
     box-shadow: 2px 2px 0 var(--shadow);

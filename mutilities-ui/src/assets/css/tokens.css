@@ -34,6 +34,9 @@
     --on-cool: light-dark(#ffffff, #1b1916);
     --cool-text: light-dark(#4f6f8f, #93b0cf);
 
+    /* Recording */
+    --rec: light-dark(#c8322a, #f0625a);
+
     /* Instruments */
     --key-border: light-dark(#2a2622, #0f0e0c);
     --white-key: light-dark(#f6f2ea, #e6ddcd);

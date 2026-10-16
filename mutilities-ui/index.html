@@ -38,6 +38,10 @@
             </nav>
 
             <div class="site-header__actions">
+                <button type="button" class="record-toggle" data-record-toggle aria-pressed="false">
+                    <span class="record-toggle__dot" aria-hidden="true"></span>
+                    <span class="record-toggle__label">Rec</span>
+                </button>
                 <button type="button" class="theme-toggle" data-theme-toggle>
                     <span class="theme-toggle__icon" aria-hidden="true">◐</span>
                     <span class="theme-toggle__label" data-theme-label>Dark</span>
@@ -49,6 +53,9 @@
             </div>
         </div>
     </header>
+
+    <!-- Appears whenever something is playing (layout/playground-strip.js) -->
+    <div class="playground" data-playground hidden></div>
 
     <main class="site-main">
 
@@ -308,6 +315,8 @@
                         <div class="envelope-controls" data-ref="envelope"></div>
                     </section>
                 </div>
+
+                <section class="panel key-synth__arp" data-ref="arp" aria-label="Arpeggiator"></section>
             </div>
         </section>
 

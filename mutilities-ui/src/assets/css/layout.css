@@ -83,6 +83,104 @@
 
 /* Header buttons */
 
+/* Record: records everything the site plays (layout/record-button.js) */
+.record-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 14px;
+    border: var(--border) solid var(--ink);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    transition: var(--theme-transition);
+}
+
+.record-toggle:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.record-toggle__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--rec);
+}
+
+.record-toggle[data-state="recording"] {
+    border-color: var(--rec);
+    color: var(--rec);
+}
+
+.record-toggle[data-state="recording"] .record-toggle__dot {
+    animation: rec-pulse 1s ease-in-out infinite alternate;
+}
+
+.record-toggle:disabled {
+    cursor: progress;
+    opacity: .6;
+}
+
+/* After stopping: Save WAV / Discard (layout/record-button.js) */
+.record-anchor {
+    position: relative;
+}
+
+.record-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 200px;
+    padding: 6px;
+    background: var(--card);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-raised);
+}
+
+.record-menu[hidden] {
+    display: none;
+}
+
+.record-menu__title {
+    padding: 6px 10px 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+}
+
+.record-menu__item {
+    height: 36px;
+    padding: 0 10px;
+    border-radius: 7px;
+    text-align: left;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.record-menu__item:hover,
+.record-menu__item:focus-visible {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+@keyframes rec-pulse {
+    to { opacity: .25; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .record-toggle[data-state="recording"] .record-toggle__dot {
+        animation: none;
+    }
+}
+
 .theme-toggle,
 .menu-toggle {
     display: flex;
@@ -167,6 +265,32 @@
         height: 44px;
         justify-content: center;
         padding: 0;
+    }
+
+    /* Phones: just the red dot until recording, then the timer. The theme
+       button steps aside while recording to make room. */
+    .record-toggle {
+        height: 44px;
+        padding: 0 12px;
+    }
+
+    .record-toggle[data-state="idle"] {
+        width: 44px;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .record-toggle[data-state="idle"] .record-toggle__label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .site-header__actions:has(.record-toggle:not([data-state="idle"])) .theme-toggle {
+        display: none;
     }
 
     .theme-toggle__icon {
@@ -332,4 +456,145 @@
 
 .page-head__patch {
     margin-top: 4px;
+}
+
+/* ===== Playground strip (layout/playground-strip.js) ===== */
+
+/* Stays at the top while scrolling, so anything playing can be stopped from anywhere */
+.playground {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    background: var(--card);
+    border-bottom: var(--border) solid var(--card-border);
+    transition: var(--theme-transition);
+}
+
+.playground[hidden] {
+    display: none;
+}
+
+.playground__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.playground__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-right: auto;
+}
+
+.playground__item {
+    display: flex;
+    align-items: center;
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+}
+
+.playground__name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 32px;
+    padding: 0 10px 0 12px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.playground__name:hover {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.playground__led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.playground__item[data-state="queued"] .playground__led {
+    background: var(--cool);
+    animation: join-wait 0.9s ease-in-out infinite alternate;
+}
+
+.playground__queued {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--cool-text);
+}
+
+.playground__stop {
+    width: 34px;
+    height: 32px;
+    border-left: var(--border) solid var(--card-border);
+    font-size: 12px;
+}
+
+.playground__stop:hover,
+.playground__stop-all:hover {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.playground__stop-all {
+    height: 32px;
+    padding: 0 12px;
+    border: var(--border) solid var(--ink);
+    border-radius: var(--radius-pill);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.playground__stop-all[hidden],
+.playground .stepper[hidden] {
+    display: none;
+}
+
+.playground .stepper__controls {
+    --stepper-size: 32px;
+}
+
+.playground .stepper__value {
+    min-width: 64px;
+}
+
+.playground__short {
+    display: none;
+}
+
+/* Phones: short names keep the tools on one line; tempo and Stop all sit below */
+@media (max-width: 719.98px) {
+    /* Still read out by screen readers; the short name is just for sight */
+    .playground__full {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    .playground__short {
+        display: inline;
+    }
+
+    .playground__list {
+        flex: 1 0 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .playground__item {
+        flex: none;
+    }
 }

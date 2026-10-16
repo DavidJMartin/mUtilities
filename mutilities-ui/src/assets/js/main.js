@@ -1,6 +1,9 @@
 import { initTheme } from './core/theme.js';
+import { setupMasterBus } from './core/audio.js';
 import { createRouter } from './core/router.js';
 import { initSiteHeader } from './layout/site-header.js';
+import { initRecordButton } from './layout/record-button.js';
+import { initPlaygroundStrip } from './layout/playground-strip.js';
 import { bindSpaceToPlay } from './core/space-to-play.js';
 import { initInKey } from './tools/in-key/index.js';
 import { initDroneSynth } from './tools/drone-synth/index.js';
@@ -10,9 +13,12 @@ import { initLogicalDrums } from './tools/logical-drums/index.js';
 const page = (id) => document.querySelector(`[data-page="${id}"]`);
 
 initTheme();
+setupMasterBus();
 
 const router = createRouter({ defaultPage: 'home' });
 initSiteHeader(document.querySelector('.site-header'), router);
+initRecordButton(document.querySelector('[data-record-toggle]'));
+initPlaygroundStrip(document.querySelector('[data-playground]'));
 
 initInKey(page('in-key-assistance'));
 

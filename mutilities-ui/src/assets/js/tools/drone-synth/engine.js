@@ -20,6 +20,9 @@ import { TextureEngine } from './texture.js';
 
 const LIMITER_THRESHOLD_DB = -1;
 
+// Make-up gain per filter type, so randomised patches don't drop away
+const FILTER_MAKEUP_DB = { lowpass: 0, highpass: 3, bandpass: 8, notch: 0 };
+
 export class DroneEngine {
     constructor(fx, voices, texture) {
         this.playing = false;
@@ -38,7 +41,8 @@ export class DroneEngine {
         this.saturator.oversample = '4x';
         this.saturator.connect(this.dcBlock);
 
-        this.bus = new Tone.Gain(1);
+        // Trimmed to sit under the drums (levels measured 16 Oct)
+        this.bus = new Tone.Gain(Tone.dbToGain(-2));
         this.bus.connect(this.saturationSwitch.a);
         this.bus.connect(this.saturator);
         this.fx = null;
@@ -65,7 +69,9 @@ export class DroneEngine {
     #createVoice(state) {
         const volume = new Tone.Volume(state.volume).connect(this.bus);
         const tremolo = new Tone.Gain(1).connect(volume);
-        const filter = new Tone.Filter({ type: state.filterType, frequency: state.filterFreq, Q: state.filterRes }).connect(tremolo);
+        // Band-pass and high-pass filters remove a lot of level; give some back
+        const makeup = new Tone.Gain(Tone.dbToGain(FILTER_MAKEUP_DB[state.filterType] ?? 0)).connect(tremolo);
+        const filter = new Tone.Filter({ type: state.filterType, frequency: state.filterFreq, Q: state.filterRes }).connect(makeup);
         const synth = new Tone.Synth({
             oscillator: { type: state.shape },
             envelope: { attack: 2, decay: 0, sustain: 1, release: 2 },
@@ -77,7 +83,7 @@ export class DroneEngine {
         ampLfo.connect(ampCurve);
 
         const voice = {
-            synth, filter, tremolo, volume, filterLfo, ampLfo, ampCurve,
+            synth, filter, makeup, tremolo, volume, filterLfo, ampLfo, ampCurve,
             state,
             sounding: false,
             filterLfoConnected: false,
@@ -107,7 +113,10 @@ export class DroneEngine {
 
         if (next.shape !== prev.shape) voice.synth.oscillator.type = next.shape;
         if (next.volume !== prev.volume) voice.volume.volume.value = next.volume;
-        if (next.filterType !== prev.filterType) voice.filter.type = next.filterType;
+        if (next.filterType !== prev.filterType) {
+            voice.filter.type = next.filterType;
+            voice.makeup.gain.rampTo(Tone.dbToGain(FILTER_MAKEUP_DB[next.filterType] ?? 0), 0.1);
+        }
         if (next.filterRes !== prev.filterRes) voice.filter.Q.value = next.filterRes;
         if (next.filterLfoRate !== prev.filterLfoRate) voice.filterLfo.frequency.value = next.filterLfoRate;
         if (next.ampLfoRate !== prev.ampLfoRate) voice.ampLfo.frequency.value = next.ampLfoRate;

@@ -1,6 +1,7 @@
 import { el, refs, setOptions, toggleData, uid } from '../../core/dom.js';
 import { MEDIA, watchMedia } from '../../core/media.js';
 import { ensureAudioRunning } from '../../core/audio.js';
+import { clock } from '../../core/clock.js';
 import { createSegmented, createSelect, createSlider, createSwitch } from '../../components/controls.js';
 import { SCALES, rootOptions, scaleOptions } from '../../music/theory.js';
 import { createPatchMenu } from '../../components/patch-menu.js';
@@ -59,16 +60,33 @@ export function initDroneSynth(root) {
     r.root.addEventListener('change', onKeyChange);
     r.scale.addEventListener('change', onKeyChange);
 
-    r.play.addEventListener('click', async () => {
-        if (!playing) await ensureAudioRunning();
-        playing = !playing;
+    // A free-running tool: it starts and stops at once, but registers with the
+    // shared clock so the playground strip can show and stop it
+    clock.register('drone-synth', {
+        name: 'Drone Synth',
+        short: 'Drone',
+        page: 'drone-synth',
+        sync: 'free',
+        stop: () => setPlaying(false),
+    });
+
+    function setPlaying(next) {
+        if (next === playing) return;
+        playing = next;
         if (playing) {
             engine.start();
+            clock.launch('drone-synth');
         } else {
             engine.stop();
+            clock.stop('drone-synth');
         }
         drift.setRunning(playing);
         renderTransport();
+    }
+
+    r.play.addEventListener('click', async () => {
+        if (!playing) await ensureAudioRunning();
+        setPlaying(!playing);
     });
 
     r.randomise.addEventListener('click', () => {

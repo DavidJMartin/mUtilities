@@ -1,10 +1,12 @@
-import { refs } from '../../core/dom.js';
+import { el, isTextEntry, refs, toggleData } from '../../core/dom.js';
 import { WAVEFORMS, ensureAudioRunning } from '../../core/audio.js';
 import { createKeyboard } from '../../components/keyboard.js';
-import { createSegmented, createSlider, createStepper } from '../../components/controls.js';
+import { createSegmented, createSlider, createStepper, createSwitch } from '../../components/controls.js';
+import { clock } from '../../core/clock.js';
 import { frequency, midiNumber, parseNote } from '../../music/theory.js';
 import { createPatchMenu } from '../../components/patch-menu.js';
 import { DEFAULT_PATCH, KeySynthEngine } from './engine.js';
+import { ARP_DIRECTIONS, ARP_OCTAVES, ARP_RATES, DEFAULT_ARP, createArp, rateLabel } from './arp.js';
 import { drawEnvelope } from './envelope-graph.js';
 
 const PAGE_ID = 'key-synth';
@@ -48,7 +50,17 @@ export function initKeySynth(root, router) {
     // note -> sources holding it
     const held = new Map();
     const sounding = new Set();
+    // Notes handed to the arp (with the arp on, keys feed it instead of sounding)
+    const arpHeld = new Set();
     let lastNote = null;
+
+    const arp = createArp(engine, (note) => {
+        r.lcdValue.textContent = note;
+    }, () => {
+        // Stopped from the playground strip: the keys no longer feed it
+        arpHeld.clear();
+        render();
+    });
 
     async function press(note, source) {
         if (!held.has(note)) held.set(note, new Set());
@@ -58,7 +70,14 @@ export function initKeySynth(root, router) {
 
         await ensureAudioRunning();
         // The key may have been released while audio was starting up
-        if (held.has(note) && !sounding.has(note)) {
+        if (!held.has(note)) return;
+        if (arp.isOn()) {
+            if (!arpHeld.has(note)) {
+                arpHeld.add(note);
+                arp.noteDown(note);
+                render();
+            }
+        } else if (!sounding.has(note)) {
             engine.noteOn(note);
             sounding.add(note);
         }
@@ -72,13 +91,17 @@ export function initKeySynth(root, router) {
 
         held.delete(note);
         if (sounding.delete(note)) engine.noteOff(note);
+        if (arpHeld.delete(note)) arp.noteUp(note);
         render();
     }
 
+    // Lets go of the keys; a latched arp keeps playing
     function releaseAll() {
         held.clear();
         sounding.clear();
+        arpHeld.clear();
         engine.releaseAll();
+        arp.releaseHeld();
         render();
     }
 
@@ -113,6 +136,7 @@ export function initKeySynth(root, router) {
         if (clamped === octave) return;
         // Held notes belong to the old octave; let them go rather than leave them hanging
         releaseAll();
+        arp.clear();
         pointers.clear();
         octave = clamped;
         octaveControl.set(octave > 0 ? `+${octave}` : String(octave));
@@ -163,10 +187,8 @@ export function initKeySynth(root, router) {
     });
 
     // QWERTY playing, only while this page is showing
-    const isTyping = (target) => target.matches?.('input, select, textarea, [contenteditable]');
-
     document.addEventListener('keydown', (event) => {
-        if (router.current() !== PAGE_ID || event.repeat || event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return;
+        if (router.current() !== PAGE_ID || event.repeat || event.metaKey || event.ctrlKey || event.altKey || isTextEntry(event.target)) return;
         const key = event.key.toLowerCase();
         if (key in OCTAVE_KEYS) {
             event.preventDefault();
@@ -229,7 +251,7 @@ export function initKeySynth(root, router) {
     r.patch.append(createPatchMenu({
         tool: 'key-synth',
         version: 1,
-        getSettings: () => ({ patch, octave }),
+        getSettings: () => ({ patch, octave, arp: arp.options }),
         applySettings: (settings) => {
             const next = {};
             if (WAVEFORMS.some(w => w.value === settings.patch?.shape)) next.shape = settings.patch.shape;
@@ -241,17 +263,132 @@ export function initKeySynth(root, router) {
             shapeControl.set(patch.shape);
             Object.entries(sliders).forEach(([key, control]) => control.set(patch[key]));
             if (Number.isInteger(settings.octave)) setOctave(settings.octave);
+            if (settings.arp && typeof settings.arp === 'object') {
+                const a = settings.arp;
+                setArp({
+                    on: typeof a.on === 'boolean' ? a.on : arp.options.on,
+                    latch: typeof a.latch === 'boolean' ? a.latch : arp.options.latch,
+                    direction: ARP_DIRECTIONS.some(d => d.value === a.direction) ? a.direction : arp.options.direction,
+                    rate: ARP_RATES.includes(a.rate) ? a.rate : arp.options.rate,
+                    octaves: Number.isInteger(a.octaves) ? Math.min(ARP_OCTAVES.max, Math.max(ARP_OCTAVES.min, a.octaves)) : arp.options.octaves,
+                    gate: Number.isFinite(a.gate) ? Math.min(1, Math.max(0.1, a.gate)) : arp.options.gate,
+                });
+            }
         },
     }));
 
+    // ===== Arp panel =====
+
+    const arpSwitch = createSwitch({ label: 'Arpeggiator on', checked: DEFAULT_ARP.on, onChange: on => setArp({ on }) });
+    const latchSwitch = createSwitch({ label: 'Latch', checked: DEFAULT_ARP.latch, small: true, onChange: latch => setArp({ latch }) });
+    const directionControl = createSegmented({
+        label: 'Arp direction',
+        options: ARP_DIRECTIONS,
+        value: DEFAULT_ARP.direction,
+        small: true,
+        onChange: direction => setArp({ direction }),
+    });
+    const rateControl = createStepper({
+        label: 'Rate',
+        hint: 'of a beat',
+        onStep: (dir) => {
+            const i = ARP_RATES.indexOf(arp.options.rate) + dir;
+            if (i >= 0 && i < ARP_RATES.length) setArp({ rate: ARP_RATES[i] });
+        },
+    });
+    const octavesControl = createStepper({
+        label: 'Octaves',
+        onStep: (dir) => {
+            const next = arp.options.octaves + dir;
+            if (next >= ARP_OCTAVES.min && next <= ARP_OCTAVES.max) setArp({ octaves: next });
+        },
+    });
+    const gateControl = createSlider({
+        label: 'Gate',
+        min: 0.1,
+        max: 1,
+        step: 0.05,
+        value: DEFAULT_ARP.gate,
+        format: v => `${Math.round(v * 100)}%`,
+        tone: 'cool',
+        onInput: gate => setArp({ gate }),
+    });
+    // Tempo is the shared clock's, so it's the same as Logical Drums'
+    const tempoControl = createStepper({
+        label: 'Tempo',
+        hint: 'shared',
+        repeat: true,
+        onStep: (dir) => { clock.bpm += dir; },
+    });
+    tempoControl.el.classList.add('key-synth__arp-tempo');
+    const renderTempo = () => tempoControl.set(`${clock.bpm} BPM`);
+    clock.onBpmChange(renderTempo);
+
+    r.arp.append(
+        el('div', { class: 'panel__head panel__head--ruled' },
+            el('h2', { class: 'panel__title', text: 'Arp' }),
+            arpSwitch.el
+        ),
+        el('div', { class: 'key-synth__arp-params' },
+            el('div', { class: 'field key-synth__arp-wide' },
+                el('span', { class: 'field__label', text: 'Direction' }),
+                directionControl.el
+            ),
+            rateControl.el,
+            octavesControl.el,
+            gateControl.el,
+            tempoControl.el,
+            el('label', { class: 'field field--inline key-synth__latch' },
+                el('span', { class: 'field__label', text: 'Latch (keeps playing after you let go)' }),
+                latchSwitch.el
+            )
+        )
+    );
+
+    function setArp(change) {
+        const wasOn = arp.isOn();
+        // Notes held as plain synth notes don't carry over into the arp, and vice versa
+        if ('on' in change && change.on !== wasOn) {
+            engine.releaseAll();
+            sounding.clear();
+            arpHeld.clear();
+        }
+        arp.set(change);
+        renderArp();
+        render();
+    }
+
+    function renderArp() {
+        const o = arp.options;
+        arpSwitch.set(o.on);
+        latchSwitch.set(o.latch);
+        directionControl.set(o.direction);
+        rateControl.set(rateLabel(o.rate));
+        octavesControl.set(String(o.octaves));
+        gateControl.set(o.gate);
+        toggleData(r.arp, 'off', !o.on);
+    }
+
     function render() {
+        // Held keys light up; with a latched arp, the notes it's still playing show too
+        const latched = new Set(arp.isOn() ? arp.notes : []);
         keyboard.querySelectorAll('.keyboard__key').forEach(key => {
             if (held.has(key.dataset.note)) {
                 key.dataset.state = 'active';
+            } else if (latched.has(key.dataset.note)) {
+                key.dataset.state = 'preview';
             } else {
                 delete key.dataset.state;
             }
         });
+
+        if (arp.isOn()) {
+            const o = arp.options;
+            const direction = ARP_DIRECTIONS.find(d => d.value === o.direction).label;
+            r.lcdLabel.textContent = `Arp · ${direction} · ${rateLabel(o.rate)}${o.latch ? ' · latch' : ''}`;
+            if (!arp.notes.length) r.lcdValue.textContent = '— hold some keys —';
+            return;
+        }
 
         if (held.size > 0) {
             const notes = [...held.keys()].sort((a, b) => pitchOrder(a) - pitchOrder(b));
@@ -268,6 +405,8 @@ export function initKeySynth(root, router) {
     drawEnvelope({ line: r.envLine, fill: r.envFill, labels: r.envLabels }, patch);
     octaveControl.set('0');
     buildKeyboard();
+    renderArp();
+    renderTempo();
     render();
 }
 

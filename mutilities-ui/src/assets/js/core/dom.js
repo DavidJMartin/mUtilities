@@ -70,6 +70,17 @@ export function refs(root) {
     return found;
 }
 
+/**
+ * Is the key press going into something you type into? Sliders, checkboxes
+ * and buttons don't count, so keyboard shortcuts (Space to play, the Key
+ * Synth's QWERTY keys) keep working after you've touched a control.
+ */
+export function isTextEntry(target) {
+    return Boolean(target.matches?.(
+        'input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), select, textarea, [contenteditable]'
+    ));
+}
+
 export function toggleData(node, name, on) {
     if (on) {
         node.dataset[name] = '';

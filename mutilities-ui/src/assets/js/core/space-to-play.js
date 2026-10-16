@@ -5,10 +5,7 @@
 // Space handling (e.g. steppers), and also swallows the matching keyup, which
 // is when browsers "click" a focused button.
 
-// Places where Space should still type or open a menu
-const isTyping = target => target.matches?.(
-    'input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), select, textarea, [contenteditable]'
-);
+import { isTextEntry } from './dom.js';
 
 const isSpace = event => event.code === 'Space' || event.key === ' ';
 
@@ -17,7 +14,7 @@ export function bindSpaceToPlay(router, pageId, playButton) {
 
     window.addEventListener('keydown', (event) => {
         if (!isSpace(event) || router.current() !== pageId) return;
-        if (event.metaKey || event.ctrlKey || event.altKey || isTyping(event.target)) return;
+        if (event.metaKey || event.ctrlKey || event.altKey || isTextEntry(event.target)) return;
 
         event.preventDefault();
         event.stopPropagation();

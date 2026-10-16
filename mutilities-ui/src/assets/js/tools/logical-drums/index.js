@@ -1,5 +1,6 @@
 import { el, refs, toggleData } from '../../core/dom.js';
 import { ensureAudioRunning } from '../../core/audio.js';
+import { BPM_MAX, BPM_MIN, clock, playButtonState } from '../../core/clock.js';
 import { createSegmented, createSelect, createSlider, createStepper } from '../../components/controls.js';
 import {
     ACCENT_ROW,
@@ -29,8 +30,7 @@ import { randomPatch } from './random.js';
 import { createPatchMenu } from '../../components/patch-menu.js';
 
 const ROW_NAMES = [...VOICE_NAMES, 'Accent'];
-const BPM_MIN = 40;
-const BPM_MAX = 240;
+const PLAYER_ID = 'logical-drums';
 const TRIGGER_FLASH_MS = 90;
 const DRUM_FLASH_MS = 120;
 
@@ -48,7 +48,6 @@ export function initLogicalDrums(root) {
     const state = {
         ...defaultPatch(),
         accentAmount: 0.6,
-        bpm: 120,
         bars: 4,
         selected: 0,
     };
@@ -132,16 +131,17 @@ export function initLogicalDrums(root) {
         label: 'Tempo',
         hint: `${BPM_MIN}–${BPM_MAX}`,
         repeat: true,
-        onStep: dir => setBpm(state.bpm + dir),
+        onStep: dir => setBpm(clock.bpm + dir),
     });
     r.tempo.prepend(tempo.el);
 
-    function setBpm(bpm) {
-        state.bpm = Math.max(BPM_MIN, Math.min(BPM_MAX, Math.round(bpm)));
-        engine.setBpm(state.bpm);
-        tempo.set(`${state.bpm} BPM`);
+    // Tempo belongs to the shared clock, so any tool changing it updates this display too
+    const setBpm = (bpm) => { clock.bpm = bpm; };
+    const renderTempo = () => {
+        tempo.set(`${clock.bpm} BPM`);
         renderLcd();
-    }
+    };
+    clock.onBpmChange(renderTempo);
 
     let taps = [];
     r.tap.addEventListener('pointerdown', (event) => {
@@ -163,32 +163,44 @@ export function initLogicalDrums(root) {
 
     r.export.addEventListener('click', () => downloadMidi(state, state.bars));
 
+    // Started and stopped through the shared clock: if another rhythmic tool is
+    // already playing, Play becomes Join and the drums come in on the next bar
+    clock.register(PLAYER_ID, {
+        name: 'Logical Drums',
+        short: 'Drums',
+        page: 'logical-drums',
+        sync: 'clock',
+        start: startTicks => engine.start(startTicks),
+        stop: () => {
+            engine.stop();
+            clearLights();
+        },
+    });
+    clock.onChange(renderTransport);
+
     r.play.addEventListener('click', async () => {
-        if (engine.playing) {
-            stop();
+        if (clock.isPlaying(PLAYER_ID)) {
+            clock.stop(PLAYER_ID);
         } else {
             await ensureAudioRunning();
-            engine.start(state.bpm);
-            renderTransport();
+            clock.launch(PLAYER_ID);
         }
     });
 
-    function stop() {
-        engine.stop();
-        clearLights();
-        renderTransport();
-    }
-
     function renderTransport() {
-        r.play.setAttribute('aria-pressed', String(engine.playing));
-        r.playLabel.textContent = engine.playing ? '■  Stop' : '▶  Play';
+        const { label, look, pressed } = playButtonState(PLAYER_ID);
+        r.play.setAttribute('aria-pressed', String(pressed));
+        r.play.dataset.look = look;
+        r.playLabel.textContent = label;
         renderLcd();
-        if (!engine.playing) r.lcdValue.textContent = '—.—.—';
+        if (!clock.isPlaying(PLAYER_ID)) r.lcdValue.textContent = '—.—.—';
     }
 
     function renderLcd() {
-        toggleData(r.lcdLed, 'on', engine.playing);
-        r.lcdLabel.textContent = engine.playing ? `Running · ${state.bpm} BPM` : 'Stopped';
+        const state = clock.state(PLAYER_ID);
+        toggleData(r.lcdLed, 'on', state === 'playing');
+        r.lcdLabel.textContent = state === 'playing' ? `Running · ${clock.bpm} BPM`
+            : state === 'queued' ? 'Joining on the next bar' : 'Stopped';
     }
 
     function renderPosition(tick) {
@@ -362,7 +374,7 @@ export function initLogicalDrums(root) {
             gens: state.gens,
             rows: state.rows,
             accentAmount: state.accentAmount,
-            bpm: state.bpm,
+            bpm: clock.bpm,
             bars: state.bars,
         }),
         applySettings: (settings) => {
@@ -589,7 +601,7 @@ export function initLogicalDrums(root) {
         r.loop.textContent = loopText(state.gens, state.rows);
     }
 
-    setBpm(state.bpm);
+    renderTempo();
     renderLoop();
     renderTransport();
 }

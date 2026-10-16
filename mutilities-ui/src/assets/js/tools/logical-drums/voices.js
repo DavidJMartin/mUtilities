@@ -22,7 +22,9 @@ const LIMITER_THRESHOLD_DB = -1;
 export class DrumKit {
     constructor() {
         this.limiter = new Tone.Limiter(LIMITER_THRESHOLD_DB).toDestination();
-        this.bus = new Tone.Volume(-6).connect(this.limiter);
+        // The loudest tool in the playground (levels measured 16 Oct); the limiter
+        // and the master bus catch stacked hits
+        this.bus = new Tone.Volume(-1).connect(this.limiter);
         this.noise = new Tone.Noise('white');
 
         const kick = new Tone.MembraneSynth({

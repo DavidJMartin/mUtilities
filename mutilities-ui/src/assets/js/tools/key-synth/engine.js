@@ -13,7 +13,8 @@ export const DEFAULT_PATCH = {
 // Each voice can peak near full scale, so chords clip without headroom. The
 // synth is turned down and a limiter catches peaks from stacked notes or
 // high resonance.
-const SYNTH_VOLUME_DB = -12;
+// Level balanced against the other tools (measured 16 Oct): sits under the drums
+const SYNTH_VOLUME_DB = -20;
 const LIMITER_THRESHOLD_DB = -1;
 
 export class KeySynthEngine {
@@ -47,6 +48,11 @@ export class KeySynthEngine {
 
     releaseAll() {
         this.synth.releaseAll();
+    }
+
+    /** A note of fixed length at an exact time, for the arpeggiator */
+    playNote(note, duration, time) {
+        this.synth.triggerAttackRelease(note, duration, time);
     }
 
     set(patch) {

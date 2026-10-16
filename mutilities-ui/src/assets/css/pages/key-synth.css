@@ -129,3 +129,45 @@
         display: none;
     }
 }
+
+/* ===== Arp ===== */
+
+.key-synth__arp-params {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 16px 18px;
+    transition: opacity .15s;
+}
+
+.key-synth__arp-wide,
+.key-synth__latch {
+    grid-column: 1 / -1;
+}
+
+.key-synth__arp .segmented__option {
+    flex: 1;
+    height: var(--segment-sm-h);
+}
+
+/* Phones: the tempo readout needs the full row */
+@media (max-width: 959.98px) {
+    .key-synth__arp-tempo {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Settings stay adjustable while it's off, just dimmed */
+.key-synth__arp[data-off] .key-synth__arp-params {
+    opacity: .5;
+}
+
+@media (min-width: 960px) {
+    .key-synth__arp-params {
+        grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr));
+    }
+
+    .key-synth__arp-wide {
+        grid-column: auto;
+    }
+}
