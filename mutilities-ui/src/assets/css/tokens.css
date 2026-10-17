@@ -9,7 +9,7 @@
  * listed here and mirrored in assets/js/core/media.js):
  *   compact   < 720px   phone layout: one-octave piano, vertical guitar neck,
  *                       single-column panels, collapsible oscillators
- *   nav       < 960px   header nav collapses into the Menu button
+ *   nav       < 1200px  header nav collapses into the Menu button (six tools need the room)
  *   wide      >= 1100px side-by-side instruments, four oscillator columns
  */
 

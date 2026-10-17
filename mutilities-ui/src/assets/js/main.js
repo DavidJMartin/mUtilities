@@ -9,6 +9,7 @@ import { initInKey } from './tools/in-key/index.js';
 import { initDroneSynth } from './tools/drone-synth/index.js';
 import { initKeySynth } from './tools/key-synth/index.js';
 import { initLogicalDrums } from './tools/logical-drums/index.js';
+import { initTwinTuring } from './tools/twin-turing/index.js';
 
 const page = (id) => document.querySelector(`[data-page="${id}"]`);
 
@@ -25,8 +26,9 @@ initInKey(page('in-key-assistance'));
 initDroneSynth(page('drone-synth'));
 initKeySynth(page('key-synth'), router);
 initLogicalDrums(page('logical-drums'));
+initTwinTuring(page('twin-turing'));
 
 // Space plays/stops the tools that have a transport
-for (const id of ['drone-synth', 'logical-drums']) {
+for (const id of ['drone-synth', 'logical-drums', 'twin-turing']) {
     bindSpaceToPlay(router, id, page(id).querySelector('[data-ref="play"]'));
 }

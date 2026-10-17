@@ -34,6 +34,7 @@
                     <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Drone Synth</span><span class="site-nav__num" aria-hidden="true">03</span></a></li>
                     <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Key Synth</span><span class="site-nav__num" aria-hidden="true">04</span></a></li>
                     <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Logical Drums</span><span class="site-nav__num" aria-hidden="true">05</span></a></li>
+                    <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Twin Turing</span><span class="site-nav__num" aria-hidden="true">06</span></a></li>
                 </ul>
             </nav>
 
@@ -123,6 +124,20 @@
                         <div class="tool-card__text">
                             <h2 class="tool-card__title">Logical Drums</h2>
                             <p class="tool-card__desc">An algorithmic drum machine built from clock dividers, Euclidean rhythms and logic gates.</p>
+                        </div>
+                    </a>
+
+                    <a class="panel panel--raised tool-card" href="#twin-turing">
+                        <div class="tool-card__meta meta"><span>05</span><span>Melody</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <div class="mini-turing">
+                                <span class="mini-turing__row"><b>A</b><i data-on></i><i></i><i data-on></i><i data-on></i><i></i><i></i><i data-on></i><i></i></span>
+                                <span class="mini-turing__row"><b>B</b><i></i><i data-on></i><i data-on></i><i></i><i data-on></i><i></i><i></i><i data-on></i></span>
+                            </div>
+                        </div>
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">Twin Turing</h2>
+                            <p class="tool-card__desc">Two looping shift registers summed into one melody. Lock a loop you like, or let it drift.</p>
                         </div>
                     </a>
                 </div>
@@ -367,6 +382,36 @@
                     </div>
                     <div class="drum-rows" data-ref="rows"></div>
                 </section>
+            </div>
+        </section>
+
+        <!-- ===== Twin Turing ===== -->
+        <section data-page="twin-turing" data-title="Twin Turing · mUtilities" hidden>
+            <div class="page__inner twin-turing container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">Twin Turing</h1>
+                        <p class="page-lead">Two looping shift registers summed into one melody. Lock a loop you like, or let it drift. Inspired by Tom Whitwell's <a href="https://www.musicthing.co.uk/Turing-Machine/" target="_blank" rel="noopener">Turing Machine</a> from <a href="https://www.musicthing.co.uk/" target="_blank" rel="noopener">Music Thing Modular</a>.</p>
+                        <div class="page-head__patch" data-ref="patch"></div>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label"><span class="lcd__led" data-ref="lcdLed"></span><span data-ref="lcdLabel">Stopped</span></span>
+                        <span class="lcd__value" data-ref="lcdValue">—</span>
+                    </div>
+                </header>
+
+                <div class="panel panel--raised turing__transport">
+                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                    <div class="turing__tempo" data-ref="tempo"></div>
+                    <div class="turing__key" data-ref="key"></div>
+                    <div class="logical__midi">
+                        <div class="logical__bars" data-ref="bars"></div>
+                        <button type="button" class="btn btn--outline" data-ref="export">Export MIDI</button>
+                    </div>
+                </div>
+
+                <div class="turing__machines" data-ref="machines"></div>
+                <section class="panel turing__voice" data-ref="voice" aria-label="Voice"></section>
             </div>
         </section>
 

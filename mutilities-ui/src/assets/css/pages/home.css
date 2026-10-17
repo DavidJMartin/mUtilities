@@ -222,3 +222,35 @@
     background: var(--lcd-text);
     border-color: var(--lcd-text);
 }
+
+.mini-turing {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mini-turing__row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mini-turing__row b {
+    width: 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--lcd-label);
+}
+
+.mini-turing__row i {
+    width: 12px;
+    height: 12px;
+    border: var(--border) solid var(--lcd-label);
+    border-radius: 50%;
+}
+
+.mini-turing__row i[data-on] {
+    background: var(--lcd-text);
+    border-color: var(--lcd-text);
+}

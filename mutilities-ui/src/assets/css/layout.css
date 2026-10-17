@@ -242,7 +242,7 @@
 
 /* Navigation: collapsed behind the Menu button on narrower screens */
 
-@media (max-width: 959.98px) {
+@media (max-width: 1199.98px) {
     .site-header__inner {
         grid-template-columns: 1fr auto;
         grid-template-areas:
@@ -407,6 +407,17 @@
     max-width: 540px;
     font-size: clamp(15px, 14.1px + .225vw, 17px);
     color: var(--muted);
+}
+
+/* Links in a page's intro, e.g. credits */
+.page-lead a {
+    color: var(--accent-text);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.page-lead a:hover {
+    color: var(--ink);
 }
 
 @media (min-width: 720px) {

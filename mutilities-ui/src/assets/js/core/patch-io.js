@@ -13,6 +13,7 @@ const TOOL_NAMES = {
     'drone-synth': 'Drone Synth',
     'key-synth': 'Key Synth',
     'logical-drums': 'Logical Drums',
+    'twin-turing': 'Twin Turing',
 };
 
 export class PatchError extends Error {}
