@@ -1,0 +1,249 @@
+/* Twin Turing */
+
+/* ===== Transport ===== */
+
+.turing__transport {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: end;
+    gap: 14px;
+}
+
+/* Tempo value in a well, as in Logical Drums */
+.turing__tempo .stepper__controls {
+    --stepper-size: 46px;
+}
+
+.turing__tempo .stepper__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--control-h);
+    background: var(--page);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+}
+
+.turing__key {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 10px;
+}
+
+@media (min-width: 720px) {
+    .turing__transport {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .turing__tempo {
+        flex: 0 1 260px;
+        min-width: 220px;
+    }
+
+
+    .turing__key {
+        flex: 0 1 340px;
+        min-width: 280px;
+    }
+
+    .turing__transport .logical__midi {
+        margin-left: auto;
+    }
+}
+
+/* ===== Machines ===== */
+
+.turing__machines {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--panel-gap);
+}
+
+@media (min-width: 960px) {
+    .turing__machines {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+.turing-machine {
+    gap: 16px;
+}
+
+.turing-machine__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: var(--border) solid var(--card-border);
+}
+
+.turing-machine__id {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.turing-machine__eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: .1em;
+    color: var(--faint);
+}
+
+.turing-machine__letter {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -.03em;
+}
+
+.turing-machine__summary {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    white-space: nowrap;
+}
+
+/* The register: one LED per bit, in loop order (newest first) */
+.turing-register {
+    display: grid;
+    grid-template-columns: repeat(16, minmax(0, 1fr));
+    gap: 4px;
+    padding: 10px;
+    background: var(--lcd);
+    border: var(--border) solid var(--lcd-border);
+    border-radius: var(--radius-md);
+}
+
+.turing-bit {
+    aspect-ratio: 1;
+    min-width: 0;
+    border: var(--border) solid var(--lcd-label);
+    border-radius: 50%;
+    background: transparent;
+    transition: background-color .06s;
+}
+
+.turing-bit[hidden] {
+    display: none;
+}
+
+.turing-bit[data-on] {
+    background: var(--lcd-text);
+    border-color: var(--lcd-text);
+}
+
+.turing-machine__controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: end;
+    gap: 16px 18px;
+}
+
+.turing-machine__controls .slider {
+    grid-column: 1 / -1;
+}
+
+.turing-machine__randomise {
+    height: var(--control-h);
+}
+
+@media (min-width: 720px) {
+    .turing-machine__randomise {
+        height: 38px;
+    }
+}
+
+/* ===== Voice ===== */
+
+.turing__voice-params {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: end;
+    gap: 16px 18px;
+}
+
+.turing__voice .segmented {
+    display: flex;
+}
+
+.turing__voice .segmented__option {
+    flex: 1;
+}
+
+/* Fields shown only in one mode (Notes on / B octave) */
+.turing__voice-params > [hidden] {
+    display: none;
+}
+
+@media (min-width: 720px) {
+    .turing__voice-params {
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    }
+}
+
+.turing__triggers {
+    grid-column: 1 / -1;
+}
+
+.turing__hint {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* Machine B switched off: settings stay adjustable, just dimmed */
+.turing-machine[data-off] {
+    box-shadow: none;
+}
+
+.turing-machine[data-off] .turing-register,
+.turing-machine[data-off] .turing-machine__controls,
+.turing-machine[data-off] .turing-machine__letter {
+    opacity: .4;
+}
+
+/* Write: hold a button to write 1s or 0s into the loop as it comes round */
+.turing-machine__write {
+    grid-column: 1 / -1;
+}
+
+.turing-machine__write-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.turing-write {
+    height: var(--control-h);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-family: var(--font-mono);
+    font-size: 16px;
+    font-weight: 500;
+    touch-action: none;
+    user-select: none;
+    transition: background-color .06s, color .06s;
+}
+
+.turing-write:hover {
+    background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+.turing-write[data-on] {
+    background: var(--lcd-text);
+    border-color: var(--lcd-text);
+    color: var(--on-accent);
+}
+
+@media (min-width: 720px) {
+    .turing-write {
+        height: 38px;
+    }
+}
