@@ -14,6 +14,7 @@ const TOOL_NAMES = {
     'key-synth': 'Key Synth',
     'logical-drums': 'Logical Drums',
     'twin-turing': 'Twin Turing',
+    'tab-writer': 'Tab Writer',
 };
 
 export class PatchError extends Error {}

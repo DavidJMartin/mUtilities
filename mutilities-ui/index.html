@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>mUtilities</title>
-    <meta name="description" content="Small music tools for composers and musicians: find the key you're in, play a drone, noodle on a synth, or build beats from logic gates.">
+    <meta name="description" content="Small music tools for composers and musicians: find the key you're in, play a drone, noodle on a synth, build beats from logic gates, grow melodies from looping random machines, or write guitar tab.">
     <meta name="theme-color" content="#ece6da">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -35,6 +35,7 @@
                     <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Key Synth</span><span class="site-nav__num" aria-hidden="true">04</span></a></li>
                     <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Logical Drums</span><span class="site-nav__num" aria-hidden="true">05</span></a></li>
                     <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Twin Turing</span><span class="site-nav__num" aria-hidden="true">06</span></a></li>
+                    <li><a class="site-nav__link" href="#tab-writer" data-nav="tab-writer"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Tab Writer</span><span class="site-nav__num" aria-hidden="true">07</span></a></li>
                 </ul>
             </nav>
 
@@ -138,6 +139,19 @@
                         <div class="tool-card__text">
                             <h2 class="tool-card__title">Twin Turing</h2>
                             <p class="tool-card__desc">Two looping shift registers summed into one melody. Lock a loop you like, or let it drift.</p>
+                        </div>
+                    </a>
+
+                    <a class="panel panel--raised tool-card" href="#tab-writer">
+                        <div class="tool-card__meta meta"><span>06</span><span>Guitar</span></div>
+                        <div class="tool-card__preview lcd-well" aria-hidden="true">
+                            <pre class="mini-tab">e|-----0---|
+B|---1---1-|
+G|-2-------|</pre>
+                        </div>
+                        <div class="tool-card__text">
+                            <h2 class="tool-card__title">Tab Writer</h2>
+                            <p class="tool-card__desc">Write guitar tab by tapping the fretboard, and see which keys your riff fits.</p>
                         </div>
                     </a>
                 </div>
@@ -412,6 +426,55 @@
 
                 <div class="turing__machines" data-ref="machines"></div>
                 <section class="panel turing__voice" data-ref="voice" aria-label="Voice"></section>
+            </div>
+        </section>
+
+        <!-- ===== Tab Writer ===== -->
+        <section data-page="tab-writer" data-title="Tab Writer · mUtilities" hidden>
+            <div class="page__inner tab-writer container">
+                <header class="page-head">
+                    <div class="page-head__text">
+                        <h1 class="page-title">Tab Writer</h1>
+                        <p class="page-lead">Tap a beat in the tab, then tap the fretboard to write notes. It shows which keys your riff fits as you go.</p>
+                        <div class="page-head__patch" data-ref="patch"></div>
+                    </div>
+                    <div class="lcd">
+                        <span class="lcd__label" data-ref="lcdLabel">Beat 1</span>
+                        <span class="lcd__value" data-ref="lcdValue">Rest</span>
+                    </div>
+                </header>
+
+                <div class="panel panel--raised tab__transport">
+                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                    <div class="tab__tempo" data-ref="tempo"></div>
+                    <div class="tab__out">
+                        <button type="button" class="btn btn--outline" data-ref="copy">Copy tab</button>
+                        <button type="button" class="btn btn--outline" data-ref="saveTab">Save .txt</button>
+                        <button type="button" class="btn btn--outline" data-ref="midi">Export MIDI</button>
+                        <button type="button" class="btn btn--outline" data-ref="new">New tab</button>
+                    </div>
+                </div>
+
+                <section class="panel tab__staff-panel" aria-label="Tab">
+                    <div class="tab__staff" data-ref="staff"></div>
+                    <div class="tab__tools" data-ref="tools"></div>
+                </section>
+
+                <section class="panel panel--raised tab__fretboard-panel">
+                    <div class="panel__head panel__head--ruled">
+                        <h2 class="panel__title">Fretboard</h2>
+                        <div class="tab__fret-options" data-ref="fretOptions"></div>
+                    </div>
+                    <div data-ref="fretboard"></div>
+                </section>
+
+                <section class="panel tab__keys-panel">
+                    <div class="panel__head panel__head--ruled">
+                        <h2 class="panel__title">Fits these keys</h2>
+                        <span class="meta" data-ref="keyCount"></span>
+                    </div>
+                    <div class="chip-list" data-ref="keys"></div>
+                </section>
             </div>
         </section>
 

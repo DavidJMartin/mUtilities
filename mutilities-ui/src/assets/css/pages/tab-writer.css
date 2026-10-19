@@ -1,0 +1,308 @@
+/* Tab Writer */
+
+/* ===== Transport ===== */
+
+.tab__transport {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+}
+
+/* Tempo value in a well, as in Logical Drums */
+.tab__tempo .stepper__controls {
+    --stepper-size: 46px;
+}
+
+.tab__tempo .stepper__value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--control-h);
+    background: var(--page);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    font-size: 16px;
+}
+
+.tab__out {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+@media (min-width: 720px) {
+    .tab__transport {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .tab__tempo {
+        flex: 0 1 260px;
+        min-width: 220px;
+    }
+
+    .tab__out {
+        display: flex;
+        flex-wrap: wrap;
+        margin-left: auto;
+    }
+}
+
+/* ===== Tab ===== */
+
+.tab__staff-panel {
+    gap: 14px;
+}
+
+/* One row of bars that scrolls sideways, string names pinned on the left */
+.tab__staff {
+    --cell-h: 24px;
+    display: flex;
+    align-items: stretch;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    padding-bottom: 6px;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    scrollbar-width: thin;
+}
+
+.tab-names {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 22px;
+    padding-top: 4px;
+    background: var(--card);
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.tab-bar {
+    display: flex;
+    flex: none;
+    padding: 0 6px;
+    border-right: 2px solid var(--ink);
+}
+
+.tab-bar:first-of-type {
+    border-left: 2px solid var(--ink);
+}
+
+.tab-cell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--cell-h);
+    font-size: 14px;
+}
+
+/* The string line, broken behind a fret number */
+.tab-beat .tab-cell::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--string);
+}
+
+.tab-beat .tab-cell:not(:empty)::before {
+    display: none;
+}
+
+.tab-cell[data-out] {
+    color: var(--rec);
+    text-decoration: underline wavy;
+    text-underline-offset: 3px;
+}
+
+.tab-beat {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: 34px;
+    padding-top: 4px;
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Longer notes take more room, so the tab reads roughly in time */
+.tab-beat[data-dur="s"] { width: 30px; }
+.tab-beat[data-dur="q"] { width: 44px; }
+.tab-beat[data-dur="h"] { width: 64px; }
+.tab-beat[data-dur="w"] { width: 96px; }
+
+.tab-beat__dur {
+    margin-top: 2px;
+    font-size: 9px;
+    text-align: center;
+    color: var(--faint);
+}
+
+@media (hover: hover) {
+    .tab-beat:hover {
+        background: color-mix(in srgb, var(--ink) 6%, transparent);
+    }
+}
+
+.tab-beat[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    box-shadow: inset 0 0 0 var(--border) var(--accent);
+}
+
+.tab-beat[aria-pressed="true"] .tab-beat__dur {
+    color: var(--accent-text);
+}
+
+/* Playhead: an LED strip under the beat that's sounding */
+.tab-beat[data-playing] {
+    box-shadow: inset 0 -4px 0 var(--cool);
+}
+
+.tab-beat[aria-pressed="true"][data-playing] {
+    box-shadow: inset 0 0 0 var(--border) var(--accent), inset 0 -4px 0 var(--cool);
+}
+
+/* ===== Beat tools ===== */
+
+.tab__tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+}
+
+.tab__length .segmented {
+    width: 100%;
+}
+
+.tab__buttons {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.tab-tool {
+    min-height: var(--segment-h);
+    padding: 0 12px;
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-md);
+    background: var(--card);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: var(--shadow-control);
+    transition: var(--theme-transition);
+}
+
+.tab-tool:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--shadow);
+}
+
+@media (min-width: 720px) {
+    .tab__tools {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 12px 20px;
+    }
+
+    .tab__length {
+        flex: 0 1 360px;
+    }
+
+    .tab__buttons {
+        display: flex;
+        flex-wrap: wrap;
+    }
+}
+
+/* ===== Fretboard ===== */
+
+.tab__fret-options {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 20px;
+    margin-left: auto;
+}
+
+.tab__fretboard-panel .panel__head {
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ===== Keys ===== */
+
+.tab__keys-panel .placeholder {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ===== Phones =====
+ * The neck runs down the screen, so the tab sticks to the top while you tap
+ * the higher frets (below the playground strip when something's playing).
+ * Made compact so the neck still has room.
+ */
+@media (max-width: 719.98px) {
+    .tab__staff-panel {
+        position: sticky;
+        top: var(--playground-h, 0px);
+        z-index: 20;
+        gap: 8px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+
+    .tab__staff {
+        --cell-h: 19px;
+        padding-bottom: 4px;
+    }
+
+    .tab-cell {
+        font-size: 13px;
+    }
+
+    .tab-names {
+        font-size: 11px;
+    }
+
+    .tab__tools {
+        gap: 8px;
+    }
+
+    /* The durations explain themselves once you've used them; the label costs a row */
+    .tab__length .field__label {
+        display: none;
+    }
+
+    .tab__length .segmented__option {
+        height: 34px;
+    }
+
+    .tab-tool {
+        min-height: 34px;
+        padding: 0 6px;
+        font-size: 13px;
+    }
+}
+
+/* Keyboard hint, only where there's likely a keyboard */
+.tab__key-hint {
+    display: none;
+    flex-basis: 100%;
+}
+
+@media (hover: hover) and (min-width: 720px) {
+    .tab__key-hint {
+        display: block;
+    }
+}

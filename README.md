@@ -20,6 +20,12 @@ A simple playable synth, using your computer keyboard or the on-screen keys.
 ### Logical Drums
 An algorithmic drum machine in the spirit of modular sequencers. Six signal generators (clock multipliers, dividers and Euclidean rhythms, as triggers or gates) feed drum voices through chains of logic gates. Patterns can be exported as MIDI.
 
+### Twin Turing
+Two looping random melody machines, after Music Thing Modular's Turing Machine. Lock a loop you like, let it slip, or let it wander, summed into one melody or played as two.
+
+### Tab Writer
+Write guitar tab by tapping a fretboard, with playback, and see which keys your riff fits. Copy it as text tab or export it as MIDI.
+
 ## Planned
 
 ### Melody generation

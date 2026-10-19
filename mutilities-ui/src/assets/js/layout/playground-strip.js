@@ -23,6 +23,11 @@ export function initPlaygroundStrip(root) {
 
     root.append(el('div', { class: 'playground__inner container' }, list, tempo.el, stopAll));
 
+    // Its height as --playground-h, so other sticky things (the Tab Writer's tab on phones) sit below it
+    new ResizeObserver(() => {
+        document.documentElement.style.setProperty('--playground-h', `${root.offsetHeight}px`);
+    }).observe(root);
+
     const render = () => {
         const active = clock.active();
         root.hidden = active.length === 0;
