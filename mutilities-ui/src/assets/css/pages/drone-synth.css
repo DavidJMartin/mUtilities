@@ -16,22 +16,31 @@
 }
 
 @media (min-width: 720px) {
-    /* Drift sits at the far right: the last column takes the spare width and it aligns to the end */
+    /* One row of controls, Key and Scale sharing the spare width; Drift gets a full-width row
+       of its own until there's room beside them */
     .drone__transport {
-        grid-template-columns: auto 140px 220px auto minmax(0, 1fr);
-    }
-
-    /* Bottom-aligned like the other fields, with its track level with the buttons */
-    .drone__transport .slider {
-        grid-column: -2;
-        justify-self: end;
-        width: min(100%, 280px);
-        padding-bottom: calc((var(--control-h) - var(--slider-h)) / 2);
+        grid-template-columns: auto minmax(100px, 140px) minmax(150px, 1fr) auto;
     }
 
     .drone__transport .btn--play,
     .drone__transport .btn--outline {
         grid-column: auto;
+    }
+}
+
+@media (min-width: 1100px) {
+    .drone__transport {
+        grid-template-columns: auto 140px 220px auto minmax(0, 1fr);
+    }
+
+    /* Drift sits at the far right: the last column takes the spare width and it aligns to the end.
+       (Below 1100px that column has no width left, so Drift stays on its own row.) */
+    .drone__transport .slider {
+        grid-column: -2;
+        justify-self: end;
+        width: min(100%, 280px);
+        /* Bottom-aligned like the other fields, with its track level with the buttons */
+        padding-bottom: calc((var(--control-h) - var(--slider-h)) / 2);
     }
 }
 
@@ -51,7 +60,8 @@
     gap: var(--panel-gap);
 }
 
-@media (min-width: 720px) {
+/* Side by side only from 960px: below that each panel's three sliders get too narrow for their values */
+@media (min-width: 960px) {
     .drone__fx {
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     }

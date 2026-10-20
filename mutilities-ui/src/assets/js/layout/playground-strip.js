@@ -28,6 +28,13 @@ export function initPlaygroundStrip(root) {
         document.documentElement.style.setProperty('--playground-h', `${root.offsetHeight}px`);
     }).observe(root);
 
+    // Phones scroll the list sideways; fade the right edge while there's more to see
+    const updateFade = () => {
+        list.toggleAttribute('data-more', list.scrollLeft + list.clientWidth < list.scrollWidth - 1);
+    };
+    list.addEventListener('scroll', updateFade, { passive: true });
+    new ResizeObserver(updateFade).observe(list);
+
     const render = () => {
         const active = clock.active();
         root.hidden = active.length === 0;
@@ -50,6 +57,7 @@ export function initPlaygroundStrip(root) {
                 on: { click: () => clock.stop(p.id) },
             })
         )));
+        updateFade();
     };
 
     const renderTempo = () => tempo.set(`${clock.bpm} BPM`);

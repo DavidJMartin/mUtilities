@@ -36,7 +36,9 @@ const knobLabel = (v) => {
     return v > 0.5 ? `${Math.round((v - 0.5) * 200)}% locked` : `Inverting ${Math.round((0.5 - v) * 200)}%`;
 };
 
-const machineSummary = m => `${m.length} bits · ${RATES[m.rate].label} · ${knobLabel(m.knob)}`;
+// Non-breaking spaces inside each part, so on narrow phones it only wraps at the dots
+const keepTogether = text => text.replaceAll(' ', '\u00a0');
+const machineSummary = m => [`${m.length} bits`, RATES[m.rate].label, knobLabel(m.knob)].map(keepTogether).join(' · ');
 
 export function initTwinTuring(root) {
     const r = refs(root);

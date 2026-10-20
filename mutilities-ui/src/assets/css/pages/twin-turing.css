@@ -103,12 +103,24 @@
 }
 
 .turing-machine__summary {
+    min-width: 0;
     margin-left: auto;
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 500;
     color: var(--muted);
-    white-space: nowrap;
+    text-align: right;
+}
+
+/* One line where there's room; on narrow phones it wraps so B's on/off switch stays in the panel */
+@media (min-width: 400px) {
+    .turing-machine__summary {
+        white-space: nowrap;
+    }
+}
+
+.turing-machine__head > :not(.turing-machine__summary) {
+    flex: none;
 }
 
 /* The register: one LED per bit, in loop order (newest first) */
@@ -174,8 +186,10 @@
     display: flex;
 }
 
+/* Options size to their labels (still filling the row), so "A + B steps" never wraps */
 .turing__voice .segmented__option {
-    flex: 1;
+    flex: 1 1 auto;
+    white-space: nowrap;
 }
 
 /* Fields shown only in one mode (Notes on / B octave) */

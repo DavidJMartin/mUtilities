@@ -10,6 +10,8 @@
 /* ===== Header ===== */
 
 .site-header {
+    position: relative;
+    z-index: 40;
     border-bottom: 2px solid var(--ink);
     transition: var(--theme-transition);
 }
@@ -17,10 +19,10 @@
 .site-header__inner {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    grid-template-areas: "brand nav actions";
+    grid-template-areas: "brand current actions";
     align-items: center;
-    gap: 10px;
-    padding-block: 22px;
+    gap: 16px;
+    padding-block: 18px;
 }
 
 .brand {
@@ -36,6 +38,16 @@
     color: var(--accent);
 }
 
+/* Where you are, e.g. "06 · Tab Writer" (the page title says it too, so phones skip it) */
+.site-header__current {
+    grid-area: current;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
 .site-header__actions {
     grid-area: actions;
     display: flex;
@@ -43,42 +55,108 @@
     gap: 8px;
 }
 
-/* Navigation: inline pills when there's room */
+/* ===== Tools panel =====
+ * Every tool, grouped like the home cards, dropping down under the header at
+ * every width. Grows by rows as tools are added; the header bar never changes.
+ */
 
 .site-nav {
-    grid-area: nav;
-    justify-self: end;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    display: none;
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    padding: 18px max(var(--gutter), calc((100% - var(--content-max)) / 2 + var(--gutter))) 22px;
+    background: var(--card);
+    border-bottom: 2px solid var(--ink);
+    box-shadow: 0 8px 0 color-mix(in srgb, var(--shadow) 25%, transparent);
 }
 
-.site-nav__list {
-    display: flex;
-    gap: 8px;
+.site-header[data-menu-open] .site-nav {
+    display: block;
+}
+
+.site-nav__home {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 16px;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.site-nav__home:hover,
+.site-nav__home[aria-current="page"] {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.site-nav__groups {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 18px 28px;
+}
+
+.site-nav__group-title {
+    padding-bottom: 6px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
 }
 
 .site-nav__link {
     display: flex;
     align-items: center;
-    padding: 8px 16px;
-    border: var(--border) solid var(--ink);
-    border-radius: var(--radius-pill);
-    font-size: 14px;
+    gap: 12px;
+    min-height: 46px;
+    border-top: var(--border) solid var(--line);
+    font-size: 17px;
     font-weight: 500;
-    white-space: nowrap;
-    transition: var(--theme-transition);
+    letter-spacing: -.01em;
 }
 
-.site-nav__link:hover {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
+.site-nav__link:hover .site-nav__label {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
+
+.site-nav__num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--faint);
+}
+
+.site-nav__label {
+    flex: 1;
 }
 
 .site-nav__link[aria-current="page"] {
-    background: var(--ink);
-    color: var(--card);
+    font-weight: 700;
 }
 
-.site-nav__dot,
-.site-nav__num {
-    display: none;
+.site-nav__link[aria-current="page"] .site-nav__num {
+    color: var(--accent-text);
+}
+
+/* LED: lit while the tool plays, blinking while it waits to join */
+.site-nav__led {
+    width: 9px;
+    height: 9px;
+    border: var(--border) solid var(--line);
+    border-radius: 50%;
+}
+
+.site-nav__link[data-playing="playing"] .site-nav__led {
+    border-color: var(--accent);
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+}
+
+.site-nav__link[data-playing="queued"] .site-nav__led {
+    border-color: var(--accent);
+    animation: rec-pulse .5s ease-in-out infinite alternate;
+    background: var(--accent);
 }
 
 /* Header buttons */
@@ -205,8 +283,7 @@
 }
 
 .menu-toggle {
-    display: none;
-    height: 44px;
+    height: 38px;
     gap: 10px;
     padding: 0 16px;
     font-size: 14px;
@@ -240,15 +317,13 @@
     transform: translateY(-3px) rotate(-45deg);
 }
 
-/* Navigation: collapsed behind the Menu button on narrower screens */
+/* Phones: a tighter header, icon-only buttons */
 
-@media (max-width: 1199.98px) {
+@media (max-width: 719.98px) {
     .site-header__inner {
         grid-template-columns: 1fr auto;
-        grid-template-areas:
-            "brand actions"
-            "nav nav";
-        gap: 0 12px;
+        grid-template-areas: "brand actions";
+        gap: 12px;
         padding-block: 14px;
     }
 
@@ -256,8 +331,12 @@
         font-size: 24px;
     }
 
+    .site-header__current {
+        display: none;
+    }
+
     .menu-toggle {
-        display: flex;
+        height: 44px;
     }
 
     .theme-toggle {
@@ -305,67 +384,23 @@
         clip: rect(0 0 0 0);
         white-space: nowrap;
     }
+}
 
-    .site-nav {
-        justify-self: stretch;
-        display: none;
-        padding: 14px 0 4px;
+/* Very narrow phones (under 360px): the Tools button drops its label to fit */
+@media (max-width: 359.98px) {
+    .menu-toggle {
+        width: 44px;
+        justify-content: center;
+        padding: 0;
     }
 
-    .site-header[data-menu-open] .site-nav {
-        display: block;
-    }
-
-    .site-nav__list {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    .site-nav__link {
-        justify-content: space-between;
-        gap: 12px;
-        min-height: 56px;
-        padding: 0 4px;
-        border: none;
-        border-top: var(--border) solid var(--line);
-        border-radius: 0;
-        font-family: var(--font-head);
-        font-size: 22px;
-        letter-spacing: -.02em;
-    }
-
-    .site-nav__link:hover,
-    .site-nav__link[aria-current="page"] {
-        background: none;
-        color: var(--ink);
-    }
-
-    .site-nav__link[aria-current="page"] {
-        font-weight: 700;
-    }
-
-    .site-nav__dot {
-        display: block;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-    }
-
-    .site-nav__link[aria-current="page"] .site-nav__dot {
-        background: var(--accent);
-    }
-
-    .site-nav__label {
-        flex: 1;
-    }
-
-    .site-nav__num {
-        display: block;
-        font-family: var(--font-mono);
-        font-size: 12px;
-        font-weight: 500;
-        letter-spacing: 0;
-        color: var(--faint);
+    .menu-toggle__label {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
     }
 }
 
@@ -607,5 +642,9 @@
 
     .playground__item {
         flex: none;
+    }
+
+    .playground__list[data-more] {
+        mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
     }
 }

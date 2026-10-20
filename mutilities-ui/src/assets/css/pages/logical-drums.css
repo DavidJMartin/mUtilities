@@ -209,12 +209,19 @@
         display: none;
     }
 
+    /* Six signals: rows of three, then all six once they fit (never 4 + 2 or 5 + 1) */
     .signal-grid {
-        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .signal:not([data-selected]) {
         display: flex;
+    }
+}
+
+@media (min-width: 1180px) {
+    .signal-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
     }
 }
 

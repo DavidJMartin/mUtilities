@@ -20,6 +20,7 @@
 
 .panel__head {
     display: flex;
+    flex-wrap: wrap; /* only if the extras can't fit beside the title (narrow phones) */
     justify-content: space-between;
     align-items: baseline;
     gap: 12px;
@@ -300,6 +301,7 @@
 
 .slider__value {
     font-variant-numeric: tabular-nums;
+    white-space: nowrap; /* "10.0 s" never splits */
 }
 
 .slider__input {

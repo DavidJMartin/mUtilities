@@ -27,16 +27,44 @@
         <div class="site-header__inner container">
             <a class="brand" href="#home"><span class="brand__m">m</span>Utilities</a>
 
+            <span class="site-header__current meta" data-current-page aria-hidden="true"></span>
+
+            <!-- Every tool, grouped like the home cards. Opened by the Tools button at every width (layout/site-header.js) -->
             <nav class="site-nav" id="site-nav" aria-label="Tools">
-                <ul class="site-nav__list">
-                    <li><a class="site-nav__link" href="#home" data-nav="home"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Home</span><span class="site-nav__num" aria-hidden="true">01</span></a></li>
-                    <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">In Key Assistance</span><span class="site-nav__num" aria-hidden="true">02</span></a></li>
-                    <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Drone Synth</span><span class="site-nav__num" aria-hidden="true">03</span></a></li>
-                    <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Key Synth</span><span class="site-nav__num" aria-hidden="true">04</span></a></li>
-                    <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Logical Drums</span><span class="site-nav__num" aria-hidden="true">05</span></a></li>
-                    <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Twin Turing</span><span class="site-nav__num" aria-hidden="true">06</span></a></li>
-                    <li><a class="site-nav__link" href="#tab-writer" data-nav="tab-writer"><span class="site-nav__dot" aria-hidden="true"></span><span class="site-nav__label">Tab Writer</span><span class="site-nav__num" aria-hidden="true">07</span></a></li>
-                </ul>
+                <a class="site-nav__home" href="#home" data-nav="home">Home <span class="meta">all tools</span></a>
+                <div class="site-nav__groups">
+                    <section class="site-nav__group" aria-label="Theory">
+                        <h2 class="site-nav__group-title meta">Theory</h2>
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__num" aria-hidden="true">01</span><span class="site-nav__label">In Key Assistance</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </section>
+                    <section class="site-nav__group" aria-label="Sound">
+                        <h2 class="site-nav__group-title meta">Sound</h2>
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__num" aria-hidden="true">02</span><span class="site-nav__label">Drone Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                            <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__num" aria-hidden="true">03</span><span class="site-nav__label">Key Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </section>
+                    <section class="site-nav__group" aria-label="Rhythm">
+                        <h2 class="site-nav__group-title meta">Rhythm</h2>
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__num" aria-hidden="true">04</span><span class="site-nav__label">Logical Drums</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </section>
+                    <section class="site-nav__group" aria-label="Melody">
+                        <h2 class="site-nav__group-title meta">Melody</h2>
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__num" aria-hidden="true">05</span><span class="site-nav__label">Twin Turing</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </section>
+                    <section class="site-nav__group" aria-label="Guitar">
+                        <h2 class="site-nav__group-title meta">Guitar</h2>
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link" href="#tab-writer" data-nav="tab-writer"><span class="site-nav__num" aria-hidden="true">06</span><span class="site-nav__label">Tab Writer</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </section>
+                </div>
             </nav>
 
             <div class="site-header__actions">
@@ -49,7 +77,7 @@
                     <span class="theme-toggle__label" data-theme-label>Dark</span>
                 </button>
                 <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav">
-                    <span class="menu-toggle__label">Menu</span>
+                    <span class="menu-toggle__label">Tools</span>
                     <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
                 </button>
             </div>
