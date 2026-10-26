@@ -14,6 +14,10 @@
 //
 // Everything is checked with the same rowFires() that plays and exports, so
 // what passes is exactly what you hear. Pass rng to make it repeatable.
+//
+// Locks: locked generators and rows keep their settings exactly. New rows are
+// still checked against the locked ones (no doubling a locked kick), and a
+// locked row is never judged against its role: it's yours.
 
 import { ACCENT_ROW, DRUM, DRUM_COUNT, TICKS_PER_BAR, clampGenerator, rowFires, shiftMax } from './logic.js';
 
@@ -86,16 +90,18 @@ function randomGenerator(rng) {
     return clampGenerator(g);
 }
 
-/** Six generators, no two with the same settings */
-function uniqueGenerators(rng) {
-    const gens = [];
-    const seen = new Set();
-    while (gens.length < 6) {
-        const g = randomGenerator(rng);
-        const key = JSON.stringify([g.type, g.rate, g.mode, g.shift, g.type === 'euclid' ? [g.k, g.n] : 0]);
-        if (seen.has(key)) continue;
-        seen.add(key);
-        gens.push(g);
+const genKey = g => JSON.stringify([g.type, g.rate, g.mode, g.shift, g.type === 'euclid' ? [g.k, g.n] : 0]);
+
+/** Six generators, no two with the same settings; locked ones (keep[i] set) stay as they are */
+function uniqueGenerators(rng, keep = []) {
+    const gens = keep.slice(0, 6);
+    const seen = new Set(gens.filter(Boolean).map(genKey));
+    for (let i = 0; i < 6; i++) {
+        if (gens[i]) continue;
+        let g;
+        do g = randomGenerator(rng); while (seen.has(genKey(g)));
+        seen.add(genKey(g));
+        gens[i] = g;
     }
     return gens;
 }
@@ -134,7 +140,7 @@ function fitsRole(role, rules, hits, others) {
     if (rules.backbeat && !hasBackbeat(hits)) return false;
     // No two drums playing exactly the same hits
     const key = hits.join();
-    if (others.some(h => h.length && h.join() === key)) return false;
+    if (others.some(h => h?.length && h.join() === key)) return false;
     if (role.avoid !== undefined) {
         // Allow a little overlap but not mostly doubling another drum
         const other = new Set(others[role.avoid] ?? []);
@@ -171,35 +177,55 @@ function randomRow(rng, gens, index, others) {
 /**
  * A new random patch. Keeps each drum's shuffle unit; shuffle amounts are
  * mostly straight, with an occasional swing on the hats and rim.
+ *
+ * current: { gens, rows } now. locks: { gens: [bool], rows: [bool] }; locked
+ * ones come back unchanged.
  */
-export function randomPatch(currentRows, rng = Math.random) {
-    for (let attempt = 0; attempt < PATCH_ATTEMPTS; attempt++) {
-        const gens = uniqueGenerators(rng);
-        const others = [];
+export function randomPatch(current, locks = {}, rng = Math.random) {
+    const lockedGen = i => Boolean(locks.gens?.[i]);
+    const lockedRow = i => Boolean(locks.rows?.[i]);
+    const keepGens = current.gens.map((g, i) => (lockedGen(i) ? g : null));
+    if (current.gens.every((_, i) => lockedGen(i)) && current.rows.every((_, i) => lockedRow(i))) return null;
+
+    // The last attempt keeps any drum it can't fit as it was, so locks that
+    // leave little room (e.g. every signal locked) still give a result
+    for (let attempt = 0; attempt <= PATCH_ATTEMPTS; attempt++) {
+        const lastTry = attempt === PATCH_ATTEMPTS;
+        const gens = uniqueGenerators(rng, keepGens);
+        // Locked rows first, so new rows are checked against them
+        const others = current.rows.map((row, i) => (lockedRow(i) ? hitsOf(gens, row) : undefined));
         const rows = [];
         let ok = true;
 
         for (let i = 0; i < ROLES.length; i++) {
-            const result = randomRow(rng, gens, i, others);
+            if (lockedRow(i)) {
+                rows.push(null);
+                continue;
+            }
+            let result = randomRow(rng, gens, i, others);
             // undefined = a drum that must play couldn't be fitted; try new generators
             if (result === undefined) {
-                ok = false;
-                break;
+                if (!lastTry) {
+                    ok = false;
+                    break;
+                }
+                result = { chain: current.rows[i], hits: hitsOf(gens, current.rows[i]) };
             }
             others[i] = result?.hits ?? [];
             rows.push(result?.chain ?? { sigs: [null], gates: [] });
         }
         if (!ok) continue;
 
-        const kitPerBar = others.slice(0, DRUM_COUNT).reduce((sum, h) => sum + h.length, 0) / CHECK_BARS;
-        if (kitPerBar > KIT_MAX_PER_BAR) continue;
+        const kitPerBar = others.slice(0, DRUM_COUNT).reduce((sum, h) => sum + (h?.length ?? 0), 0) / CHECK_BARS;
+        if (kitPerBar > KIT_MAX_PER_BAR && !lastTry) continue;
 
         const groove = chance(rng, 0.35) ? pick(rng, [54, 58, 62, 66]) : 50;
         return {
             gens,
-            rows: rows.map((row, i) => ({
-                ...row,
-                swing: currentRows[i].swing,
+            rows: rows.map((row, i) => (row === null ? current.rows[i] : {
+                sigs: row.sigs,
+                gates: row.gates,
+                swing: current.rows[i].swing,
                 shuffle: [DRUM.closedHat, DRUM.openHat, DRUM.rim].includes(i) ? groove : 50,
             })),
         };

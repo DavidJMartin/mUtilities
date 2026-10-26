@@ -28,6 +28,7 @@ import { VOICE_NAMES } from './voices.js';
 import { downloadMidi } from './midi.js';
 import { randomPatch } from './random.js';
 import { createPatchMenu } from '../../components/patch-menu.js';
+import { showToast } from '../../components/toast.js';
 
 const ROW_NAMES = [...VOICE_NAMES, 'Accent'];
 const PLAYER_ID = 'logical-drums';
@@ -37,6 +38,8 @@ const DRUM_FLASH_MS = 120;
 const BAR_OPTIONS = [1, 2, 4, 8, 16].map(n => ({ value: String(n), label: `${n} bar${n > 1 ? 's' : ''}` }));
 
 const TRIG_ICON = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polyline points="0,9 7,9 8,1 9,9 16,9"></polyline></svg>';
+const LOCK_ICON = '<svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0v2"></path></svg>';
+const UNLOCK_ICON = '<svg width="12" height="14" viewBox="0 0 12 14" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="1" y="6" width="10" height="7" rx="1.5"></rect><path d="M3.5 6V4a2.5 2.5 0 0 1 5 0"></path></svg>';
 const GATE_ICON = '<svg width="16" height="10" viewBox="0 0 16 10" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" aria-hidden="true"><polyline points="0,9 3,9 3,1 9,1 9,9 16,9"></polyline></svg>';
 
 // Like the drone, playback carries on when you switch tools, so a beat can
@@ -53,6 +56,30 @@ export function initLogicalDrums(root) {
     };
     // Which chain picker is open: { row, link, kind: 'sig' | 'gate' }
     let picker = null;
+    // Locked signals and lanes keep their settings when you Randomise (not saved in patches)
+    const locks = { gens: state.gens.map(() => false), rows: ROW_NAMES.map(() => false) };
+
+    /** A padlock toggle; onChange(locked) */
+    function createLock(label, onChange) {
+        const button = el('button', {
+            class: 'lock',
+            type: 'button',
+            'aria-label': `Lock ${label} when randomising`,
+            'aria-pressed': 'false',
+            title: `Lock ${label} when randomising`,
+        });
+        const set = (locked) => {
+            button.setAttribute('aria-pressed', String(locked));
+            button.innerHTML = locked ? LOCK_ICON : UNLOCK_ICON;
+        };
+        button.addEventListener('click', () => {
+            const locked = button.getAttribute('aria-pressed') !== 'true';
+            set(locked);
+            onChange(locked);
+        });
+        set(false);
+        return button;
+    }
 
     const engine = new DrumEngine(() => state, {
         step: renderPosition,
@@ -233,6 +260,12 @@ export function initLogicalDrums(root) {
 
         const summaryText = el('span', { class: 'signal__summary' });
         const tileSummary = el('span', { class: 'signal-tile__summary' });
+        const tileLock = el('span', { class: 'signal-tile__lock', 'aria-hidden': 'true' });
+        tileLock.innerHTML = LOCK_ICON;
+        const lock = createLock(`signal ${letter}`, (locked) => {
+            locks.gens[i] = locked;
+            toggleData(tile, 'locked', locked);
+        });
 
         const type = createSegmented({
             label: `Signal ${letter} type`,
@@ -293,7 +326,7 @@ export function initLogicalDrums(root) {
                 summaryText,
                 led()
             ),
-            el('div', { class: 'signal__body' }, type.el, mdControls, euclidControls)
+            el('div', { class: 'signal__body' }, el('div', { class: 'signal__type' }, type.el, lock), mdControls, euclidControls)
         );
 
         const tile = el('button', {
@@ -304,6 +337,7 @@ export function initLogicalDrums(root) {
         },
             el('span', { class: 'signal-tile__top' },
                 el('span', { class: 'signal-tile__letter', text: letter }),
+                tileLock,
                 led()
             ),
             tileSummary
@@ -364,7 +398,11 @@ export function initLogicalDrums(root) {
         renderLoop();
     }
 
-    r.randomise.addEventListener('click', () => applyPatch(randomPatch(state.rows)));
+    r.randomise.addEventListener('click', () => {
+        const patch = randomPatch({ gens: state.gens, rows: state.rows }, locks);
+        if (!patch) showToast('Everything is locked. Unlock a signal or a drum to randomise.');
+        applyPatch(patch);
+    });
 
     // Export / import the whole tool: patch plus tempo, accent amount and MIDI length
     r.patch.append(createPatchMenu({
@@ -463,9 +501,13 @@ export function initLogicalDrums(root) {
             });
         }
 
+        const lock = createLock(label.toLowerCase(), (locked) => {
+            locks.rows[index] = locked;
+            toggleData(rowEl, 'locked', locked);
+        });
         const rowEl = el('div', { class: ['drum-row', isAccent && 'drum-row--accent'] },
             name,
-            chain,
+            el('div', { class: 'drum-row__chainline' }, chain, lock),
             el('div', { class: 'drum-row__right' }, right),
             swingUnit && el('div', { class: 'drum-row__unit' }, swingUnit.el)
         );

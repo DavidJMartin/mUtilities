@@ -219,9 +219,15 @@
     }
 }
 
-@media (min-width: 1180px) {
+/* Six across from 1280px, with a tighter header: the longest summaries ("E(10,16) ↻10") need the room */
+@media (min-width: 1280px) {
     .signal-grid {
         grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .signal-grid .signal__head {
+        gap: 8px;
+        padding-inline: 12px;
     }
 }
 
@@ -363,9 +369,24 @@
    first signal; narrower screens keep the chain on its own full-width line */
 @media (min-width: 960px) {
     .drum-row {
-        grid-template-columns: 170px minmax(0, 1fr) auto auto;
-        grid-template-areas: "name chain right unit";
+        grid-template-columns: auto 170px minmax(0, 1fr) auto auto;
+        grid-template-areas: "lock name chain right unit";
         column-gap: 16px;
+    }
+
+    /* One line per lane: the lock moves to the front, beside the name.
+       (Doubled class names so these beat the base rules further down.) */
+    .drum-row .drum-row__chainline {
+        display: contents;
+    }
+
+    .drum-row .drum-row__chainline .lock {
+        grid-area: lock;
+        margin-right: -8px;
+    }
+
+    .drum-row .drum-row__chainline .chain {
+        grid-area: chain;
     }
 }
 
@@ -509,8 +530,25 @@ button.drum-row__name:hover:not([data-on]) {
 
 /* ===== Logic chain ===== */
 
-.chain {
+/* The chain's line, with the lane's lock at its end on narrower screens */
+.drum-row__chainline {
     grid-area: chain;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+}
+
+.drum-row__chainline .chain {
+    flex: 1;
+}
+
+.drum-row .lock {
+    width: 32px;
+    height: var(--chip-h);
+}
+
+.chain {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -689,4 +727,56 @@ button.drum-row__name:hover:not([data-on]) {
 .picker__option[aria-pressed="true"] {
     background: var(--ink);
     color: var(--card);
+}
+
+/* ===== Locks: keep a signal or lane as it is when you Randomise ===== */
+
+.lock {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: var(--border) solid var(--line);
+    border-radius: var(--radius-sm);
+    color: var(--faint);
+    transition: var(--theme-transition);
+}
+
+.lock:hover {
+    border-color: var(--card-border);
+    color: var(--ink);
+}
+
+.lock[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--card);
+}
+
+/* Phones show one signal at a time; its tile shows the lock too */
+.signal-tile__lock {
+    display: none;
+    margin-left: auto;
+    line-height: 0;
+}
+
+.signal-tile[data-locked] .signal-tile__lock {
+    display: block;
+}
+
+/* A signal's lock sits beside its type switch (the header is full) */
+.signal__type {
+    display: flex;
+    gap: 8px;
+}
+
+.signal__type .segmented {
+    flex: 1;
+}
+
+.signal__type .lock {
+    width: var(--segment-h);
+    height: var(--segment-h);
 }
