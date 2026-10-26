@@ -207,6 +207,13 @@
     grid-column: 1 / -1;
 }
 
+/* Live MIDI out: its own row under the voice settings */
+.turing__midi-out {
+    grid-column: 1 / -1;
+    padding-top: 16px;
+    border-top: var(--border) solid var(--line);
+}
+
 .turing__hint {
     font-size: 13px;
     color: var(--muted);

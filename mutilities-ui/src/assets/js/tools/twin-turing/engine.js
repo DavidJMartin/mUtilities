@@ -13,10 +13,13 @@ export class TuringEngine {
     /**
      * getState(): the live state (machines are stepped in place)
      * onDraw(info): { due, bits, midi } for the lights, in step with the audio
+     * midi: a MidiSender (core/midi-out.js); A sends on its channel, B on the next
      */
-    constructor(getState, onDraw) {
+    constructor(getState, onDraw, midi) {
         this.getState = getState;
         this.onDraw = onDraw;
+        this.midi = midi;
+        this.midiHeld = [null, null]; // per voice: a MIDI note left on (a tie), still to be ended
         // Seeded so MIDI export can replay exactly what will play next
         this.rng = createRng(Math.floor(Math.random() * 2 ** 32));
         this.voices = null; // [A or summed melody, B in separate mode]
@@ -43,7 +46,9 @@ export class TuringEngine {
     /** Let go of anything sounding, e.g. when switching between one and two melodies */
     releaseAll() {
         this.holding = [null, null];
+        this.midiHeld = [null, null];
         this.voices?.forEach(v => v.triggerRelease());
+        this.midi?.panic();
     }
 
     /** Called by the clock with a bar line (Tone ticks) to start from */
@@ -67,19 +72,30 @@ export class TuringEngine {
      * the next note (peeked on a copy) is a different pitch.
      */
     #play(note, state, t, time) {
-        const synth = this.voices[note.voice];
+        const v = note.voice;
+        const synth = this.voices[v];
         const ties = state.trigger === 'new';
-        const tiedIn = ties && this.holding[note.voice] === note.midi;
-        if (!tiedIn) synth.triggerAttack(Tone.Frequency(note.midi, 'midi'), time, 0.85);
+        const tiedIn = ties && this.holding[v] === note.midi;
+        if (!tiedIn) {
+            // With MIDI out on, the built-in synth only plays if "Synth too" is on
+            if (this.midi?.synthOn ?? true) synth.triggerAttack(Tone.Frequency(note.midi, 'midi'), time, 0.85);
+            // Monophonic like the synth: end a held MIDI note before the next starts
+            if (this.midiHeld[v] !== null) this.midi?.noteOff(v, this.midiHeld[v], time - 0.001);
+            this.midi?.noteOn(v, note.midi, 0.85, time);
+        }
 
-        const next = ties ? peekNextNote(state, this.rng.state(), t, note.voice) : null;
+        const next = ties ? peekNextNote(state, this.rng.state(), t, v) : null;
         if (next && next.midi === note.midi) {
-            this.holding[note.voice] = note.midi;
+            this.holding[v] = note.midi;
+            this.midiHeld[v] = note.midi;
             return;
         }
-        this.holding[note.voice] = null;
+        this.holding[v] = null;
+        this.midiHeld[v] = null;
         const seconds = (note.length / TICKS_PER_BEAT) * (60 / clock.bpm);
         synth.triggerRelease(time + seconds);
+        // A hair early, so a note-off never lands after the next note-on at the same moment
+        this.midi?.noteOff(v, note.midi, time + seconds - 0.001);
     }
 
     #step(time) {

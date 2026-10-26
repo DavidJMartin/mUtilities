@@ -728,3 +728,33 @@
     justify-content: flex-end;
     gap: 8px;
 }
+
+/* ===== MIDI out (components/midi-out.js) ===== */
+
+.midi-out {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 14px 18px;
+}
+
+.midi-out > [hidden] {
+    display: none;
+}
+
+.midi-out .field:first-of-type {
+    flex: 1 1 220px;
+    max-width: 340px;
+}
+
+.midi-out__connect {
+    height: var(--control-h);
+}
+
+.midi-out__synth {
+    align-self: center;
+}
+
+.midi-out__note {
+    flex-basis: 100%;
+}

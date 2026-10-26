@@ -3,6 +3,8 @@ import { WAVEFORMS, ensureAudioRunning } from '../../core/audio.js';
 import { BPM_MAX, BPM_MIN, clock, playButtonState } from '../../core/clock.js';
 import { createSegmented, createSelect, createSlider, createStepper, createSwitch } from '../../components/controls.js';
 import { createPatchMenu } from '../../components/patch-menu.js';
+import { createMidiOutControls } from '../../components/midi-out.js';
+import { MidiSender } from '../../core/midi-out.js';
 import { PITCH_CLASSES, SCALES, rootOptions, scaleOptions } from '../../music/theory.js';
 import { MAX_BITS, RANGE_MAX, RATES, TRIGGERS, defaultState, knobFromOldLock, randomBits } from './logic.js';
 import { TuringEngine } from './engine.js';
@@ -44,7 +46,9 @@ export function initTwinTuring(root) {
     const r = refs(root);
     const state = { ...defaultState(), bars: 4 };
 
-    const engine = new TuringEngine(() => state, renderStep);
+    // Live MIDI out, remembered on this device (not part of exported patches)
+    const midi = new MidiSender('twin-turing');
+    const engine = new TuringEngine(() => state, renderStep, midi);
 
     // ===== Transport =====
 
@@ -351,7 +355,8 @@ export function initTwinTuring(root) {
                 el('span', { class: 'field__label', text: 'Triggers' }),
                 trigger.el,
                 triggerHint
-            )
+            ),
+            el('div', { class: 'turing__midi-out' }, createMidiOutControls(midi, { channelHint: 'B: next' }))
         )
     );
 
