@@ -87,14 +87,6 @@
     gap: 2px;
 }
 
-.turing-machine__eyebrow {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: .1em;
-    color: var(--faint);
-}
-
 .turing-machine__letter {
     font-size: 30px;
     font-weight: 700;

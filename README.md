@@ -47,4 +47,4 @@ I do not support the use of AI to generate art and the tools provided will not f
 
 ## Credits
 
-Fonts are self-hosted from [Fontsource](https://fontsource.org): [Inter](https://github.com/rsms/inter) and [DM Mono](https://github.com/googlefonts/dm-mono), both under the SIL Open Font License (licence files in `mutilities-ui/src/assets/fonts/`).
+Fonts are self-hosted from [Fontsource](https://fontsource.org): [Atkinson Hyperlegible Next and Mono](https://github.com/googlefonts/atkinson-hyperlegible-next), both under the SIL Open Font License (licence files in `mutilities-ui/src/assets/fonts/`).

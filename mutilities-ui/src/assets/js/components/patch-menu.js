@@ -117,8 +117,8 @@ function openPasteDialog(onLoad) {
             rows: 6,
             spellcheck: 'false',
         });
-        const load = el('button', { class: 'btn btn--ink', type: 'submit', text: 'Load patch' });
-        const cancel = el('button', { class: 'btn btn--outline', type: 'button', text: 'Cancel', on: { click: () => dialog.close() } });
+        const load = el('button', { class: 'btn', type: 'submit', text: 'Load patch' });
+        const cancel = el('button', { class: 'btn', type: 'button', text: 'Cancel', on: { click: () => dialog.close() } });
 
         dialog = el('dialog', { class: 'paste-dialog' },
             el('form', {

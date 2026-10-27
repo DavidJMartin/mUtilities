@@ -34,3 +34,4 @@ initTabWriter(page('tab-writer'), router);
 for (const id of ['drone-synth', 'logical-drums', 'twin-turing', 'tab-writer']) {
     bindSpaceToPlay(router, id, page(id).querySelector('[data-ref="play"]'));
 }
+

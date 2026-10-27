@@ -3,7 +3,13 @@
 // script in index.html re-applies it before first paint to avoid a flash.
 
 const STORAGE_KEY = 'mutilities-theme';
-const THEME_COLOURS = { light: '#ece6da', dark: '#1b1916' };
+// The browser bar colour (phones) per theme, matching --page in tokens.css
+const THEME_COLOURS = { light: '#fbfbfa', dark: '#151515' };
+
+function syncThemeColour() {
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.content = THEME_COLOURS[currentTheme()];
+}
 const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
 function storeTheme(theme) {
@@ -23,7 +29,6 @@ export function currentTheme() {
 
 export function initTheme() {
     const toggles = document.querySelectorAll('[data-theme-toggle]');
-    const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
     const render = () => {
         const theme = currentTheme();
@@ -36,7 +41,7 @@ export function initTheme() {
             if (label) label.textContent = nextLabel;
         });
 
-        if (themeColorMeta) themeColorMeta.content = THEME_COLOURS[theme];
+        syncThemeColour();
     };
 
     toggles.forEach(button => {

@@ -198,13 +198,11 @@
     background: var(--card);
     font-size: 14px;
     font-weight: 500;
-    box-shadow: var(--shadow-control);
     transition: var(--theme-transition);
 }
 
 .tab-tool:active {
     transform: translate(1px, 1px);
-    box-shadow: 1px 1px 0 var(--shadow);
 }
 
 @media (min-width: 720px) {

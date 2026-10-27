@@ -342,7 +342,7 @@ function createOscPanel({ index, getVoice, getNoteOptions, update }) {
         ampLfo.el
     );
 
-    const panel = el('article', { class: 'panel panel--raised osc', 'aria-label': `Oscillator ${number}` },
+    const panel = el('article', { class: 'panel osc', 'aria-label': `Oscillator ${number}` },
         el('div', { class: 'osc__head' }, toggleButton, enable.el),
         body
     );

@@ -8,14 +8,8 @@
     gap: 14px;
     min-width: 0;
     padding: var(--panel-pad);
-    background: var(--card);
-    border: var(--border) solid var(--card-border);
     border-radius: var(--radius-lg);
     transition: var(--theme-transition);
-}
-
-.panel--raised {
-    box-shadow: var(--shadow-raised);
 }
 
 .panel__head {
@@ -29,16 +23,12 @@
 .panel__head--ruled {
     align-items: center;
     padding-bottom: 10px;
-    border-bottom: var(--border) solid var(--card-border);
+    border-bottom: var(--border) solid var(--line);
 }
 
 .panel__title {
-    font-size: 20px;
-    letter-spacing: -.02em;
-}
-
-.panel__head--ruled .panel__title {
-    font-size: 18px;
+    font-size: 19px;
+    line-height: 1.2;
 }
 
 .meta {
@@ -60,16 +50,16 @@
     gap: 14px;
 }
 
-/* ===== LCD readouts ===== */
+/* ===== Readouts: a plain box of mono text, like <pre> ===== */
 
 .lcd {
     display: flex;
     flex-direction: column;
     gap: 2px;
     padding: 12px 20px;
-    background: var(--lcd);
-    border: var(--border) solid var(--lcd-border);
-    border-radius: 12px;
+    background: var(--control);
+    border: var(--border) solid var(--card-border);
+    border-radius: var(--radius-sm);
     font-family: var(--font-mono);
     font-weight: 500;
 }
@@ -79,9 +69,7 @@
     align-items: center;
     gap: 8px;
     font-size: 11px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    color: var(--lcd-label);
+    color: var(--faint);
 }
 
 .lcd__led {
@@ -92,19 +80,40 @@
 }
 
 .lcd__led[data-on] {
-    background: var(--lcd-text);
+    background: var(--accent);
 }
 
 .lcd__value {
     font-size: clamp(20px, 18.2px + .45vw, 24px);
-    color: var(--lcd-text);
+    color: var(--ink);
 }
 
-/* Recessed dark well used for previews and the envelope graph */
+/* Dark well used for the instrument previews and the envelope graph */
 .lcd-well {
     background: var(--lcd);
     border: var(--border) solid var(--lcd-border);
     border-radius: var(--radius-md);
+}
+
+/* ===== Controls: one native-ish look for every button and select ===== */
+
+:is(.btn, .stepper__btn, .tab-tool, .chip, .record-toggle, .theme-toggle, .lock, .select select) {
+    background: var(--control);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font-family: var(--font-body);
+}
+
+:is(.btn, .stepper__btn, .tab-tool, .chip, .lock, .record-toggle, .theme-toggle):hover {
+    border-color: var(--ink);
+}
+
+/* The header's Rec and theme buttons */
+:is(.record-toggle, .theme-toggle) {
+    height: 30px;
+    padding: 0 10px;
+    font-size: 13px;
 }
 
 /* ===== Buttons ===== */
@@ -123,39 +132,24 @@
     transition: var(--theme-transition);
 }
 
-.btn--ink {
-    background: var(--ink);
-    color: var(--card);
-}
-
-.btn--outline {
-    border: var(--border) solid var(--ink);
-}
-
-.btn--outline:hover {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
-}
-
+/* Play is plain until it's running; then it's the one red thing */
 .btn--play {
     height: 54px;
-    border: var(--border) solid var(--ink);
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    color: var(--on-accent);
-    box-shadow: 3px 3px 0 var(--shadow);
     font-size: 16px;
     font-weight: 700;
 }
 
 .btn--play[aria-pressed="true"] {
-    background: var(--ink);
-    color: var(--card);
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--on-accent);
 }
 
 /* Join: another rhythmic tool is already playing, so this one comes in on the
    next bar (core/clock.js). Pulses while it waits. */
 .btn--play[data-look="join"] {
     background: var(--cool);
+    border-color: var(--cool);
     color: var(--on-cool);
 }
 
@@ -174,8 +168,7 @@
 }
 
 .btn--play:active {
-    transform: translate(1px, 1px);
-    box-shadow: 2px 2px 0 var(--shadow);
+    transform: translateY(1px);
 }
 
 @media (min-width: 720px) {
@@ -227,18 +220,10 @@
     width: 100%;
     height: var(--control-h);
     padding: 0 34px 0 14px;
-    background: var(--card);
-    border: var(--border) solid var(--card-border);
-    border-radius: var(--radius-md);
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: var(--theme-transition);
-}
-
-/* Inside a card the select sits on the page colour so it reads as a well */
-.panel .select select {
-    background: var(--page);
 }
 
 .select--sm::after {
@@ -249,8 +234,6 @@
 .select--sm select {
     height: 38px;
     padding: 0 30px 0 12px;
-    border-radius: var(--radius-sm);
-    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 500;
 }
@@ -262,13 +245,9 @@
     font-size: 13px;
 }
 
-.select--pill select,
-.panel .select--pill select {
+.select--pill select {
     height: auto;
     padding: 3px 26px 3px 10px;
-    background: transparent;
-    border-radius: var(--radius-pill);
-    font-family: var(--font-mono);
     font-size: 13px;
     font-weight: 500;
 }
@@ -276,14 +255,13 @@
 /* ===== Slider ===== */
 
 .slider {
-    --slider-fill: var(--accent);
+    --slider-fill: var(--ink);
     display: flex;
     flex-direction: column;
     gap: 6px;
     min-width: 0;
 }
 
-.slider--ink { --slider-fill: var(--ink); }
 .slider--cool { --slider-fill: var(--cool); }
 
 .slider__head {
@@ -335,7 +313,6 @@
     border: var(--border) solid var(--ink);
     border-radius: 50%;
     background: var(--card);
-    box-shadow: var(--shadow-control);
 }
 
 .slider__input::-moz-range-thumb {
@@ -344,7 +321,6 @@
     border: var(--border) solid var(--ink);
     border-radius: 50%;
     background: var(--card);
-    box-shadow: var(--shadow-control);
 }
 
 /* ===== Switch ===== */
@@ -355,7 +331,7 @@
     width: 46px;
     height: 26px;
     border: var(--border) solid var(--ink);
-    border-radius: var(--radius-pill);
+    border-radius: var(--radius-sm);
     background: var(--page);
     transition: var(--theme-transition);
 }
@@ -366,7 +342,7 @@
     left: 3px;
     width: 17px;
     height: 17px;
-    border-radius: 50%;
+    border-radius: 2px;
     background: var(--faint);
     transition: left .15s, background-color .15s;
 }
@@ -403,14 +379,16 @@
     grid-auto-columns: minmax(0, 1fr);
     grid-auto-flow: column;
     overflow: hidden;
-    border: var(--border) solid var(--card-border);
+    border: 1px solid var(--card-border);
     border-radius: var(--radius-sm);
 }
 
 .segmented__option {
     height: var(--segment-h);
     padding: 0 7px;
+    background: var(--control);
     border-right: 1px solid var(--line);
+    color: var(--ink);
     font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 500;
@@ -421,14 +399,14 @@
     border-right: none;
 }
 
-.segmented__option[aria-pressed="true"] {
+.segmented__option[aria-pressed="true"],
+.chip[aria-pressed="true"] {
     background: var(--ink);
-    color: var(--card);
+    color: var(--page);
 }
 
 .segmented--sm {
     display: flex;
-    border-radius: 7px;
 }
 
 .segmented--sm .segmented__option {
@@ -447,18 +425,9 @@
 .chip {
     min-height: 32px;
     padding: 6px 12px;
-    border: var(--border) solid var(--card-border);
-    border-radius: var(--radius-pill);
-    background: var(--card);
     font-size: 14px;
     font-weight: 500;
     transition: var(--theme-transition);
-}
-
-.chip[aria-pressed="true"] {
-    background: var(--ink);
-    border-color: var(--ink);
-    color: var(--card);
 }
 
 @media (max-width: 719.98px) {
@@ -540,6 +509,7 @@
 
 .stepper__hint {
     color: var(--faint);
+    white-space: nowrap;
 }
 
 .stepper__controls {
@@ -562,15 +532,9 @@
     justify-content: center;
     width: var(--stepper-size);
     height: var(--stepper-size);
-    border: var(--border) solid var(--card-border);
-    border-radius: var(--radius-sm);
     font-size: 20px;
     line-height: 1;
     touch-action: manipulation;
-}
-
-.stepper__btn:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 .stepper__value {
@@ -627,7 +591,6 @@
     background: var(--card);
     border: var(--border) solid var(--card-border);
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-raised);
 }
 
 .patch-menu__list[hidden] {
@@ -637,7 +600,7 @@
 .patch-menu__item {
     height: 36px;
     padding: 0 10px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     text-align: left;
     font-size: 14px;
     font-weight: 500;
@@ -664,7 +627,6 @@
     color: var(--card);
     font-size: 14px;
     font-weight: 500;
-    box-shadow: var(--shadow-control);
     opacity: 0;
     transform: translate(-50%, 8px);
     transition: opacity .2s, transform .2s;
@@ -693,11 +655,10 @@
     border-radius: var(--radius-lg);
     background: var(--card);
     color: var(--ink);
-    box-shadow: var(--shadow-raised);
 }
 
 .paste-dialog::backdrop {
-    background: color-mix(in srgb, var(--shadow) 45%, transparent);
+    background: rgb(0 0 0 / .45);
 }
 
 .paste-dialog__form {

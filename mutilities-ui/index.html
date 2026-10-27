@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>mUtilities</title>
     <meta name="description" content="Small music tools for composers and musicians: find the key you're in, play a drone, noodle on a synth, build beats from logic gates, grow melodies from looping random machines, or write guitar tab.">
-    <meta name="theme-color" content="#ece6da">
+    <meta name="theme-color" content="#fbfbfa">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -27,44 +27,17 @@
         <div class="site-header__inner container">
             <a class="brand" href="#home"><span class="brand__m">m</span>Utilities</a>
 
-            <span class="site-header__current meta" data-current-page aria-hidden="true"></span>
-
-            <!-- Every tool, grouped like the home cards. Opened by the Tools button at every width (layout/site-header.js) -->
-            <nav class="site-nav" id="site-nav" aria-label="Tools">
-                <a class="site-nav__home" href="#home" data-nav="home">Home <span class="meta">all tools</span></a>
-                <div class="site-nav__groups">
-                    <section class="site-nav__group" aria-label="Theory">
-                        <h2 class="site-nav__group-title meta">Theory</h2>
-                        <ul class="site-nav__list">
-                            <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__num" aria-hidden="true">01</span><span class="site-nav__label">In Key Assistance</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                        </ul>
-                    </section>
-                    <section class="site-nav__group" aria-label="Sound">
-                        <h2 class="site-nav__group-title meta">Sound</h2>
-                        <ul class="site-nav__list">
-                            <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__num" aria-hidden="true">02</span><span class="site-nav__label">Drone Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                            <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__num" aria-hidden="true">03</span><span class="site-nav__label">Key Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                        </ul>
-                    </section>
-                    <section class="site-nav__group" aria-label="Rhythm">
-                        <h2 class="site-nav__group-title meta">Rhythm</h2>
-                        <ul class="site-nav__list">
-                            <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__num" aria-hidden="true">04</span><span class="site-nav__label">Logical Drums</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                        </ul>
-                    </section>
-                    <section class="site-nav__group" aria-label="Melody">
-                        <h2 class="site-nav__group-title meta">Melody</h2>
-                        <ul class="site-nav__list">
-                            <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__num" aria-hidden="true">05</span><span class="site-nav__label">Twin Turing</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                        </ul>
-                    </section>
-                    <section class="site-nav__group" aria-label="Guitar">
-                        <h2 class="site-nav__group-title meta">Guitar</h2>
-                        <ul class="site-nav__list">
-                            <li><a class="site-nav__link" href="#tab-writer" data-nav="tab-writer"><span class="site-nav__num" aria-hidden="true">06</span><span class="site-nav__label">Tab Writer</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
-                        </ul>
-                    </section>
-                </div>
+            <!-- Home and every tool -->
+            <nav class="site-nav" aria-label="Tools">
+                <ul class="site-nav__list">
+                    <li><a class="site-nav__link" href="#home" data-nav="home"><span class="site-nav__label">Home</span></a></li>
+                    <li><a class="site-nav__link" href="#in-key-assistance" data-nav="in-key-assistance"><span class="site-nav__label">In Key Assistance</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                    <li><a class="site-nav__link" href="#drone-synth" data-nav="drone-synth"><span class="site-nav__label">Drone Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                    <li><a class="site-nav__link" href="#key-synth" data-nav="key-synth"><span class="site-nav__label">Key Synth</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                    <li><a class="site-nav__link" href="#logical-drums" data-nav="logical-drums"><span class="site-nav__label">Logical Drums</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                    <li><a class="site-nav__link" href="#twin-turing" data-nav="twin-turing"><span class="site-nav__label">Twin Turing</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                    <li><a class="site-nav__link" href="#tab-writer" data-nav="tab-writer"><span class="site-nav__label">Tab Writer</span><span class="site-nav__led" aria-hidden="true"></span></a></li>
+                </ul>
             </nav>
 
             <div class="site-header__actions">
@@ -75,10 +48,6 @@
                 <button type="button" class="theme-toggle" data-theme-toggle>
                     <span class="theme-toggle__icon" aria-hidden="true">◐</span>
                     <span class="theme-toggle__label" data-theme-label>Dark</span>
-                </button>
-                <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="site-nav">
-                    <span class="menu-toggle__label">Tools</span>
-                    <span class="menu-toggle__icon" aria-hidden="true"><span></span><span></span></span>
                 </button>
             </div>
         </div>
@@ -99,8 +68,7 @@
                 </div>
 
                 <div class="tool-grid">
-                    <a class="panel panel--raised tool-card" href="#in-key-assistance">
-                        <div class="tool-card__meta meta"><span>01</span><span>Theory</span></div>
+                    <a class="panel tool-card" href="#in-key-assistance">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <div class="mini-keys">
                                 <span data-state="selected"></span><span></span><span data-state="selected"></span><span></span>
@@ -113,8 +81,7 @@
                         </div>
                     </a>
 
-                    <a class="panel panel--raised tool-card" href="#drone-synth">
-                        <div class="tool-card__meta meta"><span>02</span><span>Sound</span></div>
+                    <a class="panel tool-card" href="#drone-synth">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <div class="mini-drone">
                                 <span class="mini-drone__label">DRONING · C MAJOR</span>
@@ -127,8 +94,7 @@
                         </div>
                     </a>
 
-                    <a class="panel panel--raised tool-card" href="#key-synth">
-                        <div class="tool-card__meta meta"><span>03</span><span>Sound</span></div>
+                    <a class="panel tool-card" href="#key-synth">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <div class="mini-caps">
                                 <span>A</span><span data-state="active">S</span><span>D</span><span>F</span>
@@ -140,8 +106,7 @@
                         </div>
                     </a>
 
-                    <a class="panel panel--raised tool-card" href="#logical-drums">
-                        <div class="tool-card__meta meta"><span>04</span><span>Rhythm</span></div>
+                    <a class="panel tool-card" href="#logical-drums">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <div class="mini-logic">
                                 <span class="mini-logic__sig" data-state="on">A</span>
@@ -156,8 +121,7 @@
                         </div>
                     </a>
 
-                    <a class="panel panel--raised tool-card" href="#twin-turing">
-                        <div class="tool-card__meta meta"><span>05</span><span>Melody</span></div>
+                    <a class="panel tool-card" href="#twin-turing">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <div class="mini-turing">
                                 <span class="mini-turing__row"><b>A</b><i data-on></i><i></i><i data-on></i><i data-on></i><i></i><i></i><i data-on></i><i></i></span>
@@ -170,8 +134,7 @@
                         </div>
                     </a>
 
-                    <a class="panel panel--raised tool-card" href="#tab-writer">
-                        <div class="tool-card__meta meta"><span>06</span><span>Guitar</span></div>
+                    <a class="panel tool-card" href="#tab-writer">
                         <div class="tool-card__preview lcd-well" aria-hidden="true">
                             <pre class="mini-tab">e|-----0---|
 B|---1---1-|
@@ -201,81 +164,85 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <div class="in-key__controls">
-                    <label class="field in-key__root">
-                        <span class="field__label">Root note</span>
-                        <span class="select"><select data-ref="root"></select></span>
-                    </label>
-                    <label class="field in-key__scale">
-                        <span class="field__label">Scale type</span>
-                        <span class="select"><select data-ref="scale"></select></span>
-                    </label>
-                    <button type="button" class="btn btn--ink" data-ref="clear">Clear selection</button>
-                    <ul class="legend" aria-label="Colour key">
-                        <li class="legend__item"><span class="swatch swatch--accent" aria-hidden="true"></span>selected</li>
-                        <li class="legend__item"><span class="swatch swatch--cool" aria-hidden="true"></span>in previewed key</li>
-                    </ul>
-                </div>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
 
-                <div class="in-key__instruments">
-                    <section class="panel panel--raised">
-                        <div class="panel__head">
-                            <h2 class="panel__title">Piano</h2>
-                            <span class="meta" data-ref="pianoRange"></span>
-                        </div>
-                        <div data-ref="piano"></div>
-                    </section>
-                    <section class="panel panel--raised in-key__guitar">
-                        <div class="panel__head">
-                            <h2 class="panel__title">Guitar</h2>
-                            <span class="meta">Standard · frets 0–12</span>
-                        </div>
-                        <div data-ref="guitar"></div>
-                    </section>
-                </div>
-
-                <div class="in-key__info">
-                    <section class="panel">
-                        <div class="panel__head panel__head--ruled">
-                            <h2 class="panel__title">Possible keys</h2>
-                            <span class="meta" data-ref="keyCount"></span>
-                        </div>
-                        <div class="chip-list" data-ref="keys"></div>
-                    </section>
-                    <section class="panel">
-                        <div class="panel__head panel__head--ruled">
-                            <h2 class="panel__title" data-ref="scaleTitle">No key previewed</h2>
-                        </div>
-                        <div class="degrees" data-ref="degrees"></div>
-                        <p class="note-line" data-ref="selectedLine"></p>
-                    </section>
-                    <section class="panel">
-                        <div class="panel__head panel__head--ruled">
-                            <h2 class="panel__title">Transpose sample</h2>
-                            <span class="select select--pill"><select data-ref="sampleKey" aria-label="Key the sample was recorded in"></select></span>
-                        </div>
-                        <div class="transpose" data-ref="transpose"></div>
-                    </section>
-                </div>
-
-                <section class="panel in-key__chords">
-                    <div class="panel__head panel__head--ruled">
-                        <h2 class="panel__title" data-ref="chordsTitle">Chords in key</h2>
-                        <div class="segmented segmented--sm" role="group" aria-label="Chord types" data-ref="chordGroup"></div>
+                    <div class="in-key__controls">
+                        <label class="field in-key__root">
+                            <span class="field__label">Root note</span>
+                            <span class="select"><select data-ref="root"></select></span>
+                        </label>
+                        <label class="field in-key__scale">
+                            <span class="field__label">Scale type</span>
+                            <span class="select"><select data-ref="scale"></select></span>
+                        </label>
+                        <button type="button" class="btn" data-ref="clear">Clear selection</button>
+                        <ul class="legend" aria-label="Colour key">
+                            <li class="legend__item"><span class="swatch swatch--accent" aria-hidden="true"></span>selected</li>
+                            <li class="legend__item"><span class="swatch swatch--cool" aria-hidden="true"></span>in previewed key</li>
+                        </ul>
                     </div>
-                    <div class="chord-palette" data-ref="chordPalette"></div>
-                </section>
 
-                <section class="in-key__progression">
-                    <div class="in-key__progression-head">
-                        <h2 class="panel__title">Your chords</h2>
-                        <div class="in-key__progression-actions">
-                            <button type="button" class="btn btn--outline" data-ref="clearChords" hidden>Clear</button>
-                            <button type="button" class="btn btn--ink" data-ref="playChords" hidden>▶ Play all</button>
-                        </div>
+                    <div class="in-key__instruments">
+                        <section class="panel">
+                            <div class="panel__head">
+                                <h2 class="panel__title">Piano</h2>
+                                <span class="meta" data-ref="pianoRange"></span>
+                            </div>
+                            <div data-ref="piano"></div>
+                        </section>
+                        <section class="panel in-key__guitar">
+                            <div class="panel__head">
+                                <h2 class="panel__title">Guitar</h2>
+                                <span class="meta">Standard · frets 0–12</span>
+                            </div>
+                            <div data-ref="guitar"></div>
+                        </section>
                     </div>
-                    <div class="chord-cards" data-ref="chordCards"></div>
-                </section>
+
+                    <div class="in-key__info">
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title">Possible keys</h2>
+                                <span class="meta" data-ref="keyCount"></span>
+                            </div>
+                            <div class="chip-list" data-ref="keys"></div>
+                        </section>
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title" data-ref="scaleTitle">No key previewed</h2>
+                            </div>
+                            <div class="degrees" data-ref="degrees"></div>
+                            <p class="note-line" data-ref="selectedLine"></p>
+                        </section>
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title">Transpose sample</h2>
+                                <span class="select select--pill"><select data-ref="sampleKey" aria-label="Key the sample was recorded in"></select></span>
+                            </div>
+                            <div class="transpose" data-ref="transpose"></div>
+                        </section>
+                    </div>
+
+                    <section class="panel in-key__chords">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title" data-ref="chordsTitle">Chords in key</h2>
+                            <div class="segmented segmented--sm" role="group" aria-label="Chord types" data-ref="chordGroup"></div>
+                        </div>
+                        <div class="chord-palette" data-ref="chordPalette"></div>
+                    </section>
+
+                    <section class="in-key__progression">
+                        <div class="in-key__progression-head">
+                            <h2 class="panel__title">Your chords</h2>
+                            <div class="in-key__progression-actions">
+                                <button type="button" class="btn" data-ref="clearChords" hidden>Clear</button>
+                                <button type="button" class="btn" data-ref="playChords" hidden>▶ Play all</button>
+                            </div>
+                        </div>
+                        <div class="chord-cards" data-ref="chordCards"></div>
+                    </section>
+                </div>
             </div>
         </section>
 
@@ -294,22 +261,26 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <div class="panel panel--raised drone__transport" data-ref="transport">
-                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
-                    <label class="field">
-                        <span class="field__label">Key root</span>
-                        <span class="select"><select data-ref="root"></select></span>
-                    </label>
-                    <label class="field">
-                        <span class="field__label">Scale</span>
-                        <span class="select"><select data-ref="scale"></select></span>
-                    </label>
-                    <button type="button" class="btn btn--outline" data-ref="randomise">Randomise</button>
-                </div>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
 
-                <div data-ref="texture"></div>
-                <div class="drone__fx" data-ref="fx"></div>
-                <div class="drone__oscs" data-ref="oscs"></div>
+                    <div class="panel drone__transport" data-ref="transport">
+                        <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                        <label class="field">
+                            <span class="field__label">Key root</span>
+                            <span class="select"><select data-ref="root"></select></span>
+                        </label>
+                        <label class="field">
+                            <span class="field__label">Scale</span>
+                            <span class="select"><select data-ref="scale"></select></span>
+                        </label>
+                        <button type="button" class="btn" data-ref="randomise">Randomise</button>
+                    </div>
+
+                    <div data-ref="texture"></div>
+                    <div class="drone__fx" data-ref="fx"></div>
+                    <div class="drone__oscs" data-ref="oscs"></div>
+                </div>
             </div>
         </section>
 
@@ -331,49 +302,53 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <section class="panel panel--raised">
-                    <div class="panel__head">
-                        <h2 class="panel__title">Keyboard</h2>
-                        <div class="key-synth__octave">
-                            <span class="meta" data-ref="range">C4 – D5</span>
-                            <div data-ref="octave"></div>
-                        </div>
-                    </div>
-                    <div data-ref="keyboard"></div>
-                </section>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
 
-                <div class="key-synth__controls">
-                    <div class="key-synth__col">
-                        <section class="panel">
-                            <div class="panel__head panel__head--ruled">
-                                <h2 class="panel__title">Oscillator</h2>
-                            </div>
-                            <div data-ref="shape"></div>
-                        </section>
-                        <section class="panel">
-                            <div class="panel__head panel__head--ruled">
-                                <h2 class="panel__title">Filter</h2>
-                            </div>
-                            <div class="stack" data-ref="filter"></div>
-                        </section>
-                    </div>
                     <section class="panel">
-                        <div class="panel__head panel__head--ruled">
-                            <h2 class="panel__title">Envelope</h2>
-                            <span class="meta">ADSR</span>
+                        <div class="panel__head">
+                            <h2 class="panel__title">Keyboard</h2>
+                            <div class="key-synth__octave">
+                                <span class="meta" data-ref="range">C4 – D5</span>
+                                <div data-ref="octave"></div>
+                            </div>
                         </div>
-                        <div class="lcd-well envelope" aria-hidden="true">
-                            <svg class="envelope__graph" viewBox="0 0 400 100" preserveAspectRatio="none">
-                                <polygon class="envelope__fill" data-ref="envFill"></polygon>
-                                <polyline class="envelope__line" data-ref="envLine"></polyline>
-                            </svg>
-                            <div class="envelope__labels" data-ref="envLabels"><span>A</span><span>D</span><span>S</span><span>R</span></div>
-                        </div>
-                        <div class="envelope-controls" data-ref="envelope"></div>
+                        <div data-ref="keyboard"></div>
                     </section>
-                </div>
 
-                <section class="panel key-synth__arp" data-ref="arp" aria-label="Arpeggiator"></section>
+                    <div class="key-synth__controls">
+                        <div class="key-synth__col">
+                            <section class="panel">
+                                <div class="panel__head panel__head--ruled">
+                                    <h2 class="panel__title">Oscillator</h2>
+                                </div>
+                                <div data-ref="shape"></div>
+                            </section>
+                            <section class="panel">
+                                <div class="panel__head panel__head--ruled">
+                                    <h2 class="panel__title">Filter</h2>
+                                </div>
+                                <div class="stack" data-ref="filter"></div>
+                            </section>
+                        </div>
+                        <section class="panel">
+                            <div class="panel__head panel__head--ruled">
+                                <h2 class="panel__title">Envelope</h2>
+                                <span class="meta">ADSR</span>
+                            </div>
+                            <div class="lcd-well envelope" aria-hidden="true">
+                                <svg class="envelope__graph" viewBox="0 0 400 100" preserveAspectRatio="none">
+                                    <polygon class="envelope__fill" data-ref="envFill"></polygon>
+                                    <polyline class="envelope__line" data-ref="envLine"></polyline>
+                                </svg>
+                                <div class="envelope__labels" data-ref="envLabels"><span>A</span><span>D</span><span>S</span><span>R</span></div>
+                            </div>
+                            <div class="envelope-controls" data-ref="envelope"></div>
+                        </section>
+                    </div>
+
+                    <section class="panel key-synth__arp" data-ref="arp" aria-label="Arpeggiator"></section>
+                </div>
             </div>
         </section>
 
@@ -392,38 +367,42 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <div class="panel panel--raised logical__transport">
-                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
-                    <div class="logical__tempo" data-ref="tempo">
-                        <button type="button" class="logical__tap" data-ref="tap" aria-label="Tap tempo">Tap</button>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
+
+                    <div class="panel logical__transport">
+                        <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                        <div class="logical__tempo" data-ref="tempo">
+                            <button type="button" class="logical__tap" data-ref="tap" aria-label="Tap tempo">Tap</button>
+                        </div>
+                        <div class="logical__patch" role="group" aria-label="Whole patch">
+                            <button type="button" class="btn" data-ref="randomise">Randomise</button>
+                            <button type="button" class="btn" data-ref="reset">Set to default</button>
+                        </div>
+                        <div class="logical__midi">
+                            <div class="logical__bars" data-ref="bars"></div>
+                            <button type="button" class="btn" data-ref="export">Export MIDI</button>
+                        </div>
                     </div>
-                    <div class="logical__patch" role="group" aria-label="Whole patch">
-                        <button type="button" class="btn btn--outline" data-ref="randomise">Randomise</button>
-                        <button type="button" class="btn btn--outline" data-ref="reset">Set to default</button>
-                    </div>
-                    <div class="logical__midi">
-                        <div class="logical__bars" data-ref="bars"></div>
-                        <button type="button" class="btn btn--outline" data-ref="export">Export MIDI</button>
-                    </div>
+
+                    <section class="logical__signals">
+                        <div class="panel__head">
+                            <h2 class="panel__title">Signals</h2>
+                            <span class="meta" data-ref="loop"></span>
+                        </div>
+                        <div class="signal-tiles" data-ref="tiles"></div>
+                        <div class="signal-grid" data-ref="signals"></div>
+                        <p class="logical__tip"><span data-ref="gateIcon"></span><span>Gates stay open for the first half of each cycle.</span></p>
+                    </section>
+
+                    <section class="panel logical__drums">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Drums</h2>
+                            <button type="button" class="logical__clear" data-ref="clear">Clear</button>
+                        </div>
+                        <div class="drum-rows" data-ref="rows"></div>
+                    </section>
                 </div>
-
-                <section class="logical__signals">
-                    <div class="panel__head">
-                        <h2 class="panel__title">Signals</h2>
-                        <span class="meta" data-ref="loop"></span>
-                    </div>
-                    <div class="signal-tiles" data-ref="tiles"></div>
-                    <div class="signal-grid" data-ref="signals"></div>
-                    <p class="logical__tip"><span data-ref="gateIcon"></span><span>Gates stay open for the first half of each cycle.</span></p>
-                </section>
-
-                <section class="panel logical__drums">
-                    <div class="panel__head panel__head--ruled">
-                        <h2 class="panel__title">Drums</h2>
-                        <button type="button" class="logical__clear" data-ref="clear">Clear</button>
-                    </div>
-                    <div class="drum-rows" data-ref="rows"></div>
-                </section>
             </div>
         </section>
 
@@ -442,18 +421,22 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <div class="panel panel--raised turing__transport">
-                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
-                    <div class="turing__tempo" data-ref="tempo"></div>
-                    <div class="turing__key" data-ref="key"></div>
-                    <div class="logical__midi">
-                        <div class="logical__bars" data-ref="bars"></div>
-                        <button type="button" class="btn btn--outline" data-ref="export">Export MIDI</button>
-                    </div>
-                </div>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
 
-                <div class="turing__machines" data-ref="machines"></div>
-                <section class="panel turing__voice" data-ref="voice" aria-label="Voice"></section>
+                    <div class="panel turing__transport">
+                        <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                        <div class="turing__tempo" data-ref="tempo"></div>
+                        <div class="turing__key" data-ref="key"></div>
+                        <div class="logical__midi">
+                            <div class="logical__bars" data-ref="bars"></div>
+                            <button type="button" class="btn" data-ref="export">Export MIDI</button>
+                        </div>
+                    </div>
+
+                    <div class="turing__machines" data-ref="machines"></div>
+                    <section class="panel turing__voice" data-ref="voice" aria-label="Voice"></section>
+                </div>
             </div>
         </section>
 
@@ -472,37 +455,41 @@ G|-2-------|</pre>
                     </div>
                 </header>
 
-                <div class="panel panel--raised tab__transport">
-                    <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
-                    <div class="tab__tempo" data-ref="tempo"></div>
-                    <div class="tab__out">
-                        <button type="button" class="btn btn--outline" data-ref="copy">Copy tab</button>
-                        <button type="button" class="btn btn--outline" data-ref="saveTab">Save .txt</button>
-                        <button type="button" class="btn btn--outline" data-ref="midi">Export MIDI</button>
-                        <button type="button" class="btn btn--outline" data-ref="new">New tab</button>
+                <!-- The tool itself: one outlined box in the refined look (display: contents otherwise) -->
+                <div class="tool-body">
+
+                    <div class="panel tab__transport">
+                        <button type="button" class="btn btn--play" data-ref="play" aria-pressed="false"><span data-ref="playLabel">▶  Play</span></button>
+                        <div class="tab__tempo" data-ref="tempo"></div>
+                        <div class="tab__out">
+                            <button type="button" class="btn" data-ref="copy">Copy tab</button>
+                            <button type="button" class="btn" data-ref="saveTab">Save .txt</button>
+                            <button type="button" class="btn" data-ref="midi">Export MIDI</button>
+                            <button type="button" class="btn" data-ref="new">New tab</button>
+                        </div>
                     </div>
+
+                    <section class="panel tab__staff-panel" aria-label="Tab">
+                        <div class="tab__staff" data-ref="staff"></div>
+                        <div class="tab__tools" data-ref="tools"></div>
+                    </section>
+
+                    <section class="panel tab__fretboard-panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Fretboard</h2>
+                            <div class="tab__fret-options" data-ref="fretOptions"></div>
+                        </div>
+                        <div data-ref="fretboard"></div>
+                    </section>
+
+                    <section class="panel tab__keys-panel">
+                        <div class="panel__head panel__head--ruled">
+                            <h2 class="panel__title">Fits these keys</h2>
+                            <span class="meta" data-ref="keyCount"></span>
+                        </div>
+                        <div class="chip-list" data-ref="keys"></div>
+                    </section>
                 </div>
-
-                <section class="panel tab__staff-panel" aria-label="Tab">
-                    <div class="tab__staff" data-ref="staff"></div>
-                    <div class="tab__tools" data-ref="tools"></div>
-                </section>
-
-                <section class="panel panel--raised tab__fretboard-panel">
-                    <div class="panel__head panel__head--ruled">
-                        <h2 class="panel__title">Fretboard</h2>
-                        <div class="tab__fret-options" data-ref="fretOptions"></div>
-                    </div>
-                    <div data-ref="fretboard"></div>
-                </section>
-
-                <section class="panel tab__keys-panel">
-                    <div class="panel__head panel__head--ruled">
-                        <h2 class="panel__title">Fits these keys</h2>
-                        <span class="meta" data-ref="keyCount"></span>
-                    </div>
-                    <div class="chip-list" data-ref="keys"></div>
-                </section>
             </div>
         </section>
 

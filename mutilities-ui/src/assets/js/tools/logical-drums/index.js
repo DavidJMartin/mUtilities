@@ -317,10 +317,9 @@ export function initLogicalDrums(root) {
             el('div', { class: 'signal__wide' }, rotate.el)
         );
 
-        const module = el('article', { class: 'panel panel--raised signal', 'aria-label': `Signal ${letter}` },
+        const module = el('article', { class: 'panel signal', 'aria-label': `Signal ${letter}` },
             el('div', { class: 'signal__head' },
                 el('span', { class: 'signal__id' },
-                    el('span', { class: 'signal__eyebrow', text: 'SIGNAL' }),
                     el('span', { class: 'signal__letter', text: letter })
                 ),
                 summaryText,

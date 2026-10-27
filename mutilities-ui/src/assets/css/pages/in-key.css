@@ -242,7 +242,6 @@
 }
 
 .chord-card[data-playing] {
-    box-shadow: var(--shadow-raised);
     border-color: var(--accent);
 }
 

@@ -7,45 +7,31 @@
     padding-inline: var(--gutter);
 }
 
-/* ===== Header ===== */
+/* ===== Header: brand, buttons, and Home plus every tool as a plain row of links ===== */
 
 .site-header {
     position: relative;
     z-index: 40;
-    border-bottom: 2px solid var(--ink);
+    border-bottom: 1px solid var(--line);
     transition: var(--theme-transition);
 }
 
 .site-header__inner {
     display: grid;
     grid-template-columns: auto 1fr auto;
-    grid-template-areas: "brand current actions";
+    grid-template-areas:
+        "brand . actions"
+        "nav nav nav";
     align-items: center;
-    gap: 16px;
-    padding-block: 18px;
+    gap: 10px 16px;
+    padding-block: 12px;
 }
 
 .brand {
     grid-area: brand;
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: 28px;
-    line-height: 1;
-    letter-spacing: -.04em;
-}
-
-.brand__m {
-    color: var(--accent);
-}
-
-/* Where you are, e.g. "06 · Tab Writer" (the page title says it too, so phones skip it) */
-.site-header__current {
-    grid-area: current;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    letter-spacing: .08em;
-    text-transform: uppercase;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
 }
 
 .site-header__actions {
@@ -55,130 +41,56 @@
     gap: 8px;
 }
 
-/* ===== Tools panel =====
- * Every tool, grouped like the home cards, dropping down under the header at
- * every width. Grows by rows as tools are added; the header bar never changes.
- */
-
 .site-nav {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    display: none;
-    max-height: calc(100dvh - 80px);
-    overflow-y: auto;
-    padding: 18px max(var(--gutter), calc((100% - var(--content-max)) / 2 + var(--gutter))) 22px;
-    background: var(--card);
-    border-bottom: 2px solid var(--ink);
-    box-shadow: 0 8px 0 color-mix(in srgb, var(--shadow) 25%, transparent);
+    grid-area: nav;
 }
 
-.site-header[data-menu-open] .site-nav {
-    display: block;
-}
-
-.site-nav__home {
-    display: inline-flex;
+.site-nav__list {
+    display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
-    gap: 10px;
-    margin-bottom: 16px;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-.site-nav__home:hover,
-.site-nav__home[aria-current="page"] {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-}
-
-.site-nav__groups {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 18px 28px;
-}
-
-.site-nav__group-title {
-    padding-bottom: 6px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
+    gap: 4px 18px;
 }
 
 .site-nav__link {
     display: flex;
     align-items: center;
-    gap: 12px;
-    min-height: 46px;
-    border-top: var(--border) solid var(--line);
-    font-size: 17px;
-    font-weight: 500;
-    letter-spacing: -.01em;
+    gap: 6px;
 }
 
 .site-nav__link:hover .site-nav__label {
     text-decoration: underline;
-    text-underline-offset: 4px;
+    text-underline-offset: 3px;
 }
 
-.site-nav__num {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--faint);
-}
-
-.site-nav__label {
-    flex: 1;
-}
-
-.site-nav__link[aria-current="page"] {
+.site-nav__link[aria-current="page"] .site-nav__label {
     font-weight: 700;
 }
 
-.site-nav__link[aria-current="page"] .site-nav__num {
-    color: var(--accent-text);
-}
-
-/* LED: lit while the tool plays, blinking while it waits to join */
+/* LED: only on tools that are playing, blinking while one waits to join */
 .site-nav__led {
-    width: 9px;
-    height: 9px;
-    border: var(--border) solid var(--line);
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
+    background: var(--accent);
 }
 
-.site-nav__link[data-playing="playing"] .site-nav__led {
-    border-color: var(--accent);
-    background: var(--accent);
-    box-shadow: 0 0 6px var(--accent);
+.site-nav__link:not([data-playing]) .site-nav__led {
+    display: none;
 }
 
 .site-nav__link[data-playing="queued"] .site-nav__led {
-    border-color: var(--accent);
     animation: rec-pulse .5s ease-in-out infinite alternate;
-    background: var(--accent);
 }
 
-/* Header buttons */
+/* Header buttons (their look is shared with the controls, components.css) */
 
 /* Record: records everything the site plays (layout/record-button.js) */
 .record-toggle {
     display: flex;
     align-items: center;
     gap: 8px;
-    height: 38px;
-    padding: 0 14px;
-    border: var(--border) solid var(--ink);
-    border-radius: var(--radius-pill);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 500;
     font-variant-numeric: tabular-nums;
-    transition: var(--theme-transition);
-}
-
-.record-toggle:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 .record-toggle__dot {
@@ -219,8 +131,7 @@
     padding: 6px;
     background: var(--card);
     border: var(--border) solid var(--card-border);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-raised);
+    border-radius: var(--radius-sm);
 }
 
 .record-menu[hidden] {
@@ -238,7 +149,7 @@
 .record-menu__item {
     height: 36px;
     padding: 0 10px;
-    border-radius: 7px;
+    border-radius: var(--radius-sm);
     text-align: left;
     font-size: 14px;
     font-weight: 500;
@@ -259,22 +170,10 @@
     }
 }
 
-.theme-toggle,
-.menu-toggle {
+.theme-toggle {
     display: flex;
     align-items: center;
-    border: var(--border) solid var(--ink);
-    border-radius: var(--radius-pill);
-    transition: var(--theme-transition);
-}
-
-.theme-toggle {
-    height: 38px;
     gap: 8px;
-    padding: 0 14px;
-    font-family: var(--font-mono);
-    font-size: 13px;
-    font-weight: 500;
 }
 
 .theme-toggle__icon {
@@ -282,81 +181,19 @@
     line-height: 1;
 }
 
-.menu-toggle {
-    height: 38px;
-    gap: 10px;
-    padding: 0 16px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.menu-toggle__icon {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.menu-toggle__icon span {
-    width: 16px;
-    height: 2px;
-    border-radius: 2px;
-    background: currentColor;
-    transition: transform .15s;
-}
-
-.menu-toggle[aria-expanded="true"] {
-    background: var(--ink);
-    color: var(--card);
-}
-
-.menu-toggle[aria-expanded="true"] .menu-toggle__icon span:first-child {
-    transform: translateY(3px) rotate(45deg);
-}
-
-.menu-toggle[aria-expanded="true"] .menu-toggle__icon span:last-child {
-    transform: translateY(-3px) rotate(-45deg);
-}
-
-/* Phones: a tighter header, icon-only buttons */
+/* Phones: icon-only buttons */
 
 @media (max-width: 719.98px) {
-    .site-header__inner {
-        grid-template-columns: 1fr auto;
-        grid-template-areas: "brand actions";
-        gap: 12px;
-        padding-block: 14px;
-    }
-
-    .brand {
-        font-size: 24px;
-    }
-
-    .site-header__current {
-        display: none;
-    }
-
-    .menu-toggle {
-        height: 44px;
-    }
-
     .theme-toggle {
         width: 44px;
-        height: 44px;
         justify-content: center;
-        padding: 0;
     }
 
-    /* Phones: just the red dot until recording, then the timer. The theme
-       button steps aside while recording to make room. */
-    .record-toggle {
-        height: 44px;
-        padding: 0 12px;
-    }
-
+    /* Just the red dot until recording, then the timer. The theme button
+       steps aside while recording to make room. */
     .record-toggle[data-state="idle"] {
         width: 44px;
         justify-content: center;
-        padding: 0;
     }
 
     .record-toggle[data-state="idle"] .record-toggle__label {
@@ -386,25 +223,57 @@
     }
 }
 
-/* Very narrow phones (under 360px): the Tools button drops its label to fit */
-@media (max-width: 359.98px) {
-    .menu-toggle {
-        width: 44px;
-        justify-content: center;
-        padding: 0;
-    }
+/* ===== Page frame ===== */
 
-    .menu-toggle__label {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-        clip: rect(0 0 0 0);
-        white-space: nowrap;
+/* A tool's panels (index.html): one box with a light stroke, no fill */
+.tool-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--stack-gap);
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+}
+
+@media (max-width: 719.98px) {
+    .tool-body {
+        padding: 14px;
     }
 }
 
-/* ===== Page frame ===== */
+/* The narrowest phones: every pixel for the controls (the arp's two columns) */
+@media (max-width: 379.98px) {
+    .tool-body {
+        padding: 10px;
+    }
+}
+
+/* Under 360px (old small phones) steppers shrink a little so nested modules fit */
+@media (max-width: 359.98px) {
+    .tool-body .stepper__controls {
+        --stepper-size: 34px;
+    }
+}
+
+/* Inside it, the main sections are open, with a thin rule between them */
+.tool-body > .panel {
+    padding-inline: 0;
+    padding-bottom: 0;
+}
+
+.tool-body > .panel:first-child {
+    padding-top: 0;
+}
+
+.tool-body > .panel:not(:first-child) {
+    padding-top: var(--stack-gap);
+    border-top: 1px solid var(--line);
+}
+
+/* Groups of matching modules keep a light outline each (machines, signals, oscillators…) */
+.tool-body > :not(.panel) .panel {
+    border: 1px solid var(--line);
+}
 
 .site-main {
     flex: 1;
@@ -433,26 +302,27 @@
 }
 
 .page-title {
-    font-size: clamp(36px, 28px + 2.03vw, 54px);
-    line-height: 1.02;
-    letter-spacing: -.035em;
+    font-size: clamp(30px, 24px + 1.6vw, 40px);
+    line-height: 1.2;
 }
 
 .page-lead {
-    max-width: 540px;
-    font-size: clamp(15px, 14.1px + .225vw, 17px);
+    max-width: 62ch;
     color: var(--muted);
 }
 
-/* Links in a page's intro, e.g. credits */
-.page-lead a {
-    color: var(--accent-text);
+/* Links inside sentences (a page's intro, credits, the footer): ink, with a quiet underline */
+.page-lead a,
+.site-footer a {
+    color: var(--ink);
     text-decoration: underline;
+    text-decoration-color: var(--faint);
     text-underline-offset: 3px;
 }
 
-.page-lead a:hover {
-    color: var(--ink);
+.page-lead a:hover,
+.site-footer a:hover {
+    text-decoration-color: currentColor;
 }
 
 @media (min-width: 720px) {
@@ -484,14 +354,6 @@
     align-items: center;
     gap: 10px;
     padding-block: 18px 28px;
-}
-
-.site-footer a {
-    color: var(--muted);
-}
-
-.site-footer a:hover {
-    color: var(--ink);
 }
 
 @media (min-width: 720px) {

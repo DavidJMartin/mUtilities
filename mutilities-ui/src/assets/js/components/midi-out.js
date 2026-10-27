@@ -22,7 +22,7 @@ export function createMidiOutControls(sender, { channelHint } = {}) {
     }
 
     const connect = el('button', {
-        class: 'btn btn--outline midi-out__connect',
+        class: 'btn midi-out__connect',
         type: 'button',
         text: 'Connect MIDI',
         on: {

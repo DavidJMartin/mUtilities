@@ -160,7 +160,7 @@ export function initTwinTuring(root) {
             onInput: v => update({ knob: v }),
         });
         const randomise = el('button', {
-            class: 'btn btn--outline turing-machine__randomise',
+            class: 'btn turing-machine__randomise',
             type: 'button',
             text: 'Randomise',
             on: {
@@ -210,10 +210,9 @@ export function initTwinTuring(root) {
             onChange: on => update({ on }),
         });
 
-        const panel = el('article', { class: 'panel panel--raised turing-machine', 'aria-label': `Machine ${letter}` },
+        const panel = el('article', { class: 'panel turing-machine', 'aria-label': `Machine ${letter}` },
             el('div', { class: 'turing-machine__head' },
                 el('span', { class: 'turing-machine__id' },
-                    el('span', { class: 'turing-machine__eyebrow', text: 'MACHINE' }),
                     el('span', { class: 'turing-machine__letter', text: letter })
                 ),
                 summary,
